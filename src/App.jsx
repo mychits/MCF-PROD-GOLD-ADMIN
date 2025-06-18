@@ -49,11 +49,12 @@ import CommissionReport from "./pages/CommissionReport";
 import EnrollmentReport from "./pages/EnrollmentReport";
 import Staff from "./pages/Staff";
 import Employee from "./pages/Employee";
-import EmployeeProfile from "./pages/EmployeeProfile"
+import EmployeeProfile from "./pages/EmployeeProfile";
 import LeadSettings from "./pages/LeadSettings";
 import SalesReport from "./pages/SalesReport";
-import PaymentSummary from './pages/PaymentSummary';
+import PaymentSummary from "./pages/PaymentSummary";
 import Target from "./pages/Target";
+import DueMessage from "./pages/DueMessage";
 function App() {
   return (
     <>
@@ -87,7 +88,7 @@ function App() {
               }
             />
 
-              <Route
+            <Route
               path="/target"
               element={
                 <ProtectedRoute>
@@ -109,7 +110,7 @@ function App() {
               }
             />
 
-          <Route
+            <Route
               path="/filter-groups"
               element={
                 <ProtectedRoute>
@@ -133,7 +134,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-             <Route
+            <Route
               path="/employee"
               element={
                 <ProtectedRoute>
@@ -330,7 +331,7 @@ function App() {
               <Route path="employee-report" element={<EmployeeReport />} />
               <Route path="commission-report" element={<CommissionReport />} />
               <Route path="enrollment-report" element={<EnrollmentReport />} />
-              <Route path="payment-summary"element={<PaymentSummary/>} />
+              <Route path="payment-summary" element={<PaymentSummary />} />
             </Route>
 
             <Route
@@ -344,6 +345,7 @@ function App() {
             >
               <Route path="what-add" element={<WhatsappAdd />} />
               <Route path="failed-whatuser" element={<WhatsappFailed />} />
+              <Route path="due-message" element={<DueMessage />} />
             </Route>
             <Route
               path="/profile"

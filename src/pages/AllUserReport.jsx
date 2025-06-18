@@ -28,16 +28,17 @@ const AllUserReport = () => {
   });
 
   const filteredUsers = filterOption(
-  usersData.filter((u) => {
-    const matchGroup = groupFilter ? u.groupName === groupFilter : true;
-    const enrollmentDate = new Date(u.enrollmentDate);
-    const matchFromDate = fromDate ? enrollmentDate >= new Date(fromDate) : true;
-    const matchToDate = toDate ? enrollmentDate <= new Date(toDate) : true;
-    return matchGroup && matchFromDate && matchToDate;
-  }),
-  searchText
-);
-
+    usersData.filter((u) => {
+      const matchGroup = groupFilter ? u.groupName === groupFilter : true;
+      const enrollmentDate = new Date(u.enrollmentDate);
+      const matchFromDate = fromDate
+        ? enrollmentDate >= new Date(fromDate)
+        : true;
+      const matchToDate = toDate ? enrollmentDate <= new Date(toDate) : true;
+      return matchGroup && matchFromDate && matchToDate;
+    }),
+    searchText
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,10 +61,10 @@ const AllUserReport = () => {
                 const totalProfit = data.profit.totalProfit;
                 const firstDividentHead = data.firstAuction.firstDividentHead;
                 count++;
-
+                const id = data?.enrollment?._id;
                 const tempUsr = {
                   sl_no: count,
-                  _id: usrData._id,
+                  _id:id,
                   userName: usrData.userName,
                   userPhone: usrData.phone_number,
                   customerId: usrData.customer_id,
@@ -120,29 +121,37 @@ const AllUserReport = () => {
     fetchData();
   }, []);
 
- useEffect(() => {
-  const totalCustomers = filteredUsers.length;
-  const groupSet = new Set(filteredUsers.map((user) => user.groupName));
-  const totalGroups = groupFilter ? 1 : groupSet.size;
+  useEffect(() => {
+    const totalCustomers = filteredUsers.length;
+    const groupSet = new Set(filteredUsers.map((user) => user.groupName));
+    const totalGroups = groupFilter ? 1 : groupSet.size;
 
-  const totalToBePaid = filteredUsers.reduce(
-    (sum, u) => sum + (u.totalToBePaid || 0),
-    0
-  );
-  const totalProfit = filteredUsers.reduce((sum, u) => sum + (u.profit || 0), 0);
-  const totalPaid = filteredUsers.reduce((sum, u) => sum + (u.amountPaid || 0), 0);
-  const totalBalance = filteredUsers.reduce((sum, u) => sum + (u.balance || 0), 0);
+    const totalToBePaid = filteredUsers.reduce(
+      (sum, u) => sum + (u.totalToBePaid || 0),
+      0
+    );
+    const totalProfit = filteredUsers.reduce(
+      (sum, u) => sum + (u.profit || 0),
+      0
+    );
+    const totalPaid = filteredUsers.reduce(
+      (sum, u) => sum + (u.amountPaid || 0),
+      0
+    );
+    const totalBalance = filteredUsers.reduce(
+      (sum, u) => sum + (u.balance || 0),
+      0
+    );
 
-  setTotals({
-    totalCustomers,
-    totalGroups,
-    totalToBePaid,
-    totalProfit,
-    totalPaid,
-    totalBalance,
-  });
-}, [filteredUsers, groupFilter]);
-
+    setTotals({
+      totalCustomers,
+      totalGroups,
+      totalToBePaid,
+      totalProfit,
+      totalPaid,
+      totalBalance,
+    });
+  }, [filteredUsers, groupFilter]);
 
   const Auctioncolumns = [
     { key: "sl_no", header: "SL. NO" },
@@ -253,7 +262,6 @@ const AllUserReport = () => {
                   />
                 </div>
 
-             
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
                   <div className="flex flex-col border p-4 rounded shadow">
                     <span className="text-xl font-bold text-gray-700">

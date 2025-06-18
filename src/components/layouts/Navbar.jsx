@@ -33,7 +33,7 @@ useEffect(() => {
     } catch (e) {
       console.error("Failed to parse user from localStorage:", e);
     }
-  });
+  },[]);
 
   const [open, setOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import Sidebar from "../components/layouts/Sidebar";
 import { FaWhatsapp } from "react-icons/fa";
+import { RiMoneyRupeeCircleLine } from "react-icons/ri";
 const subMenus = [
   {
     title: "Promotion Login",
@@ -20,17 +21,23 @@ const subMenus = [
     red: true,
     icon: <FaWhatsapp size={20} className="text-red-00" />,
   },
+  {
+    title: "Due Message",
+    link: "/marketing/due-message",
+   icon:<RiMoneyRupeeCircleLine  size={20} className="text-red-00"/>
+    
+  },
 ];
 const Marketing = () => {
   return (
     <div>
       <div className="w-screen flex mt-20">
         <Sidebar />
-        <div className="flex-grow">
-          <div className="w-[300px] bg-gray-50 min-h-screen max-h-auto p-4">
+        <div className="flex min-h-screen ">
+          <div className="w-[300px] bg-gray-50 min-h-screen  p-4">
             {subMenus.map(({ title, link, icon, red,newTab }) => (
               <NavLink
-              target={`${newTab?"_blank":"_self"}`}
+              target={`${newTab?"_blank":"_self"}`} 
                 className={({ isActive }) =>
                   `my-2 flex items-center gap-2 font-medium rounded-md hover:bg-gray-300  p-3 ${
                     red ? "text-red-800" : "text-blue-950"
@@ -43,8 +50,8 @@ const Marketing = () => {
               </NavLink>
             ))}
           </div>
-        </div>
         <Outlet />
+        </div>
       </div>
     </div>
   );
