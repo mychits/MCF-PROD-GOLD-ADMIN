@@ -100,6 +100,17 @@ const AuctionReport = () => {
     setSelectedAuctionGroupId(groupId);
     handleGroupAuctionChange(groupId);
   };
+   const formatPayDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { day: "numeric", month: "short", year: "numeric" };
+    return date.toLocaleDateString("en-US", options).replace(",", " ");
+  };
+  const prevDate = (dateString) => {
+    const date = new Date(dateString);
+    date.setDate(date.getDate() - 10);
+    const options = { day: "numeric", month: "short", year: "numeric" };
+    return date.toLocaleDateString("en-US", options).replace(",", " ");
+  };
 
   const handleGroupAuctionChange = async (groupId) => {
     setSelectedAuctionGroup(groupId);
@@ -111,7 +122,7 @@ const AuctionReport = () => {
           const formattedData = [
             {
               id: 1,
-              date: response?.data[0]?.auction_date,
+              date: prevDate(response?.data[0]?.auction_date),
               name: "Commencement",
               phone_number: "Commencement",
               ticket: "Commencement",
@@ -122,7 +133,7 @@ const AuctionReport = () => {
             ...response.data.map((group, index) => ({
               _id: group._id,
               id: index + 2,
-              date: group.auction_date,
+              date: formatPayDate(group.auction_date),
               name: group.user_id?.full_name,
               phone_number: group.user_id?.phone_number,
               ticket: group.ticket,
