@@ -18,28 +18,22 @@ const PaymentSummary = () => {
   });
   const [selectedLabel, setSelectedLabel] = useState("");
   const [showFilterField, setShowFilterField] = useState(false);
-  
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const params = {};
-      if (payloads.from_date) params.from_date = payloads.from_date;
-      if (payloads.to_date) params.to_date = payloads.to_date;
-      if (payloads.payment_type) params.payment_type = payloads.payment_type;
-      
-      const reportResponse = await api.get("/user/get-daily-payments", { params });
-      const processedData = processRawData(reportResponse.data);
-      setUsersData(processedData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const reportResponse = await api.get("/user/get-daily-payments");
+        const processedData = processRawData(reportResponse.data);
+        setUsersData(processedData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchData();
-  }, [payloads]);
+  }, []);
 
   const processRawData = (rawData) => {
     let count = 0;
@@ -53,10 +47,19 @@ const PaymentSummary = () => {
 
             const latestPaymentAmount = data.payments?.latestPaymentAmount || 0;
             const totalPaid = data.payments?.totalPaidAmount || 0;
-            const totalPayable = data.payable?.totalPayable || 0;
+
+            const totalPayable =
+              data.enrollment?.group?.group_type === "double"
+                ? Number(data.enrollment?.group?.group_install) *
+                    Number(data?.auction?.auctionCount) +
+                    Number(data.enrollment?.group?.group_install) || 0
+                : Number(data.payments?.totalPayable) +
+                    Number(data.enrollment?.group?.group_install) +
+                    Number(data?.firstAuction?.firstDividentHead) || 0;
+
             const balance = totalPayable - totalPaid;
 
-            // Status logic
+            // ✅ Status logic
             let status = "Not Paid";
             if (latestPaymentAmount > 0 || balance <= 0) {
               status = "Paid";
@@ -69,7 +72,8 @@ const PaymentSummary = () => {
               userPhone: usrData.phone_number,
               customerId: usrData.customer_id,
               amountPaid: totalPaid,
-              paymentsTicket: data.enrollment?.tickets || 0,
+              paymentsTicket:
+                data.enrollments?.tickets || data.payments?.ticket || 0,
               groupValue: data.enrollment?.group?.group_value || 0,
               groupName: data.enrollment?.group?.group_name || "",
               payment_type: data.enrollment?.payment_type || "",
@@ -92,20 +96,59 @@ const PaymentSummary = () => {
   };
 
   const filteredData = useMemo(() => {
-    return filterOption(usersData, searchText);
-  }, [usersData, searchText]);
+    const fromDate = payloads.from_date
+      ? new Date(payloads.from_date).setHours(0, 0, 0, 0)
+      : null;
+    const toDate = payloads.to_date
+      ? new Date(payloads.to_date).setHours(23, 59, 59, 999)
+      : null;
 
-  const totaldata = useMemo(() => {
-    return filteredData.reduce(
-      (acc, item) => {
-        acc.latestPaymentAmount += Number(item.latestPaymentAmount || 0);
-        acc.amountToBePaid += Number(item.amountToBePaid || 0);
-        acc.amountPaid += Number(item.amountPaid || 0);
-        return acc;
-      },
-      { latestPaymentAmount: 0, amountToBePaid: 0, amountPaid: 0 }
-    );
-  }, [filteredData]);
+    return usersData
+      .filter((item) => {
+        const matchPaymentType = payloads.payment_type
+          ? item.payment_type === payloads.payment_type
+          : true;
+        return matchPaymentType && filterOption([item], searchText).length > 0;
+      })
+      .map((item) => {
+        const updatedItem = { ...item };
+
+        const paymentDate = item.latestPaymentDate
+          ? new Date(item.latestPaymentDate).setHours(0, 0, 0, 0)
+          : null;
+
+        let isFilteredOut = false;
+
+        if (
+          (fromDate && (!paymentDate || paymentDate < fromDate)) ||
+          (toDate && paymentDate > toDate)
+        ) {
+          updatedItem.latestPaymentAmount = 0;
+          updatedItem.latestPaymentDate = payloads.from_date;
+          isFilteredOut = true;
+        }
+
+        const balance =
+          Number(updatedItem.amountToBePaid) - Number(updatedItem.amountPaid);
+        const latest = Number(updatedItem.latestPaymentAmount);
+
+        // ✅ Final payment status logic with new condition
+        let status = "Not Paid";
+        if (latest > 0 && balance <= 0) status = "Paid";
+        else if (latest > 0 && balance > 0) status = "Paid";
+        else if (latest === 0 && balance < 0)
+          status = "Paid"; // ✅ NEW condition
+        else if (latest === 0 && balance >= 0) status = "Not Paid";
+
+        // ✅ In filters, hide collectedBy if no real payment
+        if (isFilteredOut && latest === 0) {
+          updatedItem.latestCollectedBy = "N/A";
+        }
+
+        updatedItem.status = status;
+        return updatedItem;
+      });
+  }, [usersData, payloads, searchText]);
 
   const handleSelectFilter = (value) => {
     setSelectedLabel(value);
@@ -191,10 +234,12 @@ const PaymentSummary = () => {
         break;
       }
       case "All": {
+        const start = new Date(2000, 0, 1);
+        const end = new Date(today);
         setPayloads((prev) => ({
           ...prev,
-          from_date: "",
-          to_date: "",
+          from_date: formatDate(start),
+          to_date: formatDate(end),
         }));
         break;
       }
@@ -349,32 +394,19 @@ const PaymentSummary = () => {
                   </Select>
                 </div>
                 <div className="text-md font-semibold text-blue-700 mb-2">
-                  <label> Total Latest Payment </label>
+                  <label>Total Amount</label>
                   <div>
                     <input
                       className="w-full max-w-xs h-11 rounded-md"
                       readOnly
-                      value={`₹${totaldata.latestPaymentAmount.toLocaleString()}`}
-                    />
-                  </div>
-                </div>
-                <div className="text-md font-semibold text-red-700 mb-2">
-                  <label> Total Amount To Be Paid </label>
-                  <div>
-                    <input
-                      className="w-full max-w-xs h-11 rounded-md"
-                      readOnly
-                      value={`₹${totaldata.amountToBePaid.toLocaleString()}`}
-                    />
-                  </div>
-                </div>
-                <div className="text-md font-semibold text-blue-700 mb-2">
-                  <label> Total Amount Paid </label>
-                  <div>
-                    <input
-                      className="w-full max-w-xs h-11 rounded-md"
-                      readOnly
-                      value={`₹${totaldata.amountPaid.toLocaleString()}`}
+                      value={`₹ ${filteredData
+                        .reduce(
+                          (sum, user) => sum + (user.latestPaymentAmount || 0),
+                          0
+                        )
+                        .toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                        })}`}
                     />
                   </div>
                 </div>
