@@ -49,17 +49,20 @@ import DueMessage from "../pages/DueMessage";
 import Reports from "../pages/Reports";
 import LeadSettings from "../pages/LeadSettings";
 import Designation from "../pages/Designation";
-
+import PayOutMenu from "../pages/PayOutMenu";
+import GeneralPaymentOut from "../pages/GeneralPaymentOut";
+import Print from "../pages/Print";
+import PayOutCommission from "../pages/PayOutCommission";
+import PayOutPettyCash from "../pages/PayOutPettyCash";
+import PayOutSalary from "../pages/PayOutSalary";
+import PayOutReport from "../pages/PayoutReport";
+import ErrorPage from "./error/ErrorPage";
+import Guarantor from "../pages/Guarantor";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
-    
 
-    element: (
-     
-        <Login />
-     
-    ),
+    element: <Login />,
   },
   {
     path: "/dashboard",
@@ -113,6 +116,10 @@ const mainRoutes = createBrowserRouter([
   {
     path: "/enrollment-request-form",
     element: <EnrollmentRequestForm />,
+  },
+  {
+path:"/guarantor",
+element:<Guarantor/>
   },
   {
     path: "/filter-groups",
@@ -203,6 +210,54 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
+    path: "/pay-out-menu",
+    element: (
+      <ProtectedRoute>
+        <PayOutMenu />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/general-payment-out/:paymentType",
+    element: (
+      <ProtectedRoute>
+        <GeneralPaymentOut />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-out/commission",
+    element: (
+      <ProtectedRoute>
+        <PayOutCommission />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-out/salary",
+    element: (
+      <ProtectedRoute>
+        <PayOutSalary />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-out/petty-Cash",
+    element: (
+      <ProtectedRoute>
+        <PayOutPettyCash />
+      </ProtectedRoute>
+    ),
+  },
+   {
+    path: "/payment-out/others",
+    element: (
+      <ProtectedRoute>
+       <ErrorPage/>
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: "/collection-area-request",
     element: (
       <ProtectedRoute>
@@ -231,26 +286,19 @@ const mainRoutes = createBrowserRouter([
 
   {
     path: "/lead-setting",
-    element: (
-      <ProtectedRoute>
-        <Navbar />
-        <LeadSetting />
-      </ProtectedRoute>
-    ),
+    element: <LeadSetting />,
     children: [
       {
-        path: "",
+        index: true,
         element: <LeadSettings />,
+      },
+      {
+        path: "app-settings",
+        element: <AppSettings />,
         children: [
           {
-            path: "app-settings",
-            element: <AppSettings />,
-            children: [
-              {
-                path: "groups/mobile-access",
-                element: <GroupSettings />,
-              },
-            ],
+            path: "groups/mobile-access",
+            element: <GroupSettings />,
           },
         ],
       },
@@ -266,7 +314,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "administrative-privileges",
+    path: "/administrative-privileges",
     element: (
       <ProtectedRoute>
         <Navbar />
@@ -275,7 +323,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "admin-access-rights",
+    path: "/admin-access-rights",
     element: (
       <ProtectedRoute>
         <Navbar />
@@ -307,6 +355,7 @@ const mainRoutes = createBrowserRouter([
     element: <Reports />,
     children: [
       { path: "daybook", element: <Daybook /> },
+      { path: "payout", element: <PayOutReport /> },
       { path: "sales-report", element: <SalesReport /> },
       { path: "receipt", element: <Receipt /> },
       { path: "group-report", element: <GroupReport /> },
@@ -323,7 +372,11 @@ const mainRoutes = createBrowserRouter([
       { path: "payment-summary", element: <PaymentSummary /> },
     ],
   },
+  {
+    path: "/print/:id",
 
+    element: <Print />,
+  },
   {
     path: "/marketing",
     element: (

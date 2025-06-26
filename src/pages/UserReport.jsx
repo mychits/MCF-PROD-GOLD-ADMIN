@@ -61,6 +61,8 @@ const UserReport = () => {
   const [borrowersData, setBorrowersData] = useState([]);
   const [borrowerId, setBorrowerId] = useState("No");
   const [filteredBorrowerData, setFilteredBorrowerData] = useState([]);
+  const [filteredDisbursement, setFilteredDisbursement] = useState([]);
+  const [disbursementLoading, setDisbursementLoading] = useState(false);
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
@@ -87,7 +89,16 @@ const UserReport = () => {
     { key: "pay_type", header: "Payment Type" },
     { key: "balance", header: "Balance" },
   ];
-
+  const DisbursementColumns = [
+    { key: "id", header: "SL. NO" },
+    { key: "pay_date", header: "Disbursed Date" },
+    { key: "transaction_date", header: "Transaction Date" },
+    { key: "amount", header: "Amount" },
+    { key: "receipt_no", header: "Receipt No" },
+    { key: "pay_type", header: "Payment Type" },
+    { key: "disbursed_by", header: "Disbursed By" },
+    { key: "balance", header: "Balance" },
+  ];
   useEffect(() => {
     const fetchAllLoanPaymentsbyId = async () => {
       setBorrowersData([]);
@@ -223,7 +234,53 @@ const UserReport = () => {
     };
     fetchGroups();
   }, []);
+  // disbursement report
 
+  useEffect(() => {
+    const fetchDisbursement = async () => {
+      try {
+        setDisbursementLoading(true)
+        const response = await api.get(
+          `/payment-out/get-payment-out-report-daybook`,
+          {
+            params: {
+              pay_for: "chit",
+              userId: selectedGroup,
+            },
+          }
+        );
+
+        if (response.data) {
+          const formattedData = response.data.map((payment, index) => {
+            let balance = 0;
+
+            balance += Number(payment.amount);
+            return {
+              _id: payment._id,
+              id: index + 1,
+              pay_date: formatPayDate(payment?.pay_date),
+              transaction_date: formatPayDate(payment.createdAt),
+              amount: payment.amount,
+              receipt_no: payment.receipt_no,
+              pay_type: payment.pay_type,
+              disbursed_by: payment.admin_type?.name,
+              balance,
+            };
+          });
+
+          setFilteredDisbursement(formattedData);
+        } else {
+          setFilteredDisbursement([]);
+        }
+      } catch (error) {
+        console.error("Error fetching disbursement data", error, error.message);
+        setFilteredDisbursement([])
+      } finally {
+        setDisbursementLoading(false);
+      }
+    };
+    if (selectedGroup) fetchDisbursement();
+  }, [selectedGroup]);
   const handleGroupPayment = async (groupId) => {
     setSelectedAuctionGroupId(groupId);
     setSelectedGroup(groupId);
@@ -673,6 +730,17 @@ const UserReport = () => {
                       >
                         Customer Ledger
                       </button>
+
+                      <button
+                        className={`px-6 py-2 font-medium ${
+                          activeTab === "disbursement"
+                            ? "border-b-2 border-blue-500 text-blue-500"
+                            : "text-gray-500"
+                        }`}
+                        onClick={() => handleTabChange("disbursement")}
+                      >
+                        PayOut | Disbursement
+                      </button>
                     </div>
 
                     {activeTab === "groupDetails" && (
@@ -967,6 +1035,26 @@ const UserReport = () => {
                           )}
                         </div>
                       </>
+                    )}
+                    {activeTab === "disbursement" && (
+                      <div className="flex flex-col flex-1">
+                        <label className="mb-1 text-sm  text-gray-700 font-bold">
+                          Disbursement
+                        </label>
+
+                        {disbursementLoading ? (
+                          <CircularLoader />
+                        ) : filteredDisbursement?.length > 0 ? (
+                          <div className="mt-10">
+                            <DataTable
+                              data={filteredDisbursement}
+                              columns={DisbursementColumns}
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-40  w-full flex justify-center items-center ">No Disbursement Data Found</div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </>

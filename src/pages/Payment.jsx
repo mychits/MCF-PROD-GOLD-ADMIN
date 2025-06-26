@@ -12,7 +12,7 @@ import { Select, Dropdown, Modal as AntModal, Drawer, Tooltip } from "antd";
 import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import dataPaymentsFor from "../data/paymentsFor";
-import BackdropBlurLoader from "../components/loaders/BackDropBlurLoader";
+import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
 import { FaReceipt } from "react-icons/fa";
 import { fieldSize } from "../data/fieldSize";
 const Payment = () => {

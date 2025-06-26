@@ -1,444 +1,691 @@
+// (imports)
 import { useEffect, useState } from "react";
 import Navbar from "../components/layouts/Navbar";
+import SettingSidebar from "../components/layouts/SettingSidebar";
+import api from "../instance/TokenInstance";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-import api from "../instance/TokenInstance";
-import CircularLoader from "../components/loaders/CircularLoader";
-import { Dropdown, Progress } from "antd";
+import { Dropdown } from "antd";
 import { IoMdMore } from "react-icons/io";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
-import SettingSidebar from "../components/layouts/SettingSidebar";
+
+const today = new Date();
+const todayStr = new Date().toISOString().split("T")[0];
+const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+  .toISOString()
+  .split("T")[0];
+const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+  .toISOString()
+  .split("T")[0];
+
+function generateVirtualTargets(original, type, fromDate, toDate) {
+  if (!type || type === "designation") return original;
+
+  const extended = [...original];
+  const from = new Date(fromDate);
+  const to = new Date(toDate);
+
+  const ids = [...new Set(original.map((t) => t.agentId?._id || t.agentId))];
+
+  for (const id of ids) {
+    const personalTargets = original.filter(
+      (t) => t.agentId === id || t.agentId?._id === id
+    );
+
+    const latest = personalTargets
+      .filter((t) => new Date(t.startDate) < from)
+      .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))[0];
+
+    if (!latest) continue;
+
+    const existingMonths = new Set(
+      personalTargets.map((t) => {
+        const d = new Date(t.startDate);
+        return `${d.getFullYear()}-${d.getMonth()}`;
+      })
+    );
+
+    const loop = new Date(from);
+    while (loop <= to) {
+      const key = `${loop.getFullYear()}-${loop.getMonth()}`;
+      if (!existingMonths.has(key)) {
+        const virtual = {
+          ...latest,
+          startDate: new Date(
+            loop.getFullYear(),
+            loop.getMonth(),
+            1
+          ).toISOString(),
+          endDate: new Date(
+            loop.getFullYear(),
+            loop.getMonth() + 1,
+            0
+          ).toISOString(),
+          isVirtual: true,
+        };
+        extended.push(virtual);
+      }
+      loop.setMonth(loop.getMonth() + 1);
+    }
+  }
+
+  return extended;
+}
 
 const Target = () => {
+  const [selectedType, setSelectedType] = useState("agents");
   const [type, setType] = useState("");
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState("all");
   const [agents, setAgents] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [designations, setDesignations] = useState([]);
   const [targets, setTargets] = useState([]);
-  const [tableData, setTableData] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editTargetId, setEditTargetId] = useState(null);
-  const [fixedTargetModal, setFixedTargetModal] = useState(false);
-
-  const [filterStartDate, setFilterStartDate] = useState("");
-  const [filterEndDate, setFilterEndDate] = useState("");
+  const [selectedName, setSelectedName] = useState("");
+  const [virtualTargets, setVirtualTargets] = useState([]);
 
   const [formData, setFormData] = useState({
     agentId: "",
     designationId: "",
     startDate: "",
     endDate: "",
-    target: "",
+    totalTarget: "",
     incentive: 0,
-    achieved: 0,
   });
-
-  const [fixedTargetForm, setFixedTargetForm] = useState({
-    designationId: "",
-    fixedTarget: "",
-  });
-
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editTargetId, setEditTargetId] = useState(null);
+  const [fromDate, setFromDate] = useState(firstDay);
+  const [toDate, setToDate] = useState(lastDay);
+  const [tableData, setTableData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
     message: "",
-    type: "info",
+    type: "",
   });
+  const [reload, setReload] = useState(0);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [reloadTrigger, setReloadTrigger] = useState(0);
-
-  const fetchAll = async () => {
-    try {
-      setIsLoading(true);
-      const [agentRes, desigRes, targetRes] = await Promise.all([
+  // FETCH DATA
+  useEffect(() => {
+    const fetchData = async () => {
+      const [agentRes, designationRes] = await Promise.all([
         api.get("/agent/get-agent"),
         api.get("/target/get-designation"),
-        api.get("/target/get-targets"),
       ]);
 
-      const allAgents = agentRes.data || [];
-      setAgents(allAgents.filter(a => a.agent_type === "agent" || a.agent_type === "both"));
-      setEmployees(allAgents.filter(a => a.agent_type === "employee" || a.agent_type === "both"));
-
-      setDesignations(desigRes.data || []);
-      setTargets(targetRes.data || []);
-    } catch (err) {
-      console.error("Error fetching data", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAll();
-  }, [reloadTrigger]);
-
-  useEffect(() => {
-    const getTargetById = (id) => {
-      return targets.find((t) => {
-        return String(t.agentId?._id || t.agentId || "") === String(id) ||
-          String(t.designationId?._id || t.designationId || "") === String(id);
-      });
+      const all = agentRes.data || [];
+      setAgents(
+        all.filter((a) => a.agent_type === "agent" || a.agent_type === "both")
+      );
+      setEmployees(
+        all.filter(
+          (a) => a.agent_type === "employee" || a.agent_type === "both"
+        )
+      );
+      setDesignations(designationRes.data || []);
     };
 
+    fetchData();
+  }, [reload]);
+
+  useEffect(() => {
+    const fetchTargets = async () => {
+      try {
+        const res = await api.get("/target/get-targets", {
+          params: {
+            fromDate,
+            toDate,
+            ...(selectedId !== "all" &&
+              type === "agent" && { agentId: selectedId }),
+            ...(selectedId !== "all" &&
+              type === "employee" && { agentId: selectedId }),
+            ...(selectedId !== "all" &&
+              type === "designation" && { designationId: selectedId }),
+          },
+        });
+
+        const originalTargets = res.data || [];
+
+        if (type && (type === "agent" || type === "employee")) {
+          const from = new Date(fromDate);
+          const to = new Date(toDate);
+          const extendedTargets = [...originalTargets];
+
+          const personMap = {};
+          const list = type === "agent" ? agents : employees;
+
+          for (const person of list) {
+            const personId = person._id;
+            const personalTargets = originalTargets.filter(
+              (t) => t.agentId === personId || t.agentId?._id === personId
+            );
+
+            // Find latest target before fromDate
+            const latest = personalTargets
+              .filter((t) => new Date(t.startDate) < from)
+              .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))[0];
+
+            if (!latest) continue;
+
+            const monthSet = new Set(
+              personalTargets.map((t) => {
+                const d = new Date(t.startDate);
+                return `${d.getFullYear()}-${d.getMonth()}`;
+              })
+            );
+
+            const loop = new Date(from);
+            while (loop <= to) {
+              const key = `${loop.getFullYear()}-${loop.getMonth()}`;
+              if (!monthSet.has(key)) {
+                const newTarget = {
+                  ...latest,
+                  startDate: new Date(
+                    loop.getFullYear(),
+                    loop.getMonth(),
+                    1
+                  ).toISOString(),
+                  endDate: new Date(
+                    loop.getFullYear(),
+                    loop.getMonth() + 1,
+                    0
+                  ).toISOString(),
+                  isVirtual: true,
+                };
+                extendedTargets.push(newTarget);
+              }
+              loop.setMonth(loop.getMonth() + 1);
+            }
+          }
+
+          setTargets(extendedTargets);
+          setVirtualTargets(extendedTargets);
+        } else {
+          setTargets(originalTargets);
+          setVirtualTargets(originalTargets);
+        }
+      } catch (err) {
+        console.error("Error fetching targets:", err);
+      }
+    };
+
+    if (fromDate && toDate && type) {
+      fetchTargets();
+    }
+  }, [fromDate, toDate, type, selectedId, reload]);
+
+  useEffect(() => {
     const sourceList =
       type === "agent"
         ? agents
         : type === "employee"
-          ? employees
-          : designations;
+        ? employees
+        : designations;
 
-    const fetchAllRows = async () => {
-      const list = await Promise.all(
+    const buildRows = async () => {
+      const rows = await Promise.all(
         sourceList
           .filter((p) => selectedId === "all" || p._id === selectedId)
           .map(async (person) => {
-            const target = getTargetById(person._id);
-            return await formatRow(person, target);
+            const relatedTargets = virtualTargets.filter(
+              (t) =>
+                (t.agentId?._id || t.agentId) === person._id ||
+                (t.designationId?._id || t.designationId) === person._id
+            );
+
+            if (relatedTargets.length === 0) {
+              let designation = person.title || "N/A";
+              if (type !== "designation") {
+                try {
+                  const { data: empData } = await api.get(
+                    `/agent/get-additional-employee-info-by-id/${person._id}`
+                  );
+                  designation =
+                    empData?.employee?.designation_id?.title || designation;
+                } catch (err) {
+                  console.error(
+                    "Error fetching designation for placeholder row:",
+                    err
+                  );
+                }
+              }
+              return [
+                {
+                  name: person.name || person.title,
+                  phone: person.phone_number || "-",
+                  designation,
+                  target: "-",
+                  achieved: "-",
+                  remaining: "-",
+                  difference: "-",
+                  incentive_percent: "-",
+                  incentive_amount: "-",
+                 action: (
+  <Dropdown
+    trigger={["click"]}
+    menu={{
+      items: [{ key: "set", label: "Set Target" }],
+      onClick: ({ key }) => {
+        if (key === "set") openSetModal(person, type);
+      },
+    }}
+  >
+    <IoMdMore className="cursor-pointer" />
+  </Dropdown>
+),
+
+                },
+              ];
+            }
+
+            const row = await formatRow(person, relatedTargets, type);
+            return [row];
           })
       );
-      setTableData(list);
+      setTableData(rows.flat());
     };
 
-    if (type && (selectedId || selectedId === "all")) {
-      fetchAllRows();
-    }
-  }, [type, selectedId, targets, filterStartDate, filterEndDate]);
+    if (type && selectedId) buildRows();
+  }, [type, selectedId, targets, fromDate, toDate]);
 
-  const formatRow = async (person, target) => {
-    let total = type === "designation" ? person.fixedTarget || 0 : target?.totalTarget || 0;
-    let achieved = "Target not set";
+const formatRow = async (person, targets, currentType) => {
+  let designation = "N/A";
+  let achieved = 0;
 
-    const personType = person.agent_type || (type === "designation" ? "designation" : "unknown");
+  const allTargets = targets.filter(
+    (t) =>
+      (t.agentId?._id || t.agentId) === person._id ||
+      (t.designationId?._id || t.designationId) === person._id
+  );
 
-    if (target) {
-      const defaultStart = target.startDate?.substring(0, 10);
-      const defaultEnd = target.endDate?.substring(0, 10);
+  const monthMap = {};
+  allTargets.forEach((t) => {
+    const date = new Date(t.startDate);
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+    if (!monthMap[key]) monthMap[key] = t.totalTarget || 0;
+  });
 
-      const startDate = filterStartDate || defaultStart;
-      const endDate = filterEndDate || defaultEnd;
+  const defaultTarget =
+    Object.values(monthMap).length > 0 ? Object.values(monthMap)[0] : 0;
 
-      try {
-        const agentId = target?.agentId?._id || target?.agentId || person._id;
+  let total = 0;
+  let loop = new Date(fromDate);
+  const end = new Date(toDate);
 
-        const params = {
-          agentId,
-          startDate,
-          endDate,
-        };
+  while (loop <= end) {
+    const key = `${loop.getFullYear()}-${loop.getMonth()}`;
+    const value = monthMap[key] ?? defaultTarget;
+    total += value;
+    loop.setMonth(loop.getMonth() + 1);
+  }
 
-        const res = await api.get("/target/get-achieved", { params });
-        achieved = res.data?.achieved || 0;
-      } catch (err) {
-        console.error("Failed to fetch achieved for row", err);
+  try {
+    const { data: commData } = await api.get(
+      `/enroll/get-detailed-commission/${person._id}`,
+      {
+        params: {
+          from_date: fromDate,
+          to_date: toDate,
+        },
       }
+    );
+    achieved = commData?.summary?.actual_business || 0;
+    if (typeof achieved === "string") {
+      achieved = Number(achieved.replace(/[^0-9.-]+/g, ""));
     }
+  } catch (err) {
+    console.error("Error fetching actual business (achieved):", err);
+  }
 
-    const numericAchieved = typeof achieved === "number" ? achieved : 0;
-    const remaining = typeof total === "number" ? total - numericAchieved : 0;
-    const percent = total ? Math.round((numericAchieved / total) * 100) : 0;
+  designation = person.designationTitle || person.title || "N/A";
 
-    return {
-      name: `${person.title || person.name}`,
-      phone: person.phone_number || "-",
-      type: personType,
-      target: total,
-      startDate: target?.startDate?.substring(0, 10) || "-",
-      achieved,
-      remaining: remaining > 0 ? remaining : 0,
-      progress: typeof achieved === "number" ? (
-        <Progress percent={percent} size="small" strokeColor="#3b82f6" />
-      ) : (
-        "-"
-      ),
-      incentive: target?.incentive || "N/A",
-      action: (
-        <Dropdown
-          trigger={["click"]}
-          menu={{
-            items: [
-              type !== "designation" && {
-                key: "set",
-                label: (
-                  <div className="text-blue-600" onClick={() => openSetTargetModal(person._id)}>
-                    Set Target
-                  </div>
-                ),
-              },
-              target && {
-                key: "update",
-                label: (
-                  <div className="text-green-600" onClick={() => openUpdateModal(target)}>
-                    Update Achieved
-                  </div>
-                ),
-              },
-            ].filter(Boolean),
-          }}
-          placement="bottomLeft"
-        >
-          <IoMdMore className="cursor-pointer" />
-        </Dropdown>
-      ),
-    };
+  let isFallback = false;
+  if ((currentType === "agent" || currentType === "employee") && person._id) {
+    try {
+      const { data: empData } = await api.get(
+        `/agent/get-additional-employee-info-by-id/${person._id}`
+      );
+      const fetchedTitle = empData?.employee?.designation_id?.title;
+      if (fetchedTitle) {
+        designation = fetchedTitle;
+        const allDirect = allTargets.filter(
+          (t) => (t.agentId?._id || t.agentId) === person._id
+        );
+        if (allDirect.length === 0) {
+          isFallback = true;
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching designation for row:", err);
+    }
+  }
+
+  if (isFallback) {
+    designation += " (default)";
+  }
+
+  const difference = total - achieved;
+  const remaining = difference > 0 ? difference : 0;
+  let incentiveAmount = 0;
+  let incentivePercent = "0%";
+  const title = designation.toLowerCase();
+
+  if (title === "business agent" && achieved >= total) {
+    incentiveAmount = achieved * 0.005;
+    incentivePercent = "0.5%";
+  } else if (difference < 0) {
+    incentiveAmount = Math.abs(difference) * 0.01;
+    incentivePercent = "1%";
+  }
+
+const dropdownItems = [];
+
+const hasRealTarget = targets.find(
+  (t) =>
+    ((t.agentId?._id || t.agentId) === person._id ||
+      (t.designationId?._id || t.designationId) === person._id) &&
+    t._id && !t.isVirtual
+);
+
+if (hasRealTarget) {
+  dropdownItems.push({ key: "update", label: "Update Target" });
+  dropdownItems.push({ key: "delete", label: "Delete Target" });
+} else {
+  dropdownItems.push({ key: "set", label: "Set Target" });
+}
+
+
+const actionDropdown = (
+  <Dropdown
+    trigger={["click"]}
+    menu={{
+      items: dropdownItems,
+      onClick: ({ key }) => {
+        if (key === "set") openSetModal(person, currentType);
+        if (key === "update" && hasRealTarget) openEditModal(hasRealTarget);
+        if (key === "delete" && hasRealTarget) handleDeleteTarget(hasRealTarget._id);
+      },
+    }}
+  >
+    <IoMdMore className="cursor-pointer" />
+  </Dropdown>
+);
+
+
+  return {
+    name: person.name || person.title,
+    phone: person.phone_number || "-",
+    designation,
+    target: total,
+    achieved,
+    remaining,
+    difference,
+    incentive_percent: incentivePercent,
+    incentive_amount: `₹${incentiveAmount.toFixed(2)}`,
+    action: actionDropdown,
   };
+};
 
-  const openSetTargetModal = (id) => {
+
+
+const openSetModal = (person, selectedType) => {
+  const isDesig = selectedType === "designation";
+  setFormData({
+    agentId: isDesig ? "" : person._id,
+    designationId: isDesig ? person._id : "",
+    startDate: firstDay,
+    endDate: lastDay,
+    totalTarget: "",
+    incentive: 0,
+  });
+  setSelectedName(person.name || person.title || "");
+  setModalVisible(true);
+};
+
+
+
+  const openEditModal = (target) => {
     setFormData({
-      agentId: type !== "designation" ? id : "",
-      designationId: type === "designation" ? id : "",
-      startDate: "",
-      endDate: "",
-      target: "",
-      incentive: 0,
-      achieved: 0,
+      agentId: target.agentId?._id || "",
+      designationId: target.designationId?._id || "",
+      startDate: target.startDate?.split("T")[0] || "",
+      endDate: target.endDate?.split("T")[0] || "",
+      totalTarget: target.totalTarget,
+      incentive: target.incentive || 0,
     });
-    setEditMode(false);
-    setModalVisible(true);
-  };
-
-  const openUpdateModal = (target) => {
-    setFormData({
-      agentId: target.agentId?._id || target.agentId || "",
-      designationId: target.designationId?._id || target.designationId || "",
-      startDate: target.startDate?.substring(0, 10) || "",
-      endDate: target.endDate?.substring(0, 10) || "",
-      target: target.totalTarget,
-      incentive: target.incentive,
-      achieved: target.achieved,
-    });
-
     setEditTargetId(target._id);
-    setEditMode(true);
+    setIsEditMode(true);
     setModalVisible(true);
+  };
+
+  const handleDeleteTarget = async (id) => {
+    try {
+      await api.delete(`/target/delete-target/${id}`);
+      setAlertConfig({
+        visibility: true,
+        message: "Target deleted",
+        type: "success",
+      });
+      setReload((prev) => prev + 1);
+    } catch (err) {
+      console.error("Delete failed", err);
+      setAlertConfig({
+        visibility: true,
+        message: "Delete failed",
+        type: "error",
+      });
+    }
   };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    let updated = { ...formData, [name]: value };
-
-    if (name === "target") {
-      const targetVal = parseInt(value || "0", 10);
-      let incentive = 0;
-      if (targetVal > 2000000 && targetVal <= 5000000) incentive = 1;
-      else if (targetVal > 5000000 && targetVal <= 10000000) incentive = 2;
-      else if (targetVal > 10000000 && targetVal <= 20000000) incentive = 3;
-      else if (targetVal > 20000000) incentive = 4;
-      updated.incentive = incentive;
+    const updated = { ...formData, [name]: value };
+    if (name === "totalTarget") {
+      const val = parseInt(value);
+      if (val > 2000000 && val <= 5000000) updated.incentive = 1;
+      else if (val > 5000000 && val <= 10000000) updated.incentive = 2;
+      else if (val > 10000000 && val <= 20000000) updated.incentive = 3;
+      else if (val > 20000000) updated.incentive = 4;
+      else updated.incentive = 0;
     }
-
     setFormData(updated);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      if (editMode && editTargetId) {
-        await api.put(`/target/update-target/${editTargetId}`);
-        setAlertConfig({ visibility: true, message: "Target updated", type: "success" });
+      if (isEditMode) {
+        await api.put(`/target/update-target/${editTargetId}`, formData);
+        setAlertConfig({
+          visibility: true,
+          message: "Target updated successfully",
+          type: "success",
+        });
       } else {
-        const payload = {
-          agentId: formData.agentId,
-          designationId: formData.designationId,
-          totalTarget: parseInt(formData.target),
-          incentive: formData.incentive,
-          startDate: formData.startDate,
-          endDate: formData.endDate,
-        };
-
-        await api.post("/target/add-target", payload);
-        setAlertConfig({ visibility: true, message: "Target saved", type: "success" });
+        await api.post("/target/add-target", formData);
+        setAlertConfig({
+          visibility: true,
+          message: "Target added",
+          type: "success",
+        });
       }
-
       setModalVisible(false);
-      setReloadTrigger((prev) => prev + 1);
+      setIsEditMode(false);
+      setEditTargetId(null);
+      setReload((prev) => prev + 1);
     } catch (err) {
-      console.error("Save error:", err);
-      setAlertConfig({ visibility: true, message: "Failed to save target", type: "error" });
+      console.error("Submit failed", err);
+      setAlertConfig({
+        visibility: true,
+        message: isEditMode ? "Update failed" : "Add failed",
+        type: "error",
+      });
     }
   };
 
-  const columns = [
-    { key: "name", header: "Name" },
-    { key: "phone", header: "Phone Number" },
-    { key: "type", header: "Type" },
-    { key: "target", header: "Target" },
-    { key: "startDate", header: "Target Start" },
-    { key: "achieved", header: "Achieved" },
-    { key: "remaining", header: "Remaining" },
-    { key: "progress", header: "Progress" },
-    { key: "incentive", header: "Incentive (%)" },
-    { key: "action", header: "Action" },
-  ];
+  const getColumns = () => {
+    const baseColumns = [
+      { key: "name", header: "Name" },
+
+      { key: "target", header: "Target" },
+      { key: "action", header: "Action" },
+    ];
+
+    const fullColumns = [
+      { key: "name", header: "Name" },
+      { key: "phone", header: "Phone Number" },
+      { key: "designation", header: "Designation" },
+      { key: "target", header: "Target" },
+      { key: "achieved", header: "Achieved" },
+      { key: "remaining", header: "Remaining" },
+      { key: "difference", header: "Difference (Target - Achieved)" },
+      { key: "incentive_percent", header: "Incentive (%)" },
+      { key: "incentive_amount", header: "Incentive (₹)" },
+      { key: "action", header: "Action" },
+    ];
+
+    if (type === "designation") {
+      return baseColumns;
+    }
+
+    return fullColumns;
+  };
 
   return (
     <>
       <div className="flex mt-20">
         <Navbar visibility={true} />
+        <SettingSidebar />
         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+          onClose={() => setAlertConfig({ ...alertConfig, visibility: false })}
         />
-        <SettingSidebar />
-
-        <div className="flex-grow p-7">
-          <h1 className="text-2xl font-semibold mb-6">Targets</h1>
-          <div className="flex gap-4 mb-6 flex-wrap">
+        <div className="flex-grow p-6">
+          <h1 className="text-2xl font-semibold mb-4">Target Report</h1>
+          <div className="flex gap-2 flex-wrap mb-6">
             <select
+              className="lp-2 border rounded"
               value={type}
               onChange={(e) => {
                 setType(e.target.value);
-                setSelectedId("");
+                setSelectedId("all");
               }}
-              className="p-2 border rounded w-48"
             >
               <option value="">Select Type</option>
               <option value="agent">Agent</option>
               <option value="employee">Employee</option>
               <option value="designation">Designation</option>
             </select>
-
             {type && (
               <select
+                className="p-2 border rounded"
                 value={selectedId}
                 onChange={(e) => setSelectedId(e.target.value)}
-                className="p-2 border rounded w-60"
               >
-                <option value="">Select {type}</option>
                 <option value="all">All</option>
                 {(type === "agent"
                   ? agents
                   : type === "employee"
-                    ? employees
-                    : designations
-                ).map((item) => (
-                  <option key={item._id} value={item._id}>
-                    {type === "designation"
-                      ? item.title
-                      : `${item.name} (${item.phone_number})`}
+                  ? employees
+                  : designations
+                ).map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.name || p.title}
                   </option>
                 ))}
               </select>
             )}
-
-            {type === "designation" && selectedId && selectedId !== "all" && (
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                onClick={() => {
-                  setFixedTargetForm({
-                    designationId: selectedId,
-                    fixedTarget: "",
-                  });
-                  setFixedTargetModal(true);
-                }}
-              >
-                Set Fixed Target
-              </button>
-            )}
-
-
             <input
               type="date"
-              value={filterStartDate}
-              onChange={(e) => setFilterStartDate(e.target.value)}
               className="p-2 border rounded"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
             />
             <input
               type="date"
-              value={filterEndDate}
-              onChange={(e) => setFilterEndDate(e.target.value)}
               className="p-2 border rounded"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
             />
           </div>
 
-          {tableData.length > 0 && !isLoading ? (
-            <DataTable data={tableData} columns={columns} exportedFileName="Target-Report.csv" />
-          ) : (
-            <CircularLoader isLoading={isLoading} failure={!isLoading} data="Target Data" />
-          )}
+          <DataTable
+            data={tableData}
+            columns={getColumns()}
+            exportedFileName="Target-Report.csv"
+          />
         </div>
       </div>
 
-   
-      <Modal isVisible={modalVisible} onClose={() => setModalVisible(false)}>
+      <Modal
+        isVisible={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+          setIsEditMode(false);
+          setEditTargetId(null);
+        }}
+      >
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">{editMode ? "Update Achieved" : "Set Target"}</h2>
+          <h2 className="text-xl font-bold mb-4">
+            {isEditMode ? "Update Target" : "Set Target"}
+          </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!editMode && (
+            {selectedName && (
               <>
-                <input type="date" name="startDate" value={formData.startDate} onChange={handleFormChange} className="w-full p-2 border rounded" required />
-                <input type="date" name="endDate" value={formData.endDate} onChange={handleFormChange} className="w-full p-2 border rounded" required />
-                <input type="number" name="target" value={formData.target} onChange={handleFormChange} className="w-full p-2 border rounded" required />
+                <label className="block font-medium">Target For</label>
+                <input
+                  type="text"
+                  value={selectedName}
+                  disabled
+                  className="w-full p-2 border rounded bg-gray-100"
+                />
               </>
             )}
-            <input type="number" name="achieved" value={formData.achieved} onChange={handleFormChange} className="w-full p-2 border rounded" />
-            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-              {editMode ? "Update" : "Save"}
+            <label className="block font-medium">Start Date</label>
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded bg-gray-100"
+              required
+            />
+            <label className="block font-medium">End Date</label>
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded bg-gray-100"
+              required
+            />
+            <label className="block font-medium">Total Target</label>
+            <input
+              type="number"
+              name="totalTarget"
+              value={formData.totalTarget}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            {/* <label className="block font-medium">Incentive (%)</label>
+            <input
+              type="number"
+              name="incentive"
+              value={formData.incentive}
+              readOnly
+              className="w-full p-2 border rounded bg-gray-100"
+            /> */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+            >
+              {isEditMode ? "Update Target" : "Save Target"}
             </button>
           </form>
         </div>
       </Modal>
-
-      <Modal isVisible={fixedTargetModal} onClose={() => setFixedTargetModal(false)}>
-  <div className="p-6">
-    <h2 className="text-xl font-bold mb-4">Set Fixed Target for Designation</h2>
-    <form
-      onSubmit={async (e) => {
-        e.preventDefault();
-        try {
-          await api.put("/target/update-fixed-target", fixedTargetForm);
-          setFixedTargetModal(false);
-          setReloadTrigger((prev) => prev + 1);
-          setAlertConfig({ visibility: true, message: "Fixed target updated", type: "success" });
-        } catch (err) {
-          console.error("Error updating fixed target", err);
-          setAlertConfig({ visibility: true, message: "Failed to update", type: "error" });
-        }
-      }}
-      className="space-y-4"
-    >
-      <select
-        className="w-full p-2 border rounded"
-        value={fixedTargetForm.designationId}
-        required
-        onChange={(e) =>
-          setFixedTargetForm({
-            ...fixedTargetForm,
-            designationId: e.target.value,
-          })
-        }
-      >
-        <option value="">Select Designation</option>
-        {designations.map((d) => (
-          <option key={d._id} value={d._id}>
-            {d.title}
-          </option>
-        ))}
-      </select>
-      <input
-        type="number"
-        className="w-full p-2 border rounded"
-        required
-        value={fixedTargetForm.fixedTarget}
-        onChange={(e) =>
-          setFixedTargetForm({
-            ...fixedTargetForm,
-            fixedTarget: e.target.value,
-          })
-        }
-      />
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-        Save Fixed Target
-      </button>
-    </form>
-  </div>
-</Modal>
-
     </>
   );
 };

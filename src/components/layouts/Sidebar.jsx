@@ -6,11 +6,11 @@ import { TbCategoryPlus } from "react-icons/tb";
 import { IoIosPersonAdd } from "react-icons/io";
 import { BsCash } from "react-icons/bs";
 import { GrAnalytics } from "react-icons/gr";
-import { CgProfile, CgWebsite } from "react-icons/cg";
+import { CgWebsite } from "react-icons/cg";
 import { IoIosSettings } from "react-icons/io";
 import { IoIosHelpCircle } from "react-icons/io";
 import { RiAuctionLine } from "react-icons/ri";
-import { FaPeopleArrows, FaUserLock } from "react-icons/fa";
+import { FaPeopleArrows } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
 import { IoPeopleOutline } from "react-icons/io5";
 import { GoGraph } from "react-icons/go";
@@ -32,6 +32,9 @@ import { FaPersonMilitaryPointing } from "react-icons/fa6";
 import { GiRoundTable } from "react-icons/gi";
 import { GrUserSettings } from "react-icons/gr";
 import { TbCoinRupeeFilled } from "react-icons/tb";
+import { TbReceiptRupee } from "react-icons/tb";
+import { RiMoneyRupeeCircleLine } from "react-icons/ri";
+import {FaHandshake} from "react-icons/fa";
 const MenuSidebar = [
   {
     id: "$1",
@@ -63,6 +66,12 @@ const MenuSidebar = [
     title: "Enrollments ",
     icon: <FaPeopleArrows />,
     link: "/enrollment",
+  },
+  {
+  id: "$%%",
+    title: "Guarantor ",
+    icon: <FaHandshake />,
+    link: "/guarantor",
   },
 
   {
@@ -132,7 +141,21 @@ const MenuSidebar = [
         id: "&^$1",
         title: "Payments ",
         icon: <BsCash size={20} />,
-        link: "/payment",
+        submenu: true,
+        submenuItems: [
+          {
+            id: "&^$2",
+            title: "Pay-In ",
+            icon: <TbReceiptRupee size={20} />,
+            link: "/payment",
+          },
+          {
+            id: "&^$3",
+            title: "Pay-Out ",
+            icon: <RiMoneyRupeeCircleLine   size={20} />,
+            link: "/pay-out-menu",
+          },
+        ],
       },
     ],
   },
@@ -258,7 +281,6 @@ const Sidebar = () => {
   const ref = useRef(null);
   const [open, setOpen] = useState(true);
   const [submenuOpenIndex, setSubmenuOpenIndex] = useState(null);
-  const [hider, setHider] = useState(true);
 
   const [nestedSubmenuOpenIndex, setNestedSubmenuOpenIndex] = useState({});
 

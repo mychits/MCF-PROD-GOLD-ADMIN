@@ -64,12 +64,11 @@ const DueMessage = () => {
             }}
           />
         ),
-        isSelected // Track selection state
+        isSelected
       };
     });
   }, [usersData, groupFilter, fromDate, toDate, searchText, activeUserData]);
 
-  // Calculate visible selected count
   const visibleSelectedCount = useMemo(() => {
     return filteredUsers.filter(user => user.isSelected).length;
   }, [filteredUsers]);
@@ -79,13 +78,12 @@ const DueMessage = () => {
     try {
       notifier.open({
         key,
-        message: "Whatsapping...",
-        description: "Whatsapp process started...",
+        message: "Sending Messages Via Whatsapp..",
+        description: "Processing...",
         className: "bg-green-300 rounded-lg font-bold",
         duration: 2,
       });
 
-      // Only include visible selected users
       const visibleActiveUsers = {};
       filteredUsers.forEach(user => {
         if (user.isSelected && activeUserData[user._id]) {
@@ -95,7 +93,6 @@ const DueMessage = () => {
 
       await api.post("/whatsapp/due-message", visibleActiveUsers);
       
-      // Clear only visible selections
       const newActiveUserData = { ...activeUserData };
       filteredUsers.forEach(user => {
         if (user.isSelected) {
@@ -106,8 +103,8 @@ const DueMessage = () => {
 
       notifier.open({
         key,
-        message: "Whatsapping...",
-        description: "Ready to whatsapp",
+        message: "Whatsapp Messages Has Been Sent Successfully",
+        description: "Success",
         className: "bg-green-300 rounded-lg font-bold",
         duration: 2,
       });
@@ -227,7 +224,7 @@ const DueMessage = () => {
         ) : (
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-bold text-center">
-              Reports - All Customer
+              Whatsapp Due Messages
             </h1>
             {contextHolder}
             <div className="mt-6 mb-8">

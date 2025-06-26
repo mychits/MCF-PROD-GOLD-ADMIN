@@ -83,6 +83,7 @@ import { RiMoneyRupeeCircleFill, RiAuctionFill } from "react-icons/ri";
 import { LiaCalculatorSolid } from "react-icons/lia";
 import { GiMoneyStack } from "react-icons/gi";
 import { TbReportSearch } from "react-icons/tb";
+import { MdOutlinePayment } from "react-icons/md";
 const subMenus = [
   { title: "Daybook", link: "/reports/daybook", Icon: FaCalendarDays },
   { title: "Group Report", link: "/reports/group-report", Icon: FaPeopleGroup },
@@ -115,6 +116,11 @@ const subMenus = [
     title: "Receipt Report",
     link: "/reports/receipt",
     Icon: MdOutlineReceiptLong,
+  },
+  {
+    title: "PayOut Report",
+    link: "/reports/payout",
+    Icon: MdOutlinePayment ,
   },
   {
     title: "Auction Report",

@@ -102,6 +102,7 @@ const EnrollmentReport = () => {
               ? group?.createdAt?.split("T")[0]
               : "",
             chit_asking_month: group?.chit_asking_month,
+            ticket: group.tickets,
             referred_type: group?.referred_type,
             // referred_agent: group?.agent?.name,
             // referred_customer: group?.referred_customer?.full_name,
@@ -113,7 +114,6 @@ const EnrollmentReport = () => {
                 : group?.referred_lead?.lead_name && group?.referred_lead?.agent_number
                   ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
                   : "N/A",
-            ticket: group.tickets,
             action: (
               <div className="flex justify-center items-center gap-2">
                 <Dropdown
@@ -225,6 +225,7 @@ const EnrollmentReport = () => {
     { key: "name", header: "Customer Name" },
     { key: "phone_number", header: "Phone Number" },
     { key: "group_name", header: "Group Name" },
+    { key: "ticket", header: "Ticket" },
     { key: "group_value", header: "Group Value" },
     { key: "payment_type", header: "payment Type" },
     { key: "enrollment_date", header: "Enrollment Date" },
@@ -235,7 +236,6 @@ const EnrollmentReport = () => {
     //{ key: "referred_lead", header: "Referred Lead" },
     { key: "referred_by", header: "Referred By" },
 
-    { key: "ticket", header: "Ticket" },
   ];
 
   return (
