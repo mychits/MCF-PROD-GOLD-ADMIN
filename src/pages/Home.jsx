@@ -166,7 +166,7 @@ const Home = () => {
     {
       icon: <LiaLayerGroupSolid size={20} />,
       text: "Groups",
-      count: groups.length,
+      count: groups?.length,
       bgColor: "bg-blue-200",
       iconColor: "bg-blue-900",
       redirect: "/group",
@@ -174,7 +174,7 @@ const Home = () => {
     {
       icon: <MdGroups size={16} />,
       text: "Customers",
-      count: users.length,
+      count: users?.length,
       bgColor: "bg-orange-200",
       iconColor: "bg-orange-900",
       redirect: "/user",
@@ -182,7 +182,7 @@ const Home = () => {
     {
       icon: <FaPeopleGroup size={16} />,
       text: "Staff",
-      count: staff.length,
+      count: staff?.length,
       bgColor: "bg-sky-200",
       iconColor: "bg-sky-900",
       redirect: "/staff",
@@ -190,7 +190,7 @@ const Home = () => {
     {
       icon: <FaPersonMilitaryPointing size={16} />,
       text: "Agents",
-      count: agents.length,
+      count: agents?.length,
       bgColor: "bg-teal-200",
       iconColor: "bg-teal-900",
       redirect: "/agent",
@@ -198,7 +198,7 @@ const Home = () => {
     {
       icon: <ImUserTie size={16} />,
       text: "Employees",
-      count: employee.length,
+      count: employee?.length,
       bgColor: "bg-lime-200",
       iconColor: "bg-lime-900",
       redirect: "/employee",
