@@ -259,9 +259,9 @@ const Lead = () => {
       newErrors.lead_needs = "Lead Needs and Goals is required";
     }
 
-      if (!data.note?.toString().trim()) {
-      newErrors.note = "Note Field is Mandatory";
-    }
+    //   if (!data.note?.toString().trim()) {
+    //   newErrors.note = "Note Field is Mandatory";
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
