@@ -354,30 +354,49 @@ const GeneralPaymentOut = () => {
     }
   };
 
-  const fetchWinAmount = async (userId, groupId, ticket) => {
-    try {
-      if (!userId || !groupId || !ticket) return;
+const fetchWinAmount = async (userId, groupId, ticket) => {
+  try {
+    if (!userId || !groupId || !ticket) return;
 
-      const response = await api.get(
-        "/auction/get-auction-by-user-group-ticket",
-        {
-          params: { user_id: userId, group_id: groupId, ticket },
-        }
-      );
-
-      if (response?.data?.win_amount) {
-        setFormData((prev) => ({
-          ...prev,
-          amount: response.data.win_amount,
-        }));
-        console.log("✅ Win Amount Set:", response.data.win_amount);
-      } else {
-        console.warn("⚠️ No win amount found for user/group/ticket");
+    const response = await api.get(
+      "/auction/get-auction-by-user-group-ticket",
+      {
+        params: { user_id: userId, group_id: groupId, ticket },
       }
-    } catch (error) {
-      console.error("❌ Error fetching win amount:", error);
+    );
+
+    if (response?.data?.win_amount) {
+      setFormData((prev) => ({
+        ...prev,
+        amount: response.data.win_amount,
+      }));
+      console.log("✅ Win Amount Set:", response.data.win_amount);
+    } else {
+      Modal.warning({
+        title: "No Win Amount Found",
+        content: "No win amount was returned for this user, group, and ticket.",
+      });
     }
-  };
+  } catch (error) {
+    const backendMessage = error?.response?.data?.message;
+
+    if (error.response?.status === 404 && backendMessage === "Auction not found") {
+      Modal.warning({
+        title: "Auction Not Found",
+        content: "No auction was found for the selected user, group, and ticket.",
+      });
+    } else {
+      Modal.error({
+        title: "Error Fetching Win Amount",
+        content: "Something went wrong while trying to fetch win amount.",
+      });
+    }
+
+    console.error("❌ Error fetching win amount:", error);
+  }
+};
+
+
 
   const columns = [
     { key: "id", header: "SL. NO" },
