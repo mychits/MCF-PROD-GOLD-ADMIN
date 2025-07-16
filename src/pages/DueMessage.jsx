@@ -59,7 +59,7 @@ const DueMessage = () => {
                     groupId: user.groupId,
                     userId: user.userId,
                     amountPaid: user.amountPaid,
-                    amountToBePaid: user.amountToBePaid,
+                    amountToBePaid: user.totalToBePaid,
                   },
                 },
               }));
