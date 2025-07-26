@@ -229,6 +229,25 @@ const Lead = () => {
     }));
   };
 
+   const handleSoftRemove = async (leadId) => {
+    try {
+      await api.put(`/lead/soft-delete-lead/${leadId}`);
+      setReloadTrigger((prev) => prev + 1);
+      setAlertConfig({
+        visibility: true,
+        message: "Lead removed successfully",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error soft removing lead:", error);
+      setAlertConfig({
+        visibility: true,
+        message: "Failed to remove lead",
+        type: "error",
+      });
+    }
+  };
+
   const handleAntInputDSelect = (field, value) => {
     setUpdateFormData((prevData) => ({
       ...prevData,

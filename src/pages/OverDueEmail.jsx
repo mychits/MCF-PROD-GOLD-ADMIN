@@ -404,7 +404,7 @@ const OverDueEmail = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const reportResponse = await api.get("/user/get-overdue-email-payments");
+      const reportResponse = await api.get("/user/get-overdue-payments");
       const usersList = [];
       const tempActive = {};
 

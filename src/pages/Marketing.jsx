@@ -84,12 +84,12 @@ const mainMenus = [
         link: "/marketing/what-add",
         icon: <FaWhatsapp size={20} />,
       },
-      // {
-      //   key: "#11",
-      //   title: "Whatsapp promo",
-      //   link: "/marketing/what-promo",
-      //   icon: <FaWhatsapp size={20} />,
-      // },
+      {
+        key: "#11",
+        title: "Whatsapp promo",
+        link: "/marketing/what-promo",
+        icon: <FaWhatsapp size={20} />,
+      },
       {
         key: "#3",
         title: "Whatsapp Failed Users",
@@ -115,12 +115,6 @@ const mainMenus = [
         link: "/marketing/over-due-message",
         icon: <RiMoneyRupeeCircleLine size={28}  />,
       },
-      //  {
-      //   key: "#6",
-      //   title: "Whatsapp Gentle Remainder Message",
-      //   link: "/marketing/gentle-remainder",
-      //   icon: <RiMoneyRupeeCircleLine size={28}  />,
-      // },
     ],
   },
   {

@@ -37,6 +37,10 @@ const UserReport = () => {
     groupId: "",
     ticket: "",
   });
+  const [registrationFee, setRegistrationFee] = useState({
+    amount: 0,
+    createdAt: null,
+  });
   const [TotalToBepaid, setTotalToBePaid] = useState("");
   const [Totalpaid, setTotalPaid] = useState("");
   const [Totalprofit, setTotalProfit] = useState("");
@@ -63,6 +67,9 @@ const UserReport = () => {
   const [filteredBorrowerData, setFilteredBorrowerData] = useState([]);
   const [filteredDisbursement, setFilteredDisbursement] = useState([]);
   const [disbursementLoading, setDisbursementLoading] = useState(false);
+  const [registrationAmount, setRegistrationAmount] = useState(null);
+  const [registrationDate, setRegistrationDate] = useState(null);
+  const [finalPaymentBalance, setFinalPaymentBalance] = useState(0);
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
@@ -100,6 +107,131 @@ const UserReport = () => {
     { key: "disbursed_by", header: "Disbursed By" },
     { key: "balance", header: "Balance" },
   ];
+
+  useEffect(() => {
+    const fetchRegistrationFee = async () => {
+      if (
+        activeTab === "basicReport" &&
+        selectedGroup &&
+        EnrollGroupId.groupId &&
+        EnrollGroupId.ticket &&
+        EnrollGroupId.groupId !== "Loan"
+      ) {
+        try {
+          // Reset all values before fetch
+          setTableEnrolls([]);
+          setGroupPaid("");
+          setGroupToBePaid("");
+          setRegistrationAmount(null);
+          setRegistrationDate(null);
+          setBasicLoading(true);
+          setIsLoading(true);
+
+          const response = await api.get(
+            "/enroll/get-user-registration-fee-report",
+            {
+              params: {
+                group_id: EnrollGroupId.groupId,
+                ticket: EnrollGroupId.ticket,
+                user_id: selectedGroup,
+              },
+            }
+          );
+
+          const { payments = [], registrationFees = [] } = response.data || {};
+
+          // ✅ Set Group Paid and To Be Paid
+          setGroupPaid(payments[0]?.groupPaidAmount || 0);
+          setGroupToBePaid(payments[0]?.totalToBePaidAmount || 0);
+
+          // ✅ Build TableEnrolls with running balance
+          let balance = 0;
+          const formattedData = payments.map((payment, index) => {
+            balance += Number(payment.amount || 0);
+            return {
+              _id: payment._id,
+              id: index + 1,
+              date: formatPayDate(payment?.pay_date),
+              amount: payment.amount,
+              receipt: payment.receipt_no,
+              old_receipt: payment.old_receipt_no,
+              type: payment.pay_type,
+              balance,
+            };
+          });
+
+          // ✅ Insert all Registration Fee rows (DO NOT impact balance)
+          let totalRegAmount = 0;
+          registrationFees.forEach((regFee, idx) => {
+            formattedData.push({
+              id: "-",
+              date: regFee.createdAt
+                ? new Date(regFee.createdAt).toLocaleDateString("en-GB")
+                : "",
+              amount: regFee.amount,
+              receipt: regFee.receipt_no,
+              old_receipt: "-",
+              type: regFee.pay_for || "Reg Fee",
+              balance: "-", // Don't affect running balance
+            });
+
+            totalRegAmount += Number(regFee.amount || 0);
+          });
+
+          setRegistrationAmount(totalRegAmount);
+
+          // Set first reg fee date if available
+          if (registrationFees.length > 0) {
+            setRegistrationDate(
+              registrationFees[0]?.createdAt
+                ? new Date(registrationFees[0].createdAt).toLocaleDateString(
+                    "en-GB"
+                  )
+                : null
+            );
+          }
+
+          // ✅ Append Total Row
+          if (formattedData.length > 0) {
+            formattedData.push({
+              id: "",
+              date: "",
+              amount: "",
+              receipt: "",
+              old_receipt: "",
+              type: "TOTAL",
+              balance,
+            });
+            setFinalPaymentBalance(balance);
+          } else {
+            setFinalPaymentBalance(0); // reset
+          }
+
+          setTableEnrolls(formattedData);
+        } catch (error) {
+          console.error("Error fetching registration fee and payments:", error);
+          setTableEnrolls([]);
+          setGroupPaid("");
+          setGroupToBePaid("");
+          setRegistrationAmount(null);
+          setRegistrationDate(null);
+        } finally {
+          setBasicLoading(false);
+          setIsLoading(false);
+        }
+      } else {
+        // Reset if invalid
+        setTableEnrolls([]);
+        setGroupPaid("");
+        setGroupToBePaid("");
+        setRegistrationAmount(null);
+        setRegistrationDate(null);
+      }
+    };
+
+    fetchRegistrationFee();
+  }, [activeTab, selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
+
   useEffect(() => {
     const fetchAllLoanPaymentsbyId = async () => {
       setBorrowersData([]);
@@ -989,7 +1121,53 @@ const UserReport = () => {
                                     {`${loan.loan_id} | ₹${loan.loan_amount}`}
                                   </option>
                                 ))}
+                                {registrationFee.amount > 0 && (
+                                  <div className="mt-6 p-4 border rounded bg-gray-100 w-fit text-gray-800 shadow">
+                                    <p className="text-sm font-semibold">
+                                      Registration Fee Info
+                                    </p>
+                                    <p>
+                                      <strong>Amount:</strong> ₹
+                                      {registrationFee.amount}
+                                    </p>
+                                    <p>
+                                      <strong>Date:</strong>{" "}
+                                      {registrationFee.createdAt
+                                        ? new Date(
+                                            registrationFee.createdAt
+                                          ).toLocaleDateString("en-GB")
+                                        : "N/A"}
+                                    </p>
+                                  </div>
+                                )}
                               </select>
+                            </div>
+                            <div className="mt-6 flex justify-center gap-8 flex-wrap">
+                              <input
+                                type="text"
+                                value={`Registration Fee: ₹${
+                                  registrationAmount || 0
+                                }`}
+                                readOnly
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-green-100 text-green-800 border-green-400"
+                              />
+
+                              <input
+                                type="text"
+                                value={`Payment Balance: ₹${finalPaymentBalance}`}
+                                readOnly
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
+                              />
+
+                              <input
+                                type="text"
+                                value={`Total: ₹${
+                                  Number(finalPaymentBalance) +
+                                  Number(registrationAmount || 0)
+                                }`}
+                                readOnly
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-purple-100 text-purple-800 border-purple-400"
+                              />
                             </div>
                           </div>
 

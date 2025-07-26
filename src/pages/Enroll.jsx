@@ -846,7 +846,7 @@ const [isVerified, setIsVerified] = useState(false);
                 >
                   {users.map((user) => (
                     <Select.Option key={user._id} value={user._id}>
-                      {user.full_name}
+                      {user.full_name} | {user.phone_number ? user.phone_number : "No Number"}
                     </Select.Option>
                   ))}
                 </Select>
@@ -954,7 +954,7 @@ const [isVerified, setIsVerified] = useState(false);
                   >
                     {users.map((user) => (
                       <Select.Option key={user._id} value={user._id}>
-                        {user.full_name}
+                        {user.full_name} | {user.phone_number ? user.phone_number : "No Number"}
                       </Select.Option>
                     ))}
                   </Select>

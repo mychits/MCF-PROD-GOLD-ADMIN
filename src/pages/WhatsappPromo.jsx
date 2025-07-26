@@ -109,38 +109,34 @@ const WhatsappPromo = () => {
     fetchReferrers();
   }, [selectedReferrerType]);
 
-  const filteredUsers = useMemo(() => {
-    const filtered = TableUsers.filter((u) => {
-      const enrollmentDate = new Date(u.createdAt || u.enrollmentDate);
-      const matchFrom = fromDate ? enrollmentDate >= new Date(fromDate) : true;
-      const matchTo = toDate
-        ? enrollmentDate <= new Date(toDate + "T23:59:59")
-        : true;
-      return matchFrom && matchTo;
-    });
+ 
+const filteredUsers = useMemo(() => {
+  const filtered = TableUsers.filter((u) => {
+    const enrollmentDate = new Date(u.createdAt || u.enrollmentDate);
+    const matchFrom = fromDate ? enrollmentDate >= new Date(fromDate) : true;
+    const matchTo = toDate
+      ? enrollmentDate <= new Date(toDate + "T23:59:59")
+      : true;
+    return matchFrom && matchTo;
+  });
 
-    return filtered.map((user, index) => {
-      const isSelected = !!selectUser[user._id];
+  return filtered.map((user, index) => {
+    const isSelected = !!selectUser[user._id];
 
-      return {
-        ...user,
-        sl_no: index + 1,
-        checkBoxs: (
-          <input
-            type="checkbox"
-            checked={isSelected}
-            onChange={(e) => {
-              setSelectUser((prev) => ({
-                ...prev,
-                [user._id]: e.target.checked,
-              }));
-            }}
-          />
-        ),
-        isSelected,
-      };
-    });
-  }, [TableUsers, fromDate, toDate, selectUser]);
+    return {
+      ...user,
+      sl_no: index + 1,
+      checkBoxs: (
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={(e) => handleCheckboxChange(e.target.checked, user)}
+        />
+      ),
+      isSelected,
+    };
+  });
+}, [TableUsers, fromDate, toDate, selectUser]);
 
   const visibleSelectedCount = useMemo(() => {
     return filteredUsers.filter((user) => user.isSelected).length;
@@ -162,7 +158,7 @@ const WhatsappPromo = () => {
     fetchGroups();
   }, []);
 const sendWhatsapp = async () => {
-  // ✅ Construct payload with 'receivers' object as backend expects
+  //  Construct payload with 'receivers' object as backend expects
   const payload = {
     receivers: {},
   };
@@ -171,7 +167,7 @@ const sendWhatsapp = async () => {
     payload.receivers[`user${index}`] = user;
   });
 
-  // ✅ Check if there is at least one selected user
+  // Check if there is at least one selected user
   if (Object.keys(payload.receivers).length === 0) {
     setAlertConfig({
       type: "warning",
@@ -207,210 +203,11 @@ const sendWhatsapp = async () => {
   }
 };
 
-
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const response = await api.get(`/enroll-report/get-enroll-report`);
-  //       if (!response.data) {
-  //         setIsLoading(false);
-  //         return;
-  //       }
-
-  //       const filtered = response.data.filter((group) => {
-  //         const created = group?.createdAt ? new Date(group.createdAt) : null;
-  //         const from = fromDate ? new Date(fromDate) : null;
-  //         let to = toDate ? new Date(toDate) : null;
-  //         if (to) to.setHours(23, 59, 59, 999);
-
-  //         const isWithinDateRange =
-  //           (!from || (created && created >= from)) &&
-  //           (!to || (created && created <= to));
-
-  //         const normalizedReferrerName = selectedReferrerName
-  //           .trim()
-  //           .toLowerCase();
-
-  //         let matchesAgent = false;
-  //         if (selectedReferrerType === "agent") {
-  //           const agentName = group?.agent?.name?.toLowerCase();
-  //           const agentType = group?.agent?.agent_type;
-  //           matchesAgent =
-  //             agentType === "agent" &&
-  //             agentName &&
-  //             agentName.includes(normalizedReferrerName);
-  //         }
-
-  //         let matchesEmployee = false;
-  //         if (selectedReferrerType === "employee") {
-  //           const employeeName = group?.agent?.name?.toLowerCase();
-  //           const employeeType = group?.agent?.agent_type;
-  //           matchesEmployee =
-  //             employeeType === "employee" &&
-  //             employeeName &&
-  //             employeeName.includes(normalizedReferrerName);
-  //         }
-
-  //         let matchesLead = false;
-  //         if (selectedReferrerType === "lead") {
-  //           const referredLeadId = group?.referred_lead?._id;
-  //           const leadName = leadsMap[referredLeadId];
-  //           matchesLead = leadName && leadName.includes(normalizedReferrerName);
-  //         }
-
-  //         let matchesCustomer = false;
-  //         if (selectedReferrerType === "customer") {
-  //           const customerName =
-  //             group?.referred_customer?.full_name?.toLowerCase();
-  //           matchesCustomer =
-  //             customerName && customerName.includes(normalizedReferrerName);
-  //         }
-
-  //         const typeMatch =
-  //           matchesAgent || matchesEmployee || matchesLead || matchesCustomer;
-
-  //         return typeMatch && isWithinDateRange;
-  //       });
-
-  //       const formatted = filtered
-  //         .map((group, index) => {
-  //           const id = group?._id;
-  //           if (!id) return null;
-
-  //           return {
-  //             _id: id,
-  //             id: index + 1,
-  //             full_name: group?.user_id?.full_name || "NA",
-  //             phone_number: group?.user_id?.phone_number || "NA",
-  //             group_name: group?.group_id?.group_name || "NA",
-  //             action: (
-  //               <label
-  //                 key={id}
-  //                 className="cursor-pointer flex justify-center items-center"
-  //               >
-  //                 <input
-  //                   type="checkbox"
-  //                   checked={selectUser[id]}
-  //                   onChange={(e) => {
-  //                     setSelectUser((prev) => ({
-  //                       ...prev,
-  //                       [id]: e.target.checked,
-  //                     }));
-  //                   }}
-  //                 />
-  //                 {/* <div
-  //                   className={`w-5 h-5 border-2 rounded-full transition-all duration-200
-  //       ${
-  //         selectUser[id]
-  //           ? "bg-green-500 border-green-600"
-  //           : "bg-white border-gray-300"
-  //       }`}
-  //                 ></div> */}
-  //               </label>
-  //             ),
-  //           };
-  //         })
-  //         .filter(Boolean);
-
-  //       // Merge existing selections for persistence
-  //       const newSelection = {};
-  //       formatted.forEach((u) => {
-  //         newSelection[u._id] = false; // deselect all by default on reload
-  //       });
-  //       setSelectUser(newSelection);
-
-  //       setTableUsers(formatted);
-  //     } catch (error) {
-  //       console.error("Error fetching Enrollment data:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchUsers();
-  // }, [selectedReferrerName, selectedReferrerType, fromDate, toDate]);
-  useEffect(() => {
+ useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
       try {
-        // Handle Lead separately
-        // if (selectedReferrerType === "lead") {
-        //   const response = await api.get("/lead/get-lead");
-        //   const leads = Array.isArray(response.data)
-        //     ? response.data
-        //     : response.data?.leads || [];
-
-        //   const filtered = leads.filter((lead) => {
-        //     const created = lead?.createdAt ? new Date(lead.createdAt) : null;
-        //     const from = fromDate ? new Date(fromDate) : null;
-        //     let to = toDate ? new Date(toDate) : null;
-        //     if (to) to.setHours(23, 59, 59, 999);
-
-        //     const isWithinDateRange =
-        //       (!from || (created && created >= from)) &&
-        //       (!to || (created && created <= to));
-
-        //     const lead_type_name =
-        //       lead.lead_type === "customer"
-        //         ? lead?.lead_customer?.full_name
-        //         : lead.lead_type === "agent"
-        //         ? lead?.lead_agent?.name
-        //         : "";
-
-        //     const normalizedLeadName = lead_type_name?.toLowerCase();
-        //     const normalizedReferrerName = selectedReferrerName
-        //       .trim()
-        //       .toLowerCase();
-
-        //     const nameMatches =
-        //       normalizedLeadName ||
-        //       normalizedLeadName.includes(normalizedReferrerName);
-        //     const groupName = lead?.group_id?.group_name?.toLowerCase() || "";
-        //     const matchesGroup =
-        //       !selectedGroupName ||
-        //       groupName === selectedGroupName.trim().toLowerCase();
-
-        //     return isWithinDateRange && nameMatches && matchesGroup;
-        //     //return isWithinDateRange && nameMatches;
-        //   });
-
-        //   const formatted = filtered.map((lead, index) => ({
-        //     _id: lead._id,
-        //     id: index + 1,
-        //     full_name: lead?.lead_name || "NA",
-        //     phone_number: lead?.lead_phone || "NA",
-        //     group_name: lead?.group_id?.group_name || "NA",
-        //     enrollment_date: group?.user_id?.createdAt
-        //       ? new Date(group.user_id.createdAt).toISOString().split("T")[0]
-        //       : "NA",
-        //     action: (
-        //       <label
-        //         key={lead._id}
-        //         className="cursor-pointer flex justify-center items-center"
-        //       >
-        //         <input
-        //           type="checkbox"
-        //           checked={selectUser[lead._id] || false}
-        //           onChange={(e) => {
-        //             setSelectUser((prev) => ({
-        //               ...prev,
-        //               [lead._id]: e.target.checked,
-        //             }));
-        //           }}
-        //         />
-        //       </label>
-        //     ),
-        //   }));
-
-        //   const newSelection = {};
-        //   formatted.forEach((u) => {
-        //     newSelection[u._id] = false;
-        //   });
-        //   setSelectUser(newSelection);
-        //   setTableUsers(formatted);
-        //   return;
-        // }
+     
         if (selectedReferrerType === "lead") {
           const response = await api.get("/lead/get-lead");
           const leads = Array.isArray(response.data)
@@ -459,21 +256,11 @@ const sendWhatsapp = async () => {
             full_name: lead?.lead_name || "NA",
             phone_number: lead?.lead_phone || "NA",
             group_name: lead?.group_id?.group_name || "NA",
+            group_id: lead?.group_id?._id || "NA",
             enrollment_date: lead?.createdAt
               ? new Date(lead.createdAt).toISOString().split("T")[0]
               : "NA",
-            action: (
-              <label
-                key={lead._id}
-                className="cursor-pointer flex justify-center items-center"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectUser[lead._id] || false}
-                  onChange={(e) => handleCheckboxChange(e.target.checked, lead)}
-                />
-              </label>
-            ),
+           
           }));
 
           const newSelection = {};
@@ -559,23 +346,11 @@ const sendWhatsapp = async () => {
             full_name: group?.user_id?.full_name || "NA",
             phone_number: group?.user_id?.phone_number || "NA",
             group_name: group?.group_id?.group_name || "NA",
+            group_id: group?.group_id?._id || "NA",
             enrollment_date: group?.user_id?.createdAt
               ? new Date(group.user_id.createdAt).toISOString().split("T")[0]
               : "NA",
-            action: (
-              <label
-                key={group._id}
-                className="cursor-pointer flex justify-center items-center"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectUser[group._id] || false}
-                  onChange={(e) =>
-                    handleCheckboxChange(e.target.checked, group)
-                  }
-                />
-              </label>
-            ),
+           
           }))
           .filter(Boolean);
 
@@ -655,6 +430,28 @@ const sendWhatsapp = async () => {
     });
   };
 
+// const handleSelectAll = (checked) => {
+//   const newSelection = {};
+//   const newWhatsappData = [];
+
+//   TableUsers.forEach((user) => {
+//     newSelection[user._id] = checked;
+//     if (checked) {
+//       newWhatsappData.push({
+//         info: {
+//           userId: user._id, // ✅
+//           userName: user.full_name || user.lead_name, // ✅
+//           userPhone: user.phone_number || user.lead_phone, // ✅
+//           groupName: user.group_name,
+//           groupId: user.group_id?._id || user.group_id || "NA", // ✅
+//         },
+//       });
+//     }
+//   });
+
+//   setSelectUser(newSelection);
+//   setWhatsappData(newWhatsappData);
+// };
 const handleSelectAll = (checked) => {
   const newSelection = {};
   const newWhatsappData = [];
@@ -664,13 +461,14 @@ const handleSelectAll = (checked) => {
     if (checked) {
       newWhatsappData.push({
         info: {
-          userId: user._id, // ✅
-          userName: user.full_name || user.lead_name, // ✅
-          userPhone: user.phone_number || user.lead_phone, // ✅
+          userId: user._id,
+          userName: user.full_name || user.lead_name,
+          userPhone: user.phone_number || user.lead_phone,
           groupName: user.group_name,
-          groupId: user.group_id?._id || user.group_id || "NA", // ✅
+          groupId: user.group_id?._id || user.group_id || "NA",
         },
       });
+      console.info(newWhatsappData, "whatsapp test");
     }
   });
 
@@ -746,14 +544,14 @@ const handleSelectAll = (checked) => {
     countCustomer();
   }, [selectUser, reloadTrigger]);
 
-  const columns = [
-    { key: "action", header: "Select" },
-    { key: "id", header: "SL. NO" },
-    { key: "enrollment_date", header: "Enrolled On" },
-    { key: "full_name", header: "Name" },
-    { key: "phone_number", header: "Phone Number" },
-    { key: "group_name", header: "Group Name" },
-  ];
+const columns = [
+  { key: "checkBoxs", header: "Select" },
+  { key: "sl_no", header: "SL. NO" },
+  { key: "enrollment_date", header: "Enrolled On" },
+  { key: "full_name", header: "Name" },
+  { key: "phone_number", header: "Phone Number" },
+  { key: "group_name", header: "Group Name" },
+];
 
   return (
     <>
@@ -876,9 +674,7 @@ const handleSelectAll = (checked) => {
                         />
                         Select All
                       </label>
-                      <span className="text-sm text-gray-600">
-                        Selected: {whatsappData.length}
-                      </span>
+                     
                     </div>
                   </div>
                 </div>
@@ -900,23 +696,23 @@ const handleSelectAll = (checked) => {
                 </button>
               </div>
             </div>
-            {TableUsers.length > 0 && !isLoading ? (
+            {filteredUsers.length > 0 && !isLoading ? (
               <DataTable
                 isExportEnabled={false}
-                data={TableUsers}
+                data={filteredUsers}
                 columns={columns}
                 exportedFileName={`whatsapp-${
-                  TableUsers.length > 0
-                    ? TableUsers[0].full_name +
+                  filteredUsers.length > 0
+                    ? filteredUsers[0].full_name +
                       " to " +
-                      TableUsers[TableUsers.length - 1].full_name
+                      filteredUsers[filteredUsers.length - 1].full_name
                     : "empty"
                 }.csv`}
               />
             ) : (
               <CircularLoader
                 isLoading={isLoading}
-                failure={TableUsers.length <= 0 && !isLoading}
+                failure={filteredUsers.length <= 0 && !isLoading}
                 data={"Group Data"}
               />
             )}
