@@ -34,13 +34,20 @@ import { GrUserSettings } from "react-icons/gr";
 import { TbCoinRupeeFilled } from "react-icons/tb";
 import { TbReceiptRupee } from "react-icons/tb";
 import { RiMoneyRupeeCircleLine } from "react-icons/ri";
-import {FaHandshake} from "react-icons/fa";
+import { FaHandshake } from "react-icons/fa";
+import { SiQuicklook } from "react-icons/si";
 const MenuSidebar = [
   {
     id: "$1",
     title: "Dashboard",
     icon: <RiDashboardFill />,
     link: "/dashboard",
+  },
+  {
+    id: "$!GPP",
+    title: "Quick Search",
+    icon: <SiQuicklook />,
+    link: "/quick-search",
   },
   {
     id: "$PP",
@@ -68,7 +75,7 @@ const MenuSidebar = [
     link: "/enrollment",
   },
   {
-  id: "$%%",
+    id: "$67",
     title: "Guarantor ",
     icon: <FaHandshake />,
     link: "/guarantor",
@@ -152,7 +159,7 @@ const MenuSidebar = [
           {
             id: "&^$3",
             title: "Pay-Out ",
-            icon: <RiMoneyRupeeCircleLine   size={20} />,
+            icon: <RiMoneyRupeeCircleLine size={20} />,
             link: "/pay-out-menu",
           },
         ],
@@ -247,20 +254,19 @@ const MenuSidebar = [
         title: "Gold Admin",
         link: "http://gold-admin-web.s3-website.eu-north-1.amazonaws.com/",
         newTab: true,
-      }, // External link
+      },
       {
         id: "#2",
         title: "Chit Plans Admin",
         link: "https://erp.admin.mychits.co.in/chit-enrollment-plan/admin/",
         newTab: true,
-      }, // External link
+      },
       {
         id: "#3",
         title: "Chit Enrollment Request",
         link: "https://erp.admin.mychits.co.in/src/request/enrollment.php?user-role=&user-code=",
         newTab: true,
-      }, // External link
-      // { title: "Consolidated", link: "/consolidate" },
+      },
     ],
   },
   {
@@ -296,145 +302,139 @@ const Sidebar = () => {
   };
 
   return (
-    <>
-      <div
-        ref={ref}
-        className={`bg-secondary min-h-screen max-h-auto p-5 pt-8  ${
-          open ? "w-64" : "w-20"
-        } duration-300 relative`}
-      >
-        <BsArrowLeftShort
-          className={`bg-white text-secondary text-3xl rounded-full absolute -right-3 top-9 border border-secondary cursor-pointer ${
-            !open && "rotate-180"
+    <div
+      ref={ref}
+      className={`bg-secondary min-h-screen max-h-auto p-5 pt-8  ${
+        open ? "w-64" : "w-20"
+      } duration-300 relative`}
+    >
+      <BsArrowLeftShort
+        className={`bg-white text-secondary text-3xl rounded-full absolute -right-3 top-9 border border-secondary cursor-pointer ${
+          !open && "rotate-180"
+        }`}
+        onClick={() => setOpen(!open)}
+      />
+      <div className="inline-flex">
+        <GiGoldBar
+          className={`bg-amber-300 text-4xl rounded cursor-pointer block float-left mr-2 duration-500 ${
+            open && "rotate-[360deg]"
           }`}
-          onClick={() => setOpen(!open)}
         />
-        <div className="inline-flex">
-          <GiGoldBar
-            className={`bg-amber-300 text-4xl rounded cursor-pointer block float-left mr-2 duration-500 ${
-              open && "rotate-[360deg]"
-            }`}
-          />
-          <h3
-            className={`text-white origin-left font-medium text-2xl ${
-              !open && "scale-0"
-            } duration-300 `}
-          >
-            MyChits
-          </h3>
-        </div>
+        <h3
+          className={`text-white origin-left font-medium text-2xl ${
+            !open && "scale-0"
+          } duration-300 `}
+        >
+          MyChits
+        </h3>
+      </div>
 
-        <ul className="pt-2">
-          {MenuSidebar.map((menu, index) => {
-            const isSpecialMenu =
-              menu.title === "Collections" || menu.title === "Groups";
-            const isOpen = submenuOpenIndex === index;
+      <ul className="pt-2">
+        {MenuSidebar.map((menu, index) => {
+          const isSpecialMenu =
+            menu.title === "Collections" || menu.title === "Groups";
+          const isOpen = submenuOpenIndex === index;
 
-            return (
-              <Fragment key={menu.id}>
-                <a href={menu.link} onClick={() => toggleSubMenu(index)}>
-                  <li
-                    className={`text-gray-300 text-sm flex items-center p-2 gap-x-4 cursor-pointer  hover:bg-light-white rounded-2xl  ${
-                      menu.spacing ? "mt-9" : "mt-2"
+          return (
+            <Fragment key={menu.id}>
+              <a href={menu.link} onClick={() => toggleSubMenu(index)}>
+                <li
+                  className={`text-gray-300 text-sm flex items-center p-2 gap-x-4 cursor-pointer  hover:bg-light-white rounded-2xl  ${
+                    menu.spacing ? "mt-9" : "mt-2"
+                  }`}
+                >
+                  <span className="text-2xl block float-left">{menu.icon}</span>
+                  <span
+                    className={`text-base font-medium flex-1 ${
+                      !open && "hidden"
                     }`}
                   >
-                    <span className="text-2xl block float-left">
-                      {menu.icon}
-                    </span>
-                    <span
-                      className={`text-base font-medium flex-1 ${
-                        !open && "hidden"
-                      }`}
-                    >
-                      {menu.title}
-                    </span>
-                    {menu.submenu &&
-                      open &&
-                      (isSpecialMenu ? (
-                        isOpen ? (
-                          <AiOutlineMinus className="ml-auto transition-transform duration-200" />
-                        ) : (
-                          <AiOutlinePlus className="ml-auto transition-transform duration-200" />
-                        )
+                    {menu.title}
+                  </span>
+                  {menu.submenu &&
+                    open &&
+                    (isSpecialMenu ? (
+                      isOpen ? (
+                        <AiOutlineMinus className="ml-auto transition-transform duration-200" />
                       ) : (
-                        <BsChevronDown
-                          className={`${
-                            isOpen ? "rotate-180" : "rotate-0"
-                          } transition-transform duration-200`}
-                        />
-                      ))}
-                  </li>
-                </a>
-
-                {menu.submenu && isOpen && open && (
-                  <ul className="ml-4">
-                    {menu.submenuItems.map((submenuItem, subIndex) => (
-                      <Fragment key={submenuItem.id}>
-                        <a
-                          href={submenuItem.link}
-                          target={submenuItem.newTab ? "_blank" : "_self"}
-                        >
-                          <li
-                            onClick={() => toggleNestedSubMenu(index, subIndex)}
-                            className={`${
-                              submenuItem.red ? "text-red-300" : "text-gray-300"
-                            } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white  rounded-2xl`}
-                          >
-                            {submenuItem.icon}
-                            {submenuItem.title}
-                            {submenuItem.submenu &&
-                              (nestedSubmenuOpenIndex[index] === subIndex ? (
-                                <AiOutlineMinus className="ml-auto transition-transform duration-200" />
-                              ) : (
-                                <AiOutlinePlus className={`ml-auto`} />
-                              ))}
-                          </li>
-                        </a>
-
-                        {submenuItem.submenu &&
-                          nestedSubmenuOpenIndex[index] === subIndex && (
-                            <ul className="ml-8">
-                              {submenuItem.submenuItems.map((subSubItem) => (
-                                <a
-                                  key={subSubItem.id}
-                                  href={subSubItem.link}
-                                  target={
-                                    subSubItem.newTab ? "_blank" : "_self"
-                                  }
-                                >
-                                  <li
-                                    className={`${
-                                      subSubItem.red
-                                        ? "text-red-300"
-                                        : "text-gray-300"
-                                    } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md`}
-                                  >
-                                    {subSubItem.icon}
-                                    {subSubItem.title}
-                                  </li>
-                                </a>
-                              ))}
-                            </ul>
-                          )}
-                      </Fragment>
+                        <AiOutlinePlus className="ml-auto transition-transform duration-200" />
+                      )
+                    ) : (
+                      <BsChevronDown
+                        className={`${
+                          isOpen ? "rotate-180" : "rotate-0"
+                        } transition-transform duration-200`}
+                      />
                     ))}
-                  </ul>
-                )}
-              </Fragment>
-            );
-          })}
-        </ul>
+                </li>
+              </a>
 
-        <div
-          className="rounded-md fixed right-1 bottom-20 bg-blue-900 p-2 bg-opacity-30 hover:bg-opacity-100 active:scale-95 z-50 animate-bounce"
-          onClick={() => {
-            ref.current.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          <TbArrowsLeftDown className="text-3xl text-white rotate-90" />
-        </div>
+              {menu.submenu && isOpen && open && (
+                <ul className="ml-4">
+                  {menu.submenuItems.map((submenuItem, subIndex) => (
+                    <Fragment key={submenuItem.id}>
+                      <a
+                        href={submenuItem.link}
+                        target={submenuItem.newTab ? "_blank" : "_self"}
+                      >
+                        <li
+                          onClick={() => toggleNestedSubMenu(index, subIndex)}
+                          className={`${
+                            submenuItem.red ? "text-red-300" : "text-gray-300"
+                          } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white  rounded-2xl`}
+                        >
+                          {submenuItem.icon}
+                          {submenuItem.title}
+                          {submenuItem.submenu &&
+                            (nestedSubmenuOpenIndex[index] === subIndex ? (
+                              <AiOutlineMinus className="ml-auto transition-transform duration-200" />
+                            ) : (
+                              <AiOutlinePlus className={`ml-auto`} />
+                            ))}
+                        </li>
+                      </a>
+
+                      {submenuItem.submenu &&
+                        nestedSubmenuOpenIndex[index] === subIndex && (
+                          <ul className="ml-8">
+                            {submenuItem.submenuItems.map((subSubItem) => (
+                              <a
+                                key={subSubItem.id}
+                                href={subSubItem.link}
+                                target={subSubItem.newTab ? "_blank" : "_self"}
+                              >
+                                <li
+                                  className={`${
+                                    subSubItem.red
+                                      ? "text-red-300"
+                                      : "text-gray-300"
+                                  } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md`}
+                                >
+                                  {subSubItem.icon}
+                                  {subSubItem.title}
+                                </li>
+                              </a>
+                            ))}
+                          </ul>
+                        )}
+                    </Fragment>
+                  ))}
+                </ul>
+              )}
+            </Fragment>
+          );
+        })}
+      </ul>
+
+      <div
+        className="rounded-md fixed right-1 bottom-20 bg-blue-900 p-2 bg-opacity-30 hover:bg-opacity-100 active:scale-95 z-50 animate-bounce"
+        onClick={() => {
+          ref.current.scrollIntoView({ behavior: "smooth" });
+        }}
+      >
+        <TbArrowsLeftDown className="text-3xl text-white rotate-90" />
       </div>
-    </>
+    </div>
   );
 };
 

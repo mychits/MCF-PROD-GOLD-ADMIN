@@ -70,6 +70,7 @@ import OverDueMessage from "../pages/OverDueMessage";
 import DueEmail from "../pages/DueEmail";
 import OverDueEmail from "../pages/OverDueEmail";
 import WhatsappPromo from "../pages/WhatsappPromo";
+import QuickSearch from "../pages/QuickSearch";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -84,6 +85,15 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+    {
+    path: "/quick-search",
+    element: (
+      <ProtectedRoute>
+        <Navbar />
+        <QuickSearch />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/analytics",
     element: (
@@ -92,7 +102,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-    {
+  {
     path: "/reg-fee-print/:id",
 
     element: <RegistrationReceipt />,
@@ -106,7 +116,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-   {
+  {
     path: "/pay-in-menu",
     element: (
       <ProtectedRoute>
@@ -130,7 +140,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-    {
+  {
     path: "/print-payment-out/:id",
     element: (
       <ProtectedRoute>
@@ -155,6 +165,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+ 
   {
     path: "/target",
     element: (
@@ -447,11 +458,14 @@ const mainRoutes = createBrowserRouter([
       { path: "what-add", element: <WhatsappAdd /> },
       { path: "failed-whatuser", element: <WhatsappFailed /> },
       { path: "due-message", element: <DueMessage /> },
-      {path: "auction-intimation-message", element: <AuctionIntemationMessage/>},
-       {path: "over-due-message", element: <OverDueMessage/>},
-      {path: "due-email", element: <DueEmail/>},
-      {path: "over-due-email", element: <OverDueEmail/>},
-      {path: "what-promo", element: <WhatsappPromo />},
+      {
+        path: "auction-intimation-message",
+        element: <AuctionIntemationMessage />,
+      },
+      { path: "over-due-message", element: <OverDueMessage /> },
+      { path: "due-email", element: <DueEmail /> },
+      { path: "over-due-email", element: <OverDueEmail /> },
+      { path: "what-promo", element: <WhatsappPromo /> },
     ],
   },
 ]);

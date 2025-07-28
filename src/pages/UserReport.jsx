@@ -6,12 +6,15 @@ import CircularLoader from "../components/loaders/CircularLoader";
 import { Select } from "antd";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
+import { useSearchParams } from "react-router-dom";
 const UserReport = () => {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("user_id");
   const [groups, setGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [TableDaybook, setTableDaybook] = useState([]);
   const [TableAuctions, setTableAuctions] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState(userId ? userId : "");
   const [group, setGroup] = useState([]);
   const [commission, setCommission] = useState("");
   const [TableEnrolls, setTableEnrolls] = useState([]);
@@ -44,8 +47,11 @@ const UserReport = () => {
   const [TotalToBepaid, setTotalToBePaid] = useState("");
   const [Totalpaid, setTotalPaid] = useState("");
   const [Totalprofit, setTotalProfit] = useState("");
+
   const [NetTotalprofit, setNetTotalProfit] = useState("");
-  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState("");
+  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState(
+    userId ? userId : ""
+  );
   const [filteredAuction, setFilteredAuction] = useState([]);
   const [groupInfo, setGroupInfo] = useState({});
 
@@ -54,7 +60,9 @@ const UserReport = () => {
     return today.toISOString().split("T")[0];
   });
   const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
-  const [selectedCustomers, setSelectedCustomers] = useState("");
+  const [selectedCustomers, setSelectedCustomers] = useState(
+    userId ? userId : ""
+  );
   const [payments, setPayments] = useState([]);
   const [availableTickets, setAvailableTickets] = useState([]);
   const [screenLoading, setScreenLoading] = useState(true);
@@ -100,6 +108,7 @@ const UserReport = () => {
     { key: "id", header: "SL. NO" },
     { key: "pay_date", header: "Disbursed Date" },
     { key: "transaction_date", header: "Transaction Date" },
+    { key: "ticket", header: "Ticket" },
     { key: "amount", header: "Amount" },
     { key: "receipt_no", header: "Receipt No" },
     { key: "pay_type", header: "Payment Type" },
@@ -118,7 +127,6 @@ const UserReport = () => {
         EnrollGroupId.groupId !== "Loan"
       ) {
         try {
-          // Reset all values before fetch
           setTableEnrolls([]);
           setGroupPaid("");
           setGroupToBePaid("");
@@ -140,11 +148,9 @@ const UserReport = () => {
 
           const { payments = [], registrationFees = [] } = response.data || {};
 
-          // ✅ Set Group Paid and To Be Paid
           setGroupPaid(payments[0]?.groupPaidAmount || 0);
           setGroupToBePaid(payments[0]?.totalToBePaidAmount || 0);
 
-          // ✅ Build TableEnrolls with running balance
           let balance = 0;
           const formattedData = payments.map((payment, index) => {
             balance += Number(payment.amount || 0);
@@ -160,7 +166,6 @@ const UserReport = () => {
             };
           });
 
-          // ✅ Insert all Registration Fee rows (DO NOT impact balance)
           let totalRegAmount = 0;
           registrationFees.forEach((regFee, idx) => {
             formattedData.push({
@@ -172,7 +177,7 @@ const UserReport = () => {
               receipt: regFee.receipt_no,
               old_receipt: "-",
               type: regFee.pay_for || "Reg Fee",
-              balance: "-", // Don't affect running balance
+              balance: "-",
             });
 
             totalRegAmount += Number(regFee.amount || 0);
@@ -180,7 +185,6 @@ const UserReport = () => {
 
           setRegistrationAmount(totalRegAmount);
 
-          // Set first reg fee date if available
           if (registrationFees.length > 0) {
             setRegistrationDate(
               registrationFees[0]?.createdAt
@@ -191,7 +195,6 @@ const UserReport = () => {
             );
           }
 
-          // ✅ Append Total Row
           if (formattedData.length > 0) {
             formattedData.push({
               id: "",
@@ -204,7 +207,7 @@ const UserReport = () => {
             });
             setFinalPaymentBalance(balance);
           } else {
-            setFinalPaymentBalance(0); // reset
+            setFinalPaymentBalance(0);
           }
 
           setTableEnrolls(formattedData);
@@ -220,7 +223,6 @@ const UserReport = () => {
           setIsLoading(false);
         }
       } else {
-        // Reset if invalid
         setTableEnrolls([]);
         setGroupPaid("");
         setGroupToBePaid("");
@@ -392,6 +394,7 @@ const UserReport = () => {
               id: index + 1,
               disbursement_type: payment.disbursement_type,
               pay_date: formatPayDate(payment?.pay_date),
+              ticket: payment.ticket,
               transaction_date: formatPayDate(payment.createdAt),
               amount: payment.amount,
               receipt_no: payment.receipt_no,
@@ -414,18 +417,22 @@ const UserReport = () => {
     };
     if (selectedGroup) fetchDisbursement();
   }, [selectedGroup]);
+
   const handleGroupPayment = async (groupId) => {
     setSelectedAuctionGroupId(groupId);
     setSelectedGroup(groupId);
     handleGroupAuctionChange(groupId);
   };
-
+  useEffect(() => {
+    if (userId) {
+      handleGroupPayment(userId);
+    }
+  }, []);
   const handleEnrollGroup = (event) => {
     const value = event.target.value;
 
     if (value) {
       const [groupId, ticket] = value.split("|");
-      // for loan group id is "Loan" ticket is loan object Id
       setEnrollGroupId({ groupId, ticket });
     } else {
       setEnrollGroupId({ groupId: "", ticket: "" });
@@ -595,7 +602,11 @@ const UserReport = () => {
       setCommission(0);
     }
   };
-
+  useEffect(() => {
+    if (userId) {
+      handleGroupAuctionChange(userId);
+    }
+  }, []);
   const Auctioncolumns = [
     { key: "id", header: "SL. NO" },
     { key: "group", header: "Group Name" },
