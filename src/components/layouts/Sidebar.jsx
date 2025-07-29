@@ -36,6 +36,7 @@ import { TbReceiptRupee } from "react-icons/tb";
 import { RiMoneyRupeeCircleLine } from "react-icons/ri";
 import { FaHandshake } from "react-icons/fa";
 import { SiQuicklook } from "react-icons/si";
+import { BiTransfer } from "react-icons/bi";
 const MenuSidebar = [
   {
     id: "$1",
@@ -237,6 +238,30 @@ const MenuSidebar = [
             title: "Employee Profile",
             icon: <GrUserSettings size={18} />,
             link: "/employee-profile",
+          },
+        ],
+      },
+       {
+        id: "#3",
+        title: "Transfer",
+        hider: true,
+        icon: <BiTransfer  size={18} />,
+        newTab: true,
+        submenu: true,
+        submenuItems: [
+          {
+            id: "#206",
+            title: "Soft Transfer",
+            icon: <GrUserSettings size={18} />,
+            link: "/soft-transfer",
+            
+          },
+            {
+            id: "#206",
+            title: "Hard Transfer",
+            icon: <GrUserSettings size={18} />,
+            link: "/hard-transfer",
+            
           },
         ],
       },

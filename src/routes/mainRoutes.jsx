@@ -72,6 +72,8 @@ import OverDueEmail from "../pages/OverDueEmail";
 import WhatsappPromo from "../pages/WhatsappPromo";
 import QuickSearch from "../pages/QuickSearch";
 import BidWinner from "../pages/BidWinner";
+import TransferCustomer from "../pages/SoftTransferCustomer";
+import SoftTransferCustomer from "../pages/SoftTransferCustomer";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -380,6 +382,18 @@ const mainRoutes = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Designation />
+      </ProtectedRoute>
+    ),
+  },
+
+
+  ,
+
+  {
+    path:"soft-transfer",
+    element: (
+      <ProtectedRoute>
+         <SoftTransferCustomer/>
       </ProtectedRoute>
     ),
   },
