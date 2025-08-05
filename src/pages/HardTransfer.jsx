@@ -175,7 +175,7 @@ const HardTransfer = () => {
       return;
     }
     try {
-      const res = await api.get("/enroll/get-amount-paid", {
+      const res = await api.get("/enroll/get-exact-amount-paid", {
         params: {
           group_id: sourceGroup,
           user_id: sourceCustomer,
