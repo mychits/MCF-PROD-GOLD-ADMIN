@@ -7,11 +7,14 @@ import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
 import { FaWhatsappSquare } from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa";
+import { FiLink } from "react-icons/fi";
 import { Select, Dropdown, notification } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+import { FiMail } from "react-icons/fi";
 const Enroll = () => {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -32,7 +35,11 @@ const Enroll = () => {
   const [leads, setLeads] = useState([]);
   const [agents, setAgents] = useState([]);
   const date = new Date().toISOString().split("T")[0];
-  const whatsappEnable = true;
+  const [thirdPartyEnable, setThirdPartyEnable] = useState({
+    email: true,
+    whatsapp: true,
+    paymentLink: false,
+  });
   const [enrollmentStep, setEnrollmentStep] = useState("verify");
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
@@ -146,8 +153,8 @@ const Enroll = () => {
                           ),
                         },
                         {
-                          key:"2",
-                           label: (
+                          key: "2",
+                          label: (
                             <div
                               className="text-red-600"
                               onClick={() => handleDeleteModalOpen(group._id)}
@@ -155,7 +162,7 @@ const Enroll = () => {
                               Delete
                             </div>
                           ),
-                        }
+                        },
                       ],
                     }}
                     placement="bottomLeft"
@@ -301,9 +308,9 @@ const Enroll = () => {
                             </div>
                           ),
                         },
-                         {
-                          key:"2",
-                           label: (
+                        {
+                          key: "2",
+                          label: (
                             <div
                               className="text-red-600"
                               onClick={() => handleDeleteModalOpen(group._id)}
@@ -311,8 +318,7 @@ const Enroll = () => {
                               Delete
                             </div>
                           ),
-                        }
-                        
+                        },
                       ],
                     }}
                     placement="bottomLeft"
@@ -440,11 +446,18 @@ const Enroll = () => {
       try {
         for (const ticketEntry of ticketEntries) {
           console.log("ticket");
-          await api.post("/enroll/add-enroll", ticketEntry, {
-            headers: {
-              "Content-Type": "application/json",
+          await api.post(
+            "/enroll/add-enroll",
+            {
+              ...ticketEntry,
+             ...thirdPartyEnable
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
         }
 
         setShowModal(false);
@@ -513,9 +526,9 @@ const Enroll = () => {
   const handleDeleteGroup = async () => {
     if (currentGroup) {
       try {
-        await api.delete(`/enroll/delete-enroll/${currentGroup._id}`,{
-          deleted_by:admin,
-          deleted_at:new Date()
+        await api.delete(`/enroll/delete-enroll/${currentGroup._id}`, {
+          deleted_by: admin,
+          deleted_at: new Date(),
         });
 
         setShowModalDelete(false);
@@ -809,21 +822,19 @@ const Enroll = () => {
             setErrors({});
           }}
         >
-          <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-gray-900">
+          <div className="py-6 px-5 lg:px-8 text-left bg-white rounded-lg">
+            <h3 className="mb-6 text-2xl font-bold text-gray-900 border-b pb-3">
               Add Enrollment
             </h3>
+
             <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="category"
-                >
-                  Group <span className="text-red-500 ">*</span>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Group <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  placeholder="Select Or Search Group"
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  placeholder="Select or Search Group"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="group_id"
@@ -843,20 +854,17 @@ const Enroll = () => {
                   ))}
                 </Select>
                 {errors.group_id && (
-                  <p className="mt-1 text-sm text-red-600">{errors.group_id}</p>
+                  <p className="mt-1 text-xs text-red-600">{errors.group_id}</p>
                 )}
               </div>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="category"
-                >
-                  Customer <span className="text-red-500 ">*</span>
-                </label>
 
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Customer <span className="text-red-500">*</span>
+                </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  placeholder="Select Or Search Customer"
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  placeholder="Select or Search Customer"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="user_id"
@@ -871,25 +879,21 @@ const Enroll = () => {
                 >
                   {users.map((user) => (
                     <Select.Option key={user._id} value={user._id}>
-                      {user.full_name} |{" "}
-                      {user.phone_number ? user.phone_number : "No Number"}
+                      {user.full_name} | {user.phone_number || "No Number"}
                     </Select.Option>
                   ))}
                 </Select>
-
                 {errors.user_id && (
-                  <p className="mt-1 text-sm text-red-600">{errors.user_id}</p>
+                  <p className="mt-1 text-xs text-red-600">{errors.user_id}</p>
                 )}
               </div>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="payment_type"
-                >
-                  Select Payment Type <span className="text-red-500 ">*</span>
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Payment Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -908,8 +912,8 @@ const Enroll = () => {
                 </Select>
               </div>
 
-              <div className="w-full">
-                <label className="block mb-2 text-sm font-medium text-gray-900">
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
                   Chit Asking Month
                 </label>
                 <input
@@ -918,19 +922,16 @@ const Enroll = () => {
                   value={formData.chit_asking_month}
                   onChange={handleChange}
                   placeholder="Enter month number (e.g., 1 for Jan)"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                 />
               </div>
 
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="referred_type"
-                >
-                  Select Referred Type <span className="text-red-500 ">*</span>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Referred Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -955,169 +956,97 @@ const Enroll = () => {
                 </Select>
               </div>
 
-              {formData.referred_type === "Customer" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Customer{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
-
-                  <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                    placeholder="Select Or Search Referred Customer"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="referred_customer"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={formData?.referred_customer || undefined}
-                    onChange={(value) =>
-                      handleAntDSelect("referred_customer", value)
-                    }
-                  >
-                    {users.map((user) => (
-                      <Select.Option key={user._id} value={user._id}>
-                        {user.full_name} |{" "}
-                        {user.phone_number ? user.phone_number : "No Number"}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
-              {formData.referred_type === "Leads" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Leads{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
-
-                  <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                    placeholder="Select Or Search Referred Leads"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="referred_lead"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={formData?.referred_lead || undefined}
-                    onChange={(value) =>
-                      handleAntDSelect("referred_lead", value)
-                    }
-                  >
-                    {leads.map((lead) => (
-                      <Select.Option key={lead._id} value={lead._id}>
-                        {lead.lead_name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
-              {formData.referred_type === "Employee" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Employee{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
-
-                  <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                    placeholder="Select Or Search Referred Employee"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="agent"
-                    filterOption={(input, option) => {
-                      if (!option || !option.children) return false; // Ensure option and children exist
-
-                      return option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase());
-                    }}
-                    value={formData?.agent || undefined}
-                    onChange={(value) => handleAntDSelect("agent", value)}
-                  >
-                    {agents.map((agent) => (
-                      <Select.Option key={agent._id} value={agent._id}>
-                        {agent.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
               {formData.group_id && availableTicketsAdd.length === 0 ? (
-                <>
-                  <p className="text-center text-red-600">Group is Full</p>
-                </>
+                <p className="text-center text-red-600 font-medium">
+                  Group is Full
+                </p>
               ) : formData.group_id && availableTicketsAdd.length !== 0 ? (
                 <div>
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="email"
-                  >
-                    Number of Tickets <span className="text-red-500 ">*</span>
+                  <label className="block mb-2 text-sm font-semibold text-gray-800">
+                    Number of Tickets <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
                     name="no_of_tickets"
                     value={formData?.no_of_tickets}
                     id="name"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                     placeholder="Enter the Number of Tickets"
                     required
                     max={availableTicketsAdd.length}
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   />
-
                   {errors.no_of_tickets && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-xs text-red-600">
                       {errors.no_of_tickets}
                     </p>
                   )}
-                  <span className="mt-10 flex items-center justify-center text-sm text-blue-900">
+                  <p className="mt-1 text-xs text-blue-800 text-center">
                     Only {availableTicketsAdd.length} tickets left
-                  </span>
+                  </p>
                 </div>
-              ) : (
-                <p className="text-center text-red-600"></p>
-              )}
+              ) : null}
 
-              <div className="flex flex-col items-center p-4 max-w-full bg-white rounded-lg shadow-sm space-y-4">
-                <div className="flex items-center space-x-3">
-                  <FaWhatsappSquare color="green" className="w-10 h-10" />
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    WhatsApp
-                  </h2>
-                </div>
-
-                <div className="flex items-center space-x-2">
+              <div className="border-t pt-4 space-y-4">
+                <h2 className="text-base font-semibold text-gray-900">
+                  Actions
+                </h2>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FaWhatsapp className="text-green-600 w-5 h-5" />
+                    <span className="text-gray-800">
+                      Enable WhatsApp Sending
+                    </span>
+                  </div>
                   <input
                     type="checkbox"
-                    checked={whatsappEnable}
-                    className="text-green-500 checked:ring-2  checked:ring-green-700  rounded-full w-4 h-4"
+                    checked={thirdPartyEnable.whatsapp}
+                    onChange={() =>
+                      setThirdPartyEnable((prev) => ({
+                        ...prev,
+                        whatsapp: !prev.whatsapp,
+                      }))
+                    }
+                    className="w-5 h-5 accent-green-600 cursor-pointer"
                   />
-                  <span className="text-gray-700">Send Via Whatsapp</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FiLink className="text-green-600 w-5 h-5" />
+                    <span className="text-gray-800">Enable Payment Link</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={thirdPartyEnable.paymentLink}
+                    onChange={() =>
+                      setThirdPartyEnable((prev) => ({
+                        ...prev,
+                        paymentLink: !prev.paymentLink,
+                      }))
+                    }
+                    className="w-5 h-5 accent-green-600 cursor-pointer"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FiMail className="w-5 h-5" aria-hidden="true" />
+                    <span className="text-gray-800">Enable Email</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={thirdPartyEnable.email}
+                    onChange={() =>
+                      setThirdPartyEnable((prev) => ({
+                        ...prev,
+                        email: !prev.email,
+                      }))
+                    }
+                    className="w-5 h-5 accent-green-600 cursor-pointer"
+                  />
                 </div>
               </div>
-              <div className="w-full flex justify-end">
+
+              <div className="flex justify-end pt-4">
                 <button
                   type="button"
                   disabled={
@@ -1126,7 +1055,7 @@ const Enroll = () => {
                       (!isVerified || availableTicketsAdd.length === 0))
                   }
                   onClick={handleMultiStep}
-                  className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center ${
+                  className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors ${
                     loading
                       ? "bg-gray-400 cursor-not-allowed"
                       : enrollmentStep === "verify"
@@ -1148,6 +1077,7 @@ const Enroll = () => {
             </form>
           </div>
         </Modal>
+
         <Modal
           isVisible={showModalUpdate}
           onClose={() => {
@@ -1313,7 +1243,7 @@ const Enroll = () => {
                     }
                     value={updateFormData?.referred_customer || undefined}
                     onChange={(value) =>
-                      handleAntDSelect("referred_customer", value)
+                      handleAntInputDSelect("referred_customer", value)
                     }
                   >
                     {users.map((user) => (
