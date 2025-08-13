@@ -25,7 +25,7 @@ const Enroll = () => {
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [currentUpdateGroup, setCurrentUpdateGroup] = useState(null);
   const [availableTickets, setAvailableTickets] = useState([]);
-  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [showModalRemove, setShowModalRemove] = useState(false);
   const [currentGroup, setCurrentGroup] = useState(null);
   const [availableTicketsAdd, setAvailableTicketsAdd] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,6 +34,7 @@ const Enroll = () => {
   const [allEnrollUrl, setAllEnrollUrl] = useState(true);
   const [leads, setLeads] = useState([]);
   const [agents, setAgents] = useState([]);
+  const [removalReason, setRemovalReason] = useState("");
   const date = new Date().toISOString().split("T")[0];
   const [thirdPartyEnable, setThirdPartyEnable] = useState({
     email: true,
@@ -157,9 +158,9 @@ const Enroll = () => {
                           label: (
                             <div
                               className="text-red-600"
-                              onClick={() => handleDeleteModalOpen(group._id)}
+                              onClick={() => handleRemoveModalOpen(group._id)}
                             >
-                              Delete
+                              Remove
                             </div>
                           ),
                         },
@@ -313,9 +314,9 @@ const Enroll = () => {
                           label: (
                             <div
                               className="text-red-600"
-                              onClick={() => handleDeleteModalOpen(group._id)}
+                              onClick={() => handleRemoveModalOpen(group._id)}
                             >
-                              Delete
+                              Remove
                             </div>
                           ),
                         },
@@ -513,25 +514,28 @@ const Enroll = () => {
     }
   };
 
-  const handleDeleteModalOpen = async (groupId) => {
+  const handleRemoveModalOpen = async (groupId) => {
     try {
       const response = await api.get(`/enroll/get-enroll-by-id/${groupId}`);
       setCurrentGroup(response.data);
-      setShowModalDelete(true);
+      setShowModalRemove(true);
     } catch (error) {
       console.error("Error fetching enroll:", error);
     }
   };
 
-  const handleDeleteGroup = async () => {
+  const handleRemoveGroup = async () => {
     if (currentGroup) {
+       const user_id = currentGroup.user_id?._id
       try {
-        await api.delete(`/enroll/delete-enroll/${currentGroup._id}`, {
-          deleted_by: admin,
-          deleted_at: new Date(),
+        await api.delete(`/enroll/remove-enroll/${currentGroup._id}`, {
+          user_id,
+          removed_by: admin,
+          removed_at: new Date(),
+          removalReason,
         });
-
-        setShowModalDelete(false);
+        setRemovalReason("")
+        setShowModalRemove(false);
         setCurrentGroup(null);
         setAlertConfig({
           visibility: true,
@@ -539,6 +543,7 @@ const Enroll = () => {
           type: "success",
         });
       } catch (error) {
+        setRemovalReason("")
         console.error("Error deleting group:", error);
       }
     }
@@ -1464,34 +1469,53 @@ const Enroll = () => {
           </div>
         </Modal>
         <Modal
-          isVisible={showModalDelete}
+          isVisible={showModalRemove}
           onClose={() => {
-            setShowModalDelete(false);
+            setShowModalRemove(false);
             setCurrentGroup(null);
           }}
         >
           <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-gray-900">
-              Sure want to remove this Enrollment ?
-            </h3>
-            {currentGroup && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleDeleteGroup();
-                }}
-                className="space-y-6"
-              >
-                <button
-                  type="submit"
-                  className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                >
-                  Remove
-                </button>
-              </form>
-            )}
+      <h3 className="mb-4 text-xl font-bold text-gray-900">
+        Please Select a Reason for Removal
+      </h3>
+
+      {currentGroup && (
+        <form onSubmit={handleRemoveGroup} className="space-y-6">
+         
+          <div>
+            <label
+              htmlFor="removalReason"
+              className="block mb-2 text-sm font-medium text-gray-700"
+            >
+              Removal Reason <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="removalReason"
+              name="removalReason"
+              value={removalReason}
+              onChange={(e) => setRemovalReason(e.target.value)}
+              required
+              className="block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              <option value="">-- Select Reason --</option>
+              <option value="Closed">Customer Closed</option>
+              <option value="InActive">InActive Customer</option>
+              <option value="Fraudulent Activity">Fraudulent Activity</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
+
+        
+          <button
+            type="submit"
+            className="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            Remove
+          </button>
+        </form>
+      )}
+    </div>
         </Modal>
       </div>
     </>
