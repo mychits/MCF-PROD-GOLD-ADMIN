@@ -1407,6 +1407,7 @@ const selectednewGroup = actualGroups.find(
                             <option value="suspense">Suspense</option>
                             <option value="credit">Credit</option>
                             <option value="adjustment">Adjustment</option>
+                            <option value= "change group">Change Group</option>
                             <option value="others">Others</option>
                           </>
                         
