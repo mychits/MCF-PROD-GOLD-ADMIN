@@ -297,13 +297,7 @@ const DreamAsset = () => {
                 data={filterOption(TableAsset, searchText)}
                 columns={columns}
                 exportedPdfName="Dream Asset"
-                exportedFileName={`Asset-${
-                  TableAsset.length > 0
-                    ? TableAsset[0].name +
-                      " to " +
-                      TableAsset[TableAsset.length - 1].name
-                    : "empty"
-                }.csv`}
+                exportedFileName={`Dream Asset.csv`}
               />
             ) : (
               <CircularLoader

@@ -320,6 +320,7 @@ const SoftTransferCustomer = () => {
               data={filterOption(transferData, searchText)}
               columns={columns}
               exportedPdfName="Soft Amount Transfer Customer"
+              exportedFileName="Soft Amount Transfer Customer.csv"
             />
           ) : (
             <CircularLoader

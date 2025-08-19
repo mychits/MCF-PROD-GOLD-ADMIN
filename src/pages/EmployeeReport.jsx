@@ -251,7 +251,8 @@ const columns = selectedEmployeeId === "ALL"
                                    totalBusiness.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,})
                                 ]}
-                exportedFileName={`EmployeeReport-${selectedEmployeeId || "all"}.csv`}
+                exportedFileName={`Employee Report-${selectedEmployeeDetails?.name || "all"}.csv`}
+                
               />
               <div className="mt-6 pr-10 text-right flex justify-end gap-12">
                 <div className="text-lg font-semibold text-green-700">

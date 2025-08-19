@@ -1539,6 +1539,7 @@ const UserReport = () => {
                               data={filteredDisbursement}
                               columns={DisbursementColumns}
                               exportedPdfName={`Customer Payout Report`}
+                              exportedFileName={`Customer Payout Report.csv`}
                               printHeaderKeys={[
                                 "Customer Name",
                                 "Phone Number",

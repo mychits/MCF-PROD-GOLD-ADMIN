@@ -709,14 +709,8 @@ const AdminAccessRights = () => {
                 updateHandler={handleUpdateModalOpen}
                 data={filterOption(TableAgents, searchText)}
                 columns={columns}
-                exportedPdfName={`Admin Access Rights`}
-                exportedFileName={`Employees-${
-                  TableAgents.length > 0
-                    ? TableAgents[0].name +
-                      " to " +
-                      TableAgents[TableAgents.length - 1].name
-                    : "empty"
-                }.csv`}
+                exportedPdfName={`Admin Access Rights-${new Date().toISOString()?.split("T")[0]}`}
+                exportedFileName={`Admin Access Rights Employees.csv`}
               />
             ) : (
               <CircularLoader

@@ -647,12 +647,7 @@ const Lead = () => {
                 )}
                 columns={columns}
                 exportedPdfName="Lead"
-                exportedFileName={`Leads-${TableGroups.length > 0
-                    ? TableGroups[0].date +
-                    " to " +
-                    TableGroups[TableGroups.length - 1].date
-                    : "empty"
-                  }.csv`}
+                exportedFileName={`Leads.csv`}
               />
             ) : (
               <CircularLoader />

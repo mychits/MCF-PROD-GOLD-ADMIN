@@ -710,13 +710,7 @@ const Receipt = () => {
                     columns={columns}
                     exportedPdfName={`Receipt Report`}
                  
-                    exportedFileName={`ReportsReceipt-${
-                      TableDaybook.length > 0
-                        ? TableDaybook[0].name +
-                          " to " +
-                          TableDaybook[TableDaybook.length - 1].name
-                        : "empty"
-                    }.csv`}
+                    exportedFileName={`Reports Receipt.csv`}
                   />
                   <div className="flex justify-end mt-4 pr-4">
                     <span className="text-lg font-semibold">

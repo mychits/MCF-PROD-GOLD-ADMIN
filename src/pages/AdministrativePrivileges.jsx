@@ -366,6 +366,7 @@ const AdministrativePrivileges = () => {
                 data={filterOption(TableGroups, searchText)}
                 columns={columns}
                 exportedPdfName={`Administrative Privileges`}
+                exportedFileName={`Administrative Privileges.csv`}
               />
             ) : (
               <CircularLoader

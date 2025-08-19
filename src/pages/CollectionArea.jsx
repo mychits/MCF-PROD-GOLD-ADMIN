@@ -324,6 +324,7 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
                 data={filterOption(tableCollectionArea, searchText)}
                 columns={columns}
                 exportedPdfName="Collection Area"
+                exportedFileName="Collection Area.csv"
               />
             ) : (
               <CircularLoader

@@ -302,11 +302,7 @@ const selectednewGroup = groups.find(g => g._id === selectedAuctionGroupId);
                     printHeaderValues={[
                       selectednewGroup?.group_name || "N/A",
                     ]}
-                    exportedFileName={`AuctionsReport-${
-                      TableAuctions.length > 0
-                        ? TableAuctions[1].name + " to " + TableAuctions[TableAuctions.length - 1].name
-                        : "empty"
-                    }.csv`}
+                    exportedFileName={`AuctionsReport.csv`}
                   />
 
                   {/* ✅ Summary Section */}

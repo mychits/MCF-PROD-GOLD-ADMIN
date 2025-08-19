@@ -1227,6 +1227,7 @@ const DetailedUser = () => {
                             <DataTable
                               data={filteredDisbursement}
                               columns={DisbursementColumns}
+                              p
                             />
                           </div>
                         ) : (

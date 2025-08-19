@@ -295,7 +295,7 @@ const AuctionIntemationMessage = () => {
                   exportedPdfName="Auction Intemation Message"
                   printHeaderKeys={["Group Name"]}
                   printHeaderValues={[groupFilter]}
-                  exportedFileName={`CustomerReport.csv`}
+                  exportedFileName={`Auction Intemation Message.csv`}
                 />
               </div>
             </div>

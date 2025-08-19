@@ -255,9 +255,7 @@ const PayOutPettyCash = () => {
                   data={pettyCashPayments}
                   columns={pettyCashColumns}
                   exportedPdfName="PayOut Petty Cash"
-                  exportedFileName={`petty_cash_transactions_${
-                    new Date().toISOString().split("T")[0]
-                  }.csv`}
+                  exportedFileName={`petty cash transactions.csv`}
                 />
               ) : (
                 <div className="mt-10 text-center text-gray-500">

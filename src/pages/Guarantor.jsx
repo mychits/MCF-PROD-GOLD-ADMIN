@@ -536,12 +536,7 @@ const Guarantor = () => {
                                 data={filterOption(TableGuarantor, searchText)}
                                 columns={columns}
                                 exportedPdfName="Guarantor"
-                                exportedFileName={`Guarantor-${TableGuarantor.length > 0
-                                    ? TableGuarantor[0].name +
-                                    " to " +
-                                    TableGuarantor[TableGuarantor.length - 1].name
-                                    : "empty"
-                                    }.csv`}
+                                exportedFileName={`Guarantor.csv`}
                             />
                         ) : (
                             <CircularLoader

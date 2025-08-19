@@ -315,13 +315,7 @@ const LoanReport = () => {
                 data={filterOption(tableBorrowers, searchText)}
                 columns={columns}
                 exportedPdfName="Loan Report"
-                exportedFileName={`Groups-${
-                  tableBorrowers.length > 0
-                    ? tableBorrowers[0].date +
-                      " to " +
-                      tableBorrowers[tableBorrowers.length - 1].date
-                    : "empty"
-                }.csv`}
+                exportedFileName={`Loan Report.csv`}
               />
             )}
           </div>

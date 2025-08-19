@@ -372,13 +372,7 @@ const [isLoading,setIsLoading] = useState(false);
               data={filterOption(tableBorrowers, searchText)}
               columns={columns}
               exportedPdfName="Loans"
-              exportedFileName={`Groups-${
-                tableBorrowers.length > 0
-                  ? tableBorrowers[0].date +
-                    " to " +
-                    tableBorrowers[tableBorrowers.length - 1].date
-                  : "empty"
-              }.csv`}
+              exportedFileName={`Loans.csv`}
             />):<CircularLoader isLoading={isLoading} data="Loan Data" failure={tableBorrowers?.length<=0}/>}
           </div>
         </div>

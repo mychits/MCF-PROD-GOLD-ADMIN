@@ -292,7 +292,7 @@ const DueEmail = () => {
                   exportedPdfName="Due Email"
                   printHeaderKeys={["Group Name"]}
                   printHeaderValues={[groupFilter]}
-                  exportedFileName={`CustomerReport.csv`}
+                  exportedFileName={`Due Email.csv`}
                 />
               </div>
             </div>

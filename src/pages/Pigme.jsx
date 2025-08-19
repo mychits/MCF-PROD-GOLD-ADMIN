@@ -350,13 +350,7 @@ const Pigme = () => {
               data={filterOption(tableBorrowers, searchText)}
               columns={columns}
               exportedPdfName="Pigme"
-              exportedFileName={`Groups-${
-                tableBorrowers.length > 0
-                  ? tableBorrowers[0].date +
-                    " to " +
-                    tableBorrowers[tableBorrowers.length - 1].date
-                  : "empty"
-              }.csv`}
+              exportedFileName={`Pigme.csv`}
             />):<CircularLoader isLoading={isLoading} data="Pigme Data" failure={tableBorrowers?.length<=0}/>}
           </div>
         </div>

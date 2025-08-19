@@ -663,13 +663,7 @@ const MobileAppEnroll = () => {
                   data={filterOption(TableEnrolls, searchText)}
                   columns={columns}
                   exportedPdfName="Mobile App Enrollments"
-                  exportedFileName={`Enrollments-${
-                    TableEnrolls.length > 0
-                      ? TableEnrolls[0].name +
-                      " to " +
-                      TableEnrolls[TableEnrolls.length - 1].name
-                      : "empty"
-                    }.csv`}
+                  exportedFileName={`Mobile App Enrollments.csv`}
                 />
               ) : (
                 <CircularLoader

@@ -305,6 +305,7 @@ const HardTransfer = () => {
               data={filterOption(transferData, searchText)}
               columns={columns}
               exportedPdfName="Hard Amount Transfer"
+              exportedFileName="Hard Amount Transfer.csv"
             />
           ) : (
             <CircularLoader

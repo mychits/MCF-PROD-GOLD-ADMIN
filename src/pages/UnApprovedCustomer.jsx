@@ -130,6 +130,7 @@ const UnApprovedCustomer = () => {
           id: index + 1,
           name: group.full_name,
           phone_number: group.phone_number,
+          createdAt: group.createdAt?.split("T")[0],
           address: group.address,
           pincode: group.pincode,
           customer_id: group.customer_id,
@@ -421,6 +422,7 @@ const UnApprovedCustomer = () => {
     { key: "customer_id", header: "Customer Id" },
     { key: "name", header: "Customer Name" },
     { key: "phone_number", header: "Customer Phone Number" },
+    {key: "createdAt", header: "Joined On"},
     { key: "address", header: "Customer Address" },
     { key: "pincode", header: "Customer Pincode" },
     { key: "collection_area", header: "Area" },
@@ -649,13 +651,7 @@ const UnApprovedCustomer = () => {
                 data={filterOption(TableUsers, searchText)}
                 columns={columns}
                 exportedPdfName="UnApproved Customers"
-                exportedFileName={`Customers-${
-                  TableUsers.length > 0
-                    ? TableUsers[0].name +
-                      " to " +
-                      TableUsers[TableUsers.length - 1].name
-                    : "empty"
-                }.csv`}
+                exportedFileName={`UnApproved Customers.csv`}
               />
             ) : (
               <CircularLoader

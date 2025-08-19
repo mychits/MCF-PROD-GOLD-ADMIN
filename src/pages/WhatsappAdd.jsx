@@ -257,13 +257,7 @@ const WhatsappAdd = () => {
               data={TableUsers}
               columns={columns}
               exportedPdfName="Whatsapp Add"
-              exportedFileName={`whatsapp-${
-                TableUsers.length > 0 
-                  ? TableUsers[0].name +
-                    " to " +
-                    TableUsers[TableUsers.length - 1].name
-                  : "empty"
-              }.csv`}
+              exportedFileName={`whatsapp Add.csv`}
             />): (
               <CircularLoader
                 isLoading={isLoading}

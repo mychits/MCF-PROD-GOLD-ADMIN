@@ -801,13 +801,7 @@ const WhatsappPromo = () => {
                   selectedGroupName || "All",
                   selectedFromDate || "NA",
                 ]}
-                exportedFileName={`whatsapp-${
-                  filteredUsers.length > 0
-                    ? filteredUsers[0].full_name +
-                      " to " +
-                      filteredUsers[filteredUsers.length - 1].full_name
-                    : "empty"
-                }.csv`}
+                exportedFileName={`whatsapp Promo.csv`}
               />
             ) : (
               <CircularLoader

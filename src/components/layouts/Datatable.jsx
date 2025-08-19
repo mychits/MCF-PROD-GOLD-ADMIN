@@ -101,6 +101,7 @@ const DataTable = ({
   );
 
   const exportToExcel = () => {
+    const date = new Date().toISOString().split("T")[0];
     const headers = exportColumns.map((col) => {if(col.header.toLowerCase() ==="action") return;
       return col.header}).join(",");
     const rows = processedData
@@ -113,7 +114,9 @@ const DataTable = ({
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = exportedFileName;
+    const fileBaseName = exportedFileName.replace(/\.csv$/i, "").trim();
+  a.download = `${fileBaseName}_${date}.csv`;
+    //a.download = exportedFileName;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -219,7 +222,10 @@ const printToPDF = () => {
   // Default settings for all reports
   let showSummaryCards = true;
   let showCountCards = true;
-  const reportType = String(exportedPdfName || "").trim();
+  const date = new Date().toISOString().split("T")[0];
+const reportType = String(exportedPdfName || "").trim();
+const fileName = `${reportType}_${date}`;
+//  const reportType = String(exportedPdfName || "").trim();
   // Customize visibility based on report type
   switch (reportType) {
      case "Groups":
@@ -518,14 +524,14 @@ const printToPDF = () => {
     img.src = imageInput;
     img.onload = () => {
       document.body.appendChild(printContent);
-      document.title = reportType || "MyChits";
+      document.title = fileName || "MyChits";
       window.print();
       document.body.removeChild(printContent);
       document.title = "MyChits";
     };
   } else {
     document.body.appendChild(printContent);
-    document.title = reportType || "MyChits";
+    document.title = fileName || "MyChits";
     window.print();
     document.body.removeChild(printContent);
     document.title = "MyChits";

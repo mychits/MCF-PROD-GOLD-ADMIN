@@ -833,11 +833,11 @@ const CommissionReport = () => {
     commissionTotalDetails?.total_customers || "0",
     commissionTotalDetails?.total_groups || "0"
   ]}
-  exportedFileName={`CommissionReport-${selectedEmployeeId || "all"}.csv`}
+  exportedFileName={`CommissionReport-${selectedEmployeeDetails?.name || "all"}.csv`}
 />
             </>
           ) : (
-            selectedEmployeeId && (
+            selectedEmployeeDetails?.name && (
               <p className="text-center font-bold text-lg">
                 No Commission Data found.
               </p>

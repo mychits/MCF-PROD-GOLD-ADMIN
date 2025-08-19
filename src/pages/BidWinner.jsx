@@ -299,7 +299,7 @@ const BidWinner = () => {
                   exportedPdfName="Bid Winner"
                   printHeaderKeys={["Group Name"]}
                   printHeaderValues={[groupFilter]}
-                  exportedFileName={`CustomerReport.csv`}
+                  exportedFileName={`Bid Winner.csv`}
                 />
               </div>
             </div>

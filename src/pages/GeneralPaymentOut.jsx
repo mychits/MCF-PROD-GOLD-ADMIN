@@ -485,13 +485,7 @@ const selectednewGroup = groups.find(g => g._id === selectedAuctionGroupId);
                     selectednewGroup?.group_name,
                     double.amount
                   ]}
-                  exportedFileName={`Auctions ${
-                    TableAuctions.length > 1
-                      ? TableAuctions[1].date +
-                        " to " +
-                        TableAuctions[TableAuctions.length - 1].date
-                      : "empty"
-                  }.csv`}
+                  exportedFileName={`General Payment Out.csv`}
                 />
               ) : (
                 <CircularLoader

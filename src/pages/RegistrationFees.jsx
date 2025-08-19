@@ -995,13 +995,7 @@ const RegistrationFee = () => {
                     )}
                     columns={columns}
                     exportedPdfName="Registration Fees"
-                    exportedFileName={`Payments ${
-                      TablePayments.length > 0
-                        ? TablePayments[0].date +
-                          " to " +
-                          TablePayments[TablePayments.length - 1].date
-                        : "empty"
-                    }.csv`}
+                    exportedFileName={`Registration Fees.csv`}
                   />
                 ) : (
                   <div className="mt-10 text-center text-gray-500">

@@ -571,13 +571,7 @@ const Staff = () => {
                 data={filterOption(TableAgents, searchText)}
                 columns={columns}
                 exportedPdfName="Staff"
-                exportedFileName={`Employees-${
-                  TableAgents.length > 0
-                    ? TableAgents[0].name +
-                      " to " +
-                      TableAgents[TableAgents.length - 1].name
-                    : "empty"
-                }.csv`}
+                exportedFileName={`Staff.csv`}
               />
             ) : (
               <CircularLoader

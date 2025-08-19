@@ -405,12 +405,7 @@ const EnrollmentReport = () => {
                 data={filterOption(TableGroups, searchText)}
                 columns={columns}
                 exportedPdfName={`Enrollment Report`}
-                exportedFileName={`Leads-${TableGroups.length > 0
-                  ? TableGroups[0].date +
-                  " to " +
-                  TableGroups[TableGroups.length - 1].date
-                  : "empty"
-                  }.csv`}
+                exportedFileName={`Enrollment Report.csv`}
               />
             ) : (
               <div className="flex w-full justify-center items-center">

@@ -357,6 +357,7 @@ const CollectionAreaMapping = () => {
                 data={filterOption(tableCollectionAreaMapping, searchText)}
                 columns={columns}
                 exportedPdfName="Collection Area Mapping"
+                exportedFileName="Collection Area Mapping.csv"
               />
             ) : (
               <CircularLoader

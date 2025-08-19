@@ -450,8 +450,7 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                   data={salaryPayments}
                   columns={salaryColumns}
                   exportedPdfName="PayOut Salary"
-                  exportedFileName={`salary_Payments_${today.toISOString().split("T")[0]
-                    }.csv`}
+                  exportedFileName={`PayOut Salary.csv`}
                 />
               ) : (
                 <div className="mt-10 text-center text-gray-500">

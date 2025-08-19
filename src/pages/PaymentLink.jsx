@@ -310,13 +310,7 @@ const User = () => {
                 }))}
                 columns={columns}
                 exportedPdfName="Payment Link"
-                exportedFileName={`Customers-${
-                  TableUsers.length > 0
-                    ? TableUsers[0].name +
-                      " to " +
-                      TableUsers[TableUsers.length - 1].name
-                    : "empty"
-                }.csv`}
+                exportedFileName={`Payment Link.csv`}
               />
             ) : (
               <CircularLoader

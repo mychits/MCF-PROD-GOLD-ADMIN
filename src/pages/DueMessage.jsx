@@ -328,7 +328,7 @@ useEffect(() => {
                   exportedPdfName="Due Message"
                   printHeaderKeys={["Group Name"]}
                   printHeaderValues={[groupFilter]}
-                  exportedFileName={`CustomerReport.csv`}
+                  exportedFileName={`Due Message.csv`}
                 />
               </div>
             </div>

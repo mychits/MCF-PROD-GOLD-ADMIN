@@ -1259,15 +1259,7 @@ const GroupReport = () => {
                                   `₹${paidAmount}`,
                                   `₹${balanceAmount}`,
                                 ]}
-                                exportedFileName={`Employees-${
-                                  TableEnrollsDate.length > 0
-                                    ? TableEnrollsDate[0].name +
-                                      " to " +
-                                      TableEnrollsDate[
-                                        TableEnrollsDate.length - 1
-                                      ].name
-                                    : "empty"
-                                }.csv`}
+                                exportedFileName={`Date-wise Group Report.csv`}
                               />
                             </div>
                           ) : (

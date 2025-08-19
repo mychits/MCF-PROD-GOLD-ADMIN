@@ -712,13 +712,7 @@ const LeadReport = () => {
                 data={filterOption(TableGroups, searchText)}
                 columns={columns}
                 exportedPdfName="Lead Report"
-                exportedFileName={`Leads-${
-                  TableGroups.length > 0
-                    ? TableGroups[0].date +
-                      " to " +
-                      TableGroups[TableGroups.length - 1].date
-                    : "empty"
-                }.csv`}
+                exportedFileName={`Lead Report.csv`}
               />
             )}
 

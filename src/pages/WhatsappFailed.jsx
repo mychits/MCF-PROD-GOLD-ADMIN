@@ -409,13 +409,7 @@ const WhatsappFailed = () => {
               data={TableUsers}
               columns={columns}
               exportedPdfName="Whatsapp Failed"
-              exportedFileName={`WhatsappFailedCustomers-${
-                TableUsers.length > 0
-                  ? TableUsers[0].name +
-                    " to " +
-                    TableUsers[TableUsers.length - 1].name
-                  : "empty"
-              }.csv`}
+              exportedFileName={`Whatsapp Failed Customers.csv`}
             />): (
               <CircularLoader
                 isLoading={isLoading}

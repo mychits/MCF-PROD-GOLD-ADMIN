@@ -790,13 +790,7 @@ const selectednewGroup = actualGroups.find(
                     exportedPdfName="PayOut Others"
                     printHeaderKeys={["Group Name"]}
                     printHeaderValues={[selectednewGroup?.group_name]}
-                    exportedFileName={`Payments ${
-                      TablePayments.length > 0
-                        ? TablePayments[0].date +
-                          " to " +
-                          TablePayments[TablePayments.length - 1].date
-                        : "empty"
-                    }.csv`}
+                    exportedFileName={`PayOut Others.csv`}
                   />
                 ) : (
                   <div className="mt-10 text-center text-gray-500">

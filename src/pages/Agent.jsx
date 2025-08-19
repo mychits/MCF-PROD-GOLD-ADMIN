@@ -533,12 +533,7 @@ const Agent = () => {
                 data={filterOption(TableAgents, searchText)}
                 columns={columns}
                 exportedPdfName={`Agents`}
-                exportedFileName={`Employees-${TableAgents.length > 0
-                  ? TableAgents[0].name +
-                  " to " +
-                  TableAgents[TableAgents.length - 1].name
-                  : "empty"
-                  }.csv`}
+                exportedFileName={`Agents.csv`}
               />
             ) : (
               <CircularLoader isLoading={isLoading} failure={TableAgents?.length <= 0} data="Employee Data" />

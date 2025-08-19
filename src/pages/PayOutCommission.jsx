@@ -509,8 +509,7 @@ const PayOutCommission = () => {
                   data={commissionPayments}
                   columns={commissionColumns}
                   exportedPdfName="PayOut Commission"
-                  exportedFileName={`Commission_Payments_${new Date().toISOString().split("T")[0]
-                    }.csv`}
+                  exportedFileName={`Commission Payments.csv`}
                 />
               ) : (
                 <div className="mt-10 text-center text-gray-500">

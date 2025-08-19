@@ -105,7 +105,7 @@ const Group = () => {
             " Group",
           value: group?.group_value,
           monthly_installment: group.monthly_installment,
-          relationship_manager: group.relationship_manager,
+          relationship_manager: group.relationship_manager?.name || "N/A",
           installment: group.group_install,
           incentives: group.incentives,
           members: group?.group_members,
@@ -236,7 +236,7 @@ const Group = () => {
         "Group Members must be greater than zero (no symbols).";
     }
     if (!data.relationship_manager) {
-      newErrors.group_members = "Relationship Manager is required";
+      newErrors.relationship_manager = "Relationship Manager is required";
     }
     if (!data.monthly_installment) {
       newErrors.monthly_installment = "Monthly Installment is required";
@@ -382,8 +382,7 @@ const Group = () => {
         group_commission: response?.data?.group_commission,
         incentives: response?.data?.incentives,
         reg_fee: response?.data?.reg_fee,
-       
-        relationship_manager: response?.data?.relationship_manager,
+        relationship_manager: response?.data?.relationship_manager?._id,
         monthly_installment: response?.data?.monthly_installment,
       });
       setShowModalUpdate(true);
@@ -518,14 +517,8 @@ const Group = () => {
                 updateHandler={handleUpdateModalOpen}
                 data={filterOption(TableGroups, searchText)}
                 columns={columns}
-                exportedPdfName="Groups"
-                exportedFileName={`Groups-${
-                  TableGroups.length > 0
-                    ? TableGroups[0].date.split("T")[0] +
-                      " to " +
-                      TableGroups[TableGroups.length - 1].date.split("T")[0]
-                    : "empty"
-                }.csv`}
+                exportedPdfName={`Groups`}
+                exportedFileName={`Groups.csv`}
               />
             ) : (
               <CircularLoader
@@ -605,13 +598,14 @@ const Group = () => {
                 </label>
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                  placeholder="Select or Search Group Type"
+                  placeholder="Select or Search Relationship Manager"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="relationship_manager"
-                  filterOption={(input, option) =>
-                    option.children.toLowerCase().includes(input.toLowerCase())
-                  }
+                  filterOption={(input, option) => {
+                    const text = `${option.children}`; // Coerce children to string
+                    return text.toLowerCase().includes(input.toLowerCase());
+                  }}
                   value={formData?.relationship_manager || undefined}
                   onChange={(value) =>
                     handleAntDSelect("relationship_manager", value)
@@ -625,9 +619,9 @@ const Group = () => {
                     )
                   )}
                 </Select>
-                {errors.group_type && (
+                {errors.relationship_manager && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.group_type}
+                    {errors.relationship_manager}
                   </p>
                 )}
               </div>
@@ -1003,13 +997,14 @@ const Group = () => {
                 </label>
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                  placeholder="Select or Search Group Type"
+                  placeholder="Select or Search Relationship Manager"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="relationship_manager"
-                  filterOption={(input, option) =>
-                    option.children.toLowerCase().includes(input.toLowerCase())
-                  }
+                  filterOption={(input, option) => {
+                    const text = `${option.children}`; // Coerce children to string
+                    return text.toLowerCase().includes(input.toLowerCase());
+                  }}
                   value={updateFormData?.relationship_manager || undefined}
                   onChange={(value) =>
                     handleAntInputDSelect("relationship_manager", value)
@@ -1023,9 +1018,9 @@ const Group = () => {
                     )
                   )}
                 </Select>
-                {errors.group_type && (
+                {errors.relationship_manager && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.group_type}
+                    {errors.relationship_manager}
                   </p>
                 )}
               </div>
@@ -1138,7 +1133,7 @@ const Group = () => {
                     type="text"
                     name="monthly_installment"
                     value={updateFormData.monthly_installment}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                     id="monthly_install"
                     placeholder="Enter Monthly Installment"
                     required
@@ -1146,7 +1141,7 @@ const Group = () => {
                   />
                   {errors.monthly_installment && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.start_date}
+                      {errors.monthly_installment}
                     </p>
                   )}
                 </div>
