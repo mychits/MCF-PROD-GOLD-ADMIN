@@ -142,7 +142,7 @@ const Auction = () => {
   const handleChangeUser = (e) => {
     const { name, value } = e.target;
     const [user_id, ticket] = value.split("-");
-    console.log(user_id,ticket,"this is it");
+    
     setFormData((prevData) => ({
       ...prevData,
       user_id,
@@ -157,7 +157,7 @@ const Auction = () => {
     if (groupId) {
       try {
         const response = await api.get(
-          `/enroll/get-group-enroll-auction/${groupId}`
+          `/enroll/get-group-enroll-auction-all/${groupId}`
         );
         if (response.data && response.data.length > 0) {
           setFilteredUsers(response.data);
