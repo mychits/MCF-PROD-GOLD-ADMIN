@@ -29,13 +29,14 @@ const User = () => {
   const [files, setFiles] = useState({});
   const [districts, setDistricts] = useState([]);
   const [reloadTrigger, setReloadTrigger] = useState(0);
+  const [collectionExecutive, setCollectionExecutive] = useState([]);
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
     message: "Something went wrong!",
     type: "info",
   });
   const [errors, setErrors] = useState({});
-
+  const [agents, setAgents] = useState([]);
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -47,6 +48,7 @@ const User = () => {
     pan_no: "",
     track_source: "admin_panel",
     collection_area: "",
+    collection_executive: "",
   });
 
   const [updateFormData, setUpdateFormData] = useState({
@@ -85,6 +87,7 @@ const User = () => {
     bank_account_number: "",
     bank_IFSC_code: "",
     selected_plan: "",
+    collection_executive: "",
   });
 
   const [searchText, setSearchText] = useState("");
@@ -107,6 +110,18 @@ const User = () => {
     };
     fetchCollectionArea();
   }, [reloadTrigger]);
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await api.get("/agent/get-agent");
+        setCollectionExecutive(response.data);
+      } catch (err) {
+        console.error("Failed to fetch employee", err);
+      }
+    };
+    fetchAgents();
+  }, []);
 
   useEffect(() => {
     const fetchDistricts = async () => {
@@ -378,7 +393,8 @@ const User = () => {
           pincode: "",
           adhaar_no: "",
           pan_no: "",
-
+          collection_executive: "",
+          collection_area: "",
           track_source: "admin-panel",
         });
       } catch (error) {
@@ -471,6 +487,7 @@ const User = () => {
         district: response?.data?.district,
         state: response?.data?.state,
         collection_area: response?.data?.collection_area?._id || "",
+        collection_executive: response?.data?.collection_executive?._id || "",
         alternate_number: response?.data?.alternate_number,
         referral_name: response?.data?.referral_name,
         nominee_name: response?.data?.nominee_name,
@@ -867,7 +884,8 @@ const User = () => {
                   <p className="mt-2 text-sm text-red-600">{errors.address}</p>
                 )}
               </div>
-              <div className="w-full">
+              <div className="flex flex-row justify-between space-x-4">
+              <div className="w-1/2">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="area"
@@ -898,7 +916,39 @@ const User = () => {
                   ))}
                 </Select>
               </div>
-
+              
+              <div className="w-1/2">
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="area"
+                >
+                  Collection Executive
+                </label>
+                <Select
+                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  placeholder="Select Or Search Collection Area"
+                  popupMatchSelectWidth={false}
+                  name="collection_executive"
+                  showSearch
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={formData?.collection_executive || undefined}
+                  onChange={(value) =>
+                    handleAntDSelect("collection_executive", value)
+                  }
+                >
+                  {collectionExecutive.map((collection) => (
+                    <Select.Option key={collection._id} value={collection._id}>
+                      {`${collection.name} | ${collection.phone_number}`}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              </div>
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
@@ -1137,7 +1187,7 @@ const User = () => {
                 </div>
               </div>
               <div className="flex flex-row justify-between space-x-4">
-                <div className="w-full">
+                <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="area"
@@ -1172,6 +1222,37 @@ const User = () => {
                     ))}
                   </Select>
                 </div>
+                <div className="w-1/2">
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="area"
+                >
+                  Collection Executive
+                </label>
+                <Select
+                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  placeholder="Select Or Search Collection Executive"
+                  popupMatchSelectWidth={false}
+                  name="collection_executive"
+                  showSearch
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={updateFormData?.collection_executive || undefined}
+                  onChange={(value) =>
+                    handleAntInputDSelect("collection_executive", value)
+                  }
+                >
+                  {collectionExecutive.map((collection) => (
+                    <Select.Option key={collection._id} value={collection._id}>
+                      {`${collection.name} | ${collection.phone_number}`}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
               </div>
 
               <div className="flex flex-row justify-between space-x-4">
