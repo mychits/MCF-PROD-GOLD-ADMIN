@@ -34,6 +34,7 @@ const GroupSettings = () => {
     maximum_bid: "",
     commission: 5,
     reg_fee: "",
+    createdAt: "",
   });
 
   useEffect(() => {
@@ -60,6 +61,7 @@ const GroupSettings = () => {
           ),
           id: index + 1,
           name: group.group_name,
+          group_created: group?.createdAt.split("T")[0],
           type: `${group.group_type
             .charAt(0)
             .toUpperCase()}${group.group_type.slice(1)} Group`,
@@ -178,6 +180,7 @@ const GroupSettings = () => {
     { key: "checkBox", header: "Mobile Access" },
     { key: "id", header: "SL. NO" },
     { key: "name", header: "Group Name" },
+    {key: "group_created", header: "Created On"},
     { key: "type", header: "Group Type" },
     { key: "value", header: "Group Value" },
     { key: "installment", header: "Group Installment" },
