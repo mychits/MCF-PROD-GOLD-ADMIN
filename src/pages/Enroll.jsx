@@ -74,7 +74,11 @@ const Enroll = () => {
     agent: "",
     referred_lead: "",
     chit_asking_month: "",
-    
+    blocked_referral: false,
+    blocked_referral_type: "",
+    blocked_referred_customer: "",
+    blocked_referred_lead: "",
+    blocked_referred_agent: "",
   });
 
   const [searchText, setSearchText] = useState("");
@@ -89,8 +93,8 @@ const Enroll = () => {
     const adminId = userObj._id;
     if (adminId) {
       setAdmin(userObj._id);
-      
-      setFormData(prev => ({...prev,created_by:adminId}));
+
+      setFormData((prev) => ({ ...prev, created_by: adminId }));
     } else {
       setAdmin("");
     }
@@ -101,7 +105,6 @@ const Enroll = () => {
         const response = await api.get("/group/get-group-admin");
 
         setGroups(response.data);
-       
       } catch (error) {
         console.error("Error fetching group data:", error);
       }
@@ -250,11 +253,39 @@ const Enroll = () => {
       }
     }
   };
+  function setRefferedType(referralArray) {
+    const found = referralArray.find((referee) => referee.data);
+    return found ? found.value : null;
+  }
   const handleAntInputDSelect = (field, value) => {
-    setUpdateFormData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
+    if (field === "referred_type" && value === "Blocked Referral") {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        referred_type: "",
+        blocked_referral: true,
+        referred_customer: "",
+        referred_lead: "",
+        agent: "",
+        blocked_referral_type: setRefferedType([
+          { data: prevData?.referred_customer, value: "Customer" },
+          { data: prevData?.referred_lead, value: "Lead" },
+          { data: prevData?.agent, value: "Agent" },
+        ]),
+        blocked_referred_customer: prevData?.referred_customer?._id,
+        blocked_referred_lead: prevData?.referred_lead?._id,
+        blocked_referred_agent: prevData?.agent?._id,
+      }));
+      return;
+    } else {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        blocked_referral_type: false,
+        blocked_referred_customer: "",
+        blocked_referred_lead: "",
+        blocked_referred_agent: "",
+        [field]: value,
+      }));
+    }
 
     setErrors({ ...errors, [field]: "" });
   };
@@ -371,7 +402,6 @@ const Enroll = () => {
     { key: "action", header: "Action" }
   );
 
-
   const handleChange = async (e) => {
     const { name, value } = e.target;
 
@@ -440,7 +470,7 @@ const Enroll = () => {
         referred_lead,
         chit_asking_month,
         email_id,
-        created_by
+        created_by,
       } = formData;
       const ticketsCount = parseInt(no_of_tickets, 10);
       const ticketEntries = availableTicketsAdd
@@ -457,7 +487,7 @@ const Enroll = () => {
           chit_asking_month: Number(chit_asking_month),
           tickets: ticketNumber,
           email_id,
-          created_by
+          created_by,
         }));
 
       try {
@@ -524,6 +554,12 @@ const Enroll = () => {
         referred_lead: response.data?.referred_lead,
         referred_type: response.data?.referred_type,
         chit_asking_month: response.data?.chit_asking_month || "",
+        blocked_referral: response.data?.blocked_referral || false,
+        blocked_referral_type: response.data?.blocked_referral_type || "",
+        blocked_referral_customer:
+          response.data?.blocked_referral_customer || "",
+        blocked_referral_lead: response.data?.blocked_referral_lead || "",
+        blocked_referral_agent: response.data?.blocked_referral_agent || "",
       });
       setShowModalUpdate(true);
     } catch (error) {
@@ -658,11 +694,11 @@ const Enroll = () => {
           );
         if (referredCustomerName)
           referredInfoParts.push(
-            `👤 Already referred by Customer Name: ${referredCustomerName}`
+            `Already referred by Customer Name: ${referredCustomerName}`
           );
         if (referredLeadName)
           referredInfoParts.push(
-            `🧲 Already referred by Lead Name: ${referredLeadName}`
+            ` Already referred by Lead Name: ${referredLeadName}`
           );
         if (referredInfoParts.length === 0)
           referredInfoParts.push("Enrollment exists with no referral info.");
@@ -909,10 +945,10 @@ const Enroll = () => {
                     const selectedUser = users.find((u) => u._id === value);
                     if (selectedUser) {
                       setEmail(selectedUser.email || "");
-                       setFormData((prev) => ({
-                          ...prev,
-                          email_id: selectedUser.email,
-                        }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        email_id: selectedUser.email,
+                      }));
                     }
                   }}
                 >
@@ -934,15 +970,15 @@ const Enroll = () => {
                       title="Email ID For Payment Link Submission"
                       type="email"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2"
-                      value={email|| ""}
-                      onChange={(e) => { setEmail(e.target.value);
+                      value={email || ""}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
                         setFormData((prev) => ({
                           ...prev,
                           email_id: e.target.value,
-                        }))}
-                      }
+                        }));
+                      }}
                     />
-                    
                   </div>
                 )}
                 {errors.email_id && (
@@ -1009,6 +1045,7 @@ const Enroll = () => {
                     "Customer",
                     "Employee",
                     "Leads",
+
                     "Others",
                   ].map((refType) => (
                     <Select.Option key={refType} value={refType}>
@@ -1123,6 +1160,7 @@ const Enroll = () => {
                   </Select>
                 </div>
               )}
+
               {formData.group_id && availableTicketsAdd.length === 0 ? (
                 <p className="text-center text-red-600 font-medium">
                   Group is Full
@@ -1379,6 +1417,7 @@ const Enroll = () => {
                     "Customer",
                     "Employee",
                     "Leads",
+                    "Blocked Referral",
                     "Others",
                   ].map((refType) => (
                     <Select.Option key={refType} value={refType}>
