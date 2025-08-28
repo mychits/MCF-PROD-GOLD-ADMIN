@@ -235,8 +235,8 @@ const MenuSidebar = [
         submenuItems: [
           {
             id: ids.sixteen,
-            title: "Filter Groups",
-            icon: <FaFilter size="10" />,
+            title: "Mobile Access Groups",
+            icon: <FaFilter size={18} />,
             link: "/filter-groups",
           },
         ],
