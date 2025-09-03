@@ -58,7 +58,8 @@ const AllUserReport = () => {
                   data.enrollment.group.group_install
                 );
                 const groupType = data.enrollment.group.group_type;
-                const firstInstallment = data.enrollment?.group?.monthly_installment;
+                const firstInstallment =
+                  data.enrollment?.group?.monthly_installment;
                 const totalPaidAmount = data.payments.totalPaidAmount;
                 const auctionCount = parseInt(data?.auction?.auctionCount);
                 const totalPayable = data.payable.totalPayable;
@@ -182,15 +183,16 @@ const AllUserReport = () => {
     { key: "groupValue", header: "Group Value" },
     { key: "paymentsTicket", header: "Ticket" },
     { key: "enrollmentDate", header: "Enrollment Date" },
-    {
-      key: "firstInstallment",
-      header: "First Installment",
-    },
-     { key: "referred_type", header: "Referred Type" },
+
+    { key: "referred_type", header: "Referred Type" },
     { key: "reffered_by", header: "Referred By" },
     { key: "relationshipManager", header: "Relationship Manager" },
     { key: "payment_type", header: "Payment Type" },
     { key: "amountPaid", header: "Amount Paid" },
+    {
+      key: "firstInstallment",
+      header: "First Installment",
+    },
     { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "balance", header: "Balance" },
     { key: "collectionArea", header: "Collection Area" },
@@ -206,16 +208,18 @@ const AllUserReport = () => {
     { key: "groupValue", header: "Group Value" },
     { key: "paymentsTicket", header: "Ticket" },
     { key: "enrollmentDate", header: "Enrollment Date" },
-    {
-      key: "firstInstallment",
-      header: "First Installment",
-    },
+
     { key: "referred_type", header: "Referred Type" },
     { key: "reffered_by", header: "Referred By" },
     { key: "relationshipManager", header: "Relationship Manager" },
     { key: "amountPaid", header: "Amount Paid" },
     { key: "payment_type", header: "Payment Type" },
     { key: "totalToBePaid", header: "Amount to be Paid" },
+
+    {
+      key: "firstInstallment",
+      header: "First Installment",
+    },
     { key: "collectionExecutive", header: "Collection Executive" },
     { key: "collectionArea", header: "Collection Area" },
     { key: "balance", header: "Balance" },
