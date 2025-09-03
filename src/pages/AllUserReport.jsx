@@ -58,6 +58,7 @@ const AllUserReport = () => {
                   data.enrollment.group.group_install
                 );
                 const groupType = data.enrollment.group.group_type;
+                const firstInstallment = data.enrollment?.group?.monthly_installment;
                 const totalPaidAmount = data.payments.totalPaidAmount;
                 const auctionCount = parseInt(data?.auction?.auctionCount);
                 const totalPayable = data.payable.totalPayable;
@@ -69,6 +70,7 @@ const AllUserReport = () => {
                   sl_no: count,
                   _id: id,
                   userName: usrData.userName,
+                  firstInstallment,
                   userPhone: usrData.phone_number,
                   customerId: usrData.customer_id,
                   collectionArea: usrData.collection_area || "N/A",
@@ -78,7 +80,8 @@ const AllUserReport = () => {
                   groupValue: data?.enrollment?.group?.group_value,
                   groupName: data.enrollment.group.group_name,
                   profit: totalProfit,
-                  relationshipManager :data?.enrollment?.relationship_manager?.name || "N/A",
+                  relationshipManager:
+                    data?.enrollment?.relationship_manager?.name || "N/A",
 
                   reffered_by: data?.enrollment?.agent
                     ? data.enrollment.agent
@@ -172,46 +175,49 @@ const AllUserReport = () => {
 
   const Auctioncolumns = [
     { key: "sl_no", header: "SL. NO" },
+    { key: "customerId", header: "Customer Id" },
     { key: "userName", header: "Customer Name" },
     { key: "userPhone", header: "Phone Number" },
-    { key: "customerId", header: "Customer Id" },
     { key: "groupName", header: "Group Name" },
     { key: "groupValue", header: "Group Value" },
-    { key: "enrollmentDate", header: "Enrollment Date" },
-    { key: "referred_type", header: "Referred Type" },
-    // { key: "agent", header: "Referred Agent" },
-    // { key: "reffered_customer", header: "Referred Customer" },
-    // { key: "reffered_lead", header: "Referred Lead" },
-    { key: "reffered_by", header: "Referred By" },
-    { key: "payment_type", header: "Payment Type" },
     { key: "paymentsTicket", header: "Ticket" },
-    { key: "totalToBePaid", header: "Amount to be Paid" },
-    { key: "profit", header: "Profit" },
+    { key: "enrollmentDate", header: "Enrollment Date" },
+    {
+      key: "firstInstallment",
+      header: "First Installment",
+    },
+     { key: "referred_type", header: "Referred Type" },
+    { key: "reffered_by", header: "Referred By" },
     { key: "relationshipManager", header: "Relationship Manager" },
-    { key: "collectionExecutive", header: "Collection Executive" },
-    { key: "collectionArea", header: "Collection Area" },
+    { key: "payment_type", header: "Payment Type" },
     { key: "amountPaid", header: "Amount Paid" },
+    { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "balance", header: "Balance" },
+    { key: "collectionArea", header: "Collection Area" },
+    { key: "collectionExecutive", header: "Collection Executive" },
     { key: "statusDiv", header: "Status" },
   ];
   const ExcelColumns = [
     { key: "sl_no", header: "SL. NO" },
+    { key: "customerId", header: "Customer Id" },
     { key: "userName", header: "Customer Name" },
     { key: "userPhone", header: "Phone Number" },
-    { key: "customerId", header: "Customer Id" },
     { key: "groupName", header: "Group Name" },
     { key: "groupValue", header: "Group Value" },
+    { key: "paymentsTicket", header: "Ticket" },
     { key: "enrollmentDate", header: "Enrollment Date" },
+    {
+      key: "firstInstallment",
+      header: "First Installment",
+    },
     { key: "referred_type", header: "Referred Type" },
     { key: "reffered_by", header: "Referred By" },
-    { key: "payment_type", header: "Payment Type" },
-    { key: "paymentsTicket", header: "Ticket" },
-    { key: "totalToBePaid", header: "Amount to be Paid" },
-    { key: "profit", header: "Profit" },
     { key: "relationshipManager", header: "Relationship Manager" },
+    { key: "amountPaid", header: "Amount Paid" },
+    { key: "payment_type", header: "Payment Type" },
+    { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "collectionExecutive", header: "Collection Executive" },
     { key: "collectionArea", header: "Collection Area" },
-    { key: "amountPaid", header: "Amount Paid" },
     { key: "balance", header: "Balance" },
     { key: "status", header: "Status" },
   ];
@@ -228,7 +234,6 @@ const AllUserReport = () => {
     searchText
   );
 
-  // 2️⃣ Totals calculation
   const total = {
     totalCustomers: filteredTableData.length,
     totalGroups: new Set(filteredTableData.map((u) => u.groupName)).size,
