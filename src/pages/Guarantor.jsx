@@ -35,7 +35,7 @@ const Guarantor = () => {
   const [customRelationship, setCustomRelationship] = useState("");
   const [errors, setErrors] = useState({});
   const [filteredEnrollments, setFilteredEnrollments] = useState([]);
- 
+
   const [formData, setFormData] = useState({
     user_id: "",
     guarantor_name: "",
@@ -141,7 +141,7 @@ const Guarantor = () => {
     const { value } = e.target;
     setSearchText(value);
   };
-    const [extraDocs, setExtraDocs] = useState(
+  const [extraDocs, setExtraDocs] = useState(
     formData.guarantor_all_document || [
       { document_name: "", file: null, preview: "" },
     ]
@@ -179,20 +179,20 @@ const Guarantor = () => {
   // };
 
   const handleExtraDocNameChange = (index, e) => {
-  const updated = [...extraDocs];
-  updated[index].document_name = e.target.value;
-  setExtraDocs(updated);
-};
-
-const handleExtraDocFileChange = (index, e) => {
-  const file = e.target.files[0];
-  if (file) {
     const updated = [...extraDocs];
-    updated[index].file = file;
-    updated[index].preview = URL.createObjectURL(file);
+    updated[index].document_name = e.target.value;
     setExtraDocs(updated);
-  }
-};
+  };
+
+  const handleExtraDocFileChange = (index, e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const updated = [...extraDocs];
+      updated[index].file = file;
+      updated[index].preview = URL.createObjectURL(file);
+      setExtraDocs(updated);
+    }
+  };
 
   //  Add/remove extra docs
   const addNewDocField = () => {
@@ -369,118 +369,385 @@ const handleExtraDocFileChange = (index, e) => {
     }));
   };
 
-  const validateForm = (type) => {
-    const newErrors = {};
-    const data = type === "addGuarantor" ? formData : updateFormData;
+//   const validateForm = (type) => {
+//     const newErrors = {};
+//     const data = type === "addGuarantor" ? formData : updateFormData;
 
-    const regex = {
-      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      phone: /^[6-9]\d{9}$/,
-      pincode: /^\d{6}$/,
-      adhaar: /^\d{12}$/,
-      pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-    };
+//     const regex = {
+//       email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+//       phone: /^[6-9]\d{9}$/,
+//       pincode: /^\d{6}$/,
+//       adhaar: /^\d{12}$/,
+//       pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+//     };
 
-    if (!data.user_id) newErrors.user_id = "Customer Name is required";
-    if (!data.guarantor_referred_type)
-      newErrors.guarantor_referred_type = "Referred Type is required";
-    if (!data.enrollment_ids || data.enrollment_ids.length === 0)
-      newErrors.enrollment_ids = "Enrollment is required";
+//     if (!data.user_id) newErrors.user_id = "Customer Name is required";
+//     if (!data.guarantor_referred_type)
+//       newErrors.guarantor_referred_type = "Referred Type is required";
+//     if (!data.enrollment_ids || data.enrollment_ids.length === 0)
+//       newErrors.enrollment_ids = "Enrollment is required";
 
-    if (data.guarantor_referred_type === "Customer") {
-      if (!data.user_guarantor)
-        newErrors.user_guarantor = "Referred Customer is required";
-    }
+//     if (data.guarantor_referred_type === "Customer") {
+//       if (!data.user_guarantor)
+//         newErrors.user_guarantor = "Referred Customer is required";
+//     }
+//     if (data.guarantor_referred_type === "Customer") {
+//       if (!data.guarantor_description?.trim())
+//         newErrors.guarantor_description = "Description is required";
+//     }
 
-    if (data.guarantor_referred_type === "Third Party") {
-      if (!data.guarantor_name?.trim())
-        newErrors.guarantor_name = "Guarantor Name is required";
+//     if (data.guarantor_referred_type === "Third Party") {
+//       if (!data.guarantor_name?.trim())
+//         newErrors.guarantor_name = "Guarantor Name is required";
+//       if (!data.guarantor_relationship_type?.trim())
+//         newErrors.guarantor_relationship_type =
+//           "Guarantor Relationship Customer is required";
 
-      if (!data.guarantor_phone_number)
-        newErrors.guarantor_phone_number = "Phone Number is required";
-      else if (!regex.phone.test(data.guarantor_phone_number))
-        newErrors.guarantor_phone_number = "Invalid Phone Number";
+//       if (!data.guarantor_phone_number)
+//         newErrors.guarantor_phone_number = "Phone Number is required";
+//       else if (!regex.phone.test(data.guarantor_phone_number))
+//         newErrors.guarantor_phone_number = "Invalid Phone Number";
 
-      if (data.guarantor_email && !regex.email.test(data.guarantor_email))
-        newErrors.guarantor_email = "Invalid Email format";
 
-      if (!data.guarantor_adhaar_no)
-        newErrors.guarantor_adhaar_no = "Adhaar Number is required";
-      else if (!regex.adhaar.test(data.guarantor_adhaar_no))
-        newErrors.guarantor_adhaar_no = "Invalid Adhaar Number";
+//       if (!data.guarantor_email)
+//         newErrors.guarantor_email = "Email  is required";
+//       else if (!regex.email.test(data.guarantor_email))
+//         newErrors.guarantor_email = "Invalid Email ";
 
-      if (!data.guarantor_pincode)
-        newErrors.guarantor_pincode = "Pincode is required";
-      else if (!regex.pincode.test(data.guarantor_pincode))
-        newErrors.guarantor_pincode = "Invalid Pincode";
+//       if (!data.guarantor_adhaar_no)
+//         newErrors.guarantor_adhaar_no = "Adhaar Number is required";
+//       else if (!regex.adhaar.test(data.guarantor_adhaar_no))
+//         newErrors.guarantor_adhaar_no = "Invalid Adhaar Number";
 
-      if (
-        data.guarantor_pan_no &&
-        !regex.pan.test(data.guarantor_pan_no.toUpperCase())
-      )
-        newErrors.guarantor_pan_no = "Invalid PAN format";
+//       if (!data.guarantor_pincode)
+//         newErrors.guarantor_pincode = "Pincode is required";
+//       else if (!regex.pincode.test(data.guarantor_pincode))
+//         newErrors.guarantor_pincode = "Invalid Pincode";
 
-      if (!data.guarantor_address?.trim())
-        newErrors.guarantor_address = "Address is required";
-      if (!data.guarantor_relationship_type?.trim())
-        newErrors.guarantor_relationship_type = "relationship is required";
-      if (!data.guarantor_occupation)
-        newErrors.guarantor_occupation = "Enter Occupation Details";
-      if (!data.guarantor_income)
-        newErrors.guarantor_income = "Guarantor income Details is required";
-    }
+//      if (!data.guarantor_pan_no)
+//         newErrors.guarantor_pan_no = "Pan Number is required";
+//       // else if (!regex.pan.test(data.guarantor_pan_no))
+//       //   newErrors.guarantor_pan_no = "Invalid Pan Number";
+//        // newErrors.guarantor_pan_no = "Invalid PAN format";
 
-    if (data.guarantor_referred_type === "Property") {
-      if (!data.guarantor_description?.trim())
-        newErrors.guarantor_description = "Description is required";
-    }
-    if (data.guarantor_referred_type === "Property") {
-      if (!data.guarantor_document_name?.trim())
-        newErrors.guarantor_document_name = "Document Name is required";
-    }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+//         if (!data.guarantor_photo || data.guarantor_photo.length === 0) {
+//     newErrors.guarantor_photo = "Profile Photo is required";
+//   } else if (typeof data.guarantor_photo === "string") {
+//     // if it's a URL from DB, allow it
+//     if (data.guarantor_photo.trim() === "") {
+//       newErrors.guarantor_photo = "Profile Photo is required";
+//     }
+//   } else if (data.guarantor_photo instanceof File) {
+//     // optional: file type & size validation
+//     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+//     if (!allowedTypes.includes(data.guarantor_photo.type)) {
+//       newErrors.guarantor_photo = "Only JPG and PNG files are allowed";
+//     }
+//     if (data.guarantor_photo.size > 2 * 1024 * 1024) {
+//       // 2MB limit
+//       newErrors.guarantor_photo = "File size must be less than 2MB";
+//     }
+//   }
+
+//       if (!data.guarantor_pan_document || data.guarantor_pan_document.length === 0) {
+//     newErrors.guarantor_pan_document = "Pan Photo is required";
+//   } else if (typeof data.guarantor_pan_document === "string") {
+//     // if it's a URL from DB, allow it
+//     if (data.guarantor_pan_document.trim() === "") {
+//       newErrors.guarantor_pan_document = "Pan Photo is required";
+//     }
+//   } else if (data.guarantor_pan_document instanceof File) {
+//     // optional: file type & size validation
+//     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+//     if (!allowedTypes.includes(data.guarantor_pan_document.type)) {
+//       newErrors.guarantor_pan_document = "Only JPG and PNG files are allowed";
+//     }
+//     if (data.guarantor_pan_document.size > 2 * 1024 * 1024) {
+//       // 2MB limit
+//       newErrors.guarantor_pan_document = "File size must be less than 2MB";
+//     }
+//   }
+
+//      if (!data.guarantor_aadhar_document || data.guarantor_aadhar_document.length === 0) {
+//     newErrors.guarantor_aadhar_document = "Aadhar Photo is required";
+//   } else if (typeof data.guarantor_aadhar_document === "string") {
+//     // if it's a URL from DB, allow it
+//     if (data.guarantor_aadhar_document.trim() === "") {
+//       newErrors.guarantor_aadhar_document = "Aadhar Photo is required";
+//     }
+//   } else if (data.guarantor_aadhar_document instanceof File) {
+//     // optional: file type & size validation
+//     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+//     if (!allowedTypes.includes(data.guarantor_aadhar_document.type)) {
+//       newErrors.guarantor_aadhar_document = "Only JPG and PNG files are allowed";
+//     }
+//     if (data.guarantor_aadhar_document.size > 2 * 1024 * 1024) {
+//       // 2MB limit
+//       newErrors.guarantor_aadhar_document = "File size must be less than 2MB";
+//     }
+//   }
+
+//    if (!data.guarantor_income_document || data.guarantor_income_document.length === 0) {
+//     newErrors.guarantor_income_document = "Occupation Document Photo is required";
+//   } else if (typeof data.guarantor_income_document === "string") {
+//     // if it's a URL from DB, allow it
+//     if (data.guarantor_income_document.trim() === "") {
+//       newErrors.guarantor_income_document = "Aadhar Photo is required";
+//     }
+//   } else if (data.guarantor_income_document instanceof File) {
+//     // optional: file type & size validation
+//     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+//     if (!allowedTypes.includes(data.guarantor_income_document.type)) {
+//       newErrors.guarantor_income_document = "Only JPG and PNG files are allowed";
+//     }
+//     if (data.guarantor_income_document.size > 2 * 1024 * 1024) {
+//       // 2MB limit
+//       newErrors.guarantor_income_document = "File size must be less than 2MB";
+//     }
+//   }
+
+//       if (!data.guarantor_address?.trim())
+//         newErrors.guarantor_address = "Address is required";
+
+//       if (!data.guarantor_occupation)
+//         newErrors.guarantor_occupation = "Enter Occupation Details";
+//       if (!data.guarantor_profession_type)
+//         newErrors.guarantor_profession_type = "Enter Profession Type";
+
+//       if (!data.guarantor_agri_rtc_no)
+//         newErrors.guarantor_agri_rtc_no = "Enter Agriculture RTC number";
+
+//       if (!data.guarantor_land_holdings)
+//         newErrors.guarantor_land_holdings = "Enter Agriculture land Area";
+
+//       if(!data.guarantor_bank_account_number)
+//         newErrors.guarantor_bank_account_number = "Enter Bank Account Number "
+//       if(!data.guarantor_bank_branch)
+//         newErrors.guarantor_bank_branch = "Enter Bank Branch Name "
+//       if(!data.guarantor_bank_ifsc_code)
+//         newErrors.guarantor_bank_ifsc_code = "Enter Bank IFSC Code "
+
+
+//           if (!data.guarantor_bank_passbook_photo || data.guarantor_bank_passbook_photo.length === 0) {
+//     newErrors.guarantor_bank_passbook_photo = "Bank PassBook Photo is required";
+//   } else if (typeof data.guarantor_bank_passbook_photo === "string") {
+//     // if it's a URL from DB, allow it
+//     if (data.guarantor_bank_passbook_photo.trim() === "") {
+//       newErrors.guarantor_bank_passbook_photo = "Bank PassBook Photo is required";
+//     }
+//   } else if (data.guarantor_bank_passbook_photo instanceof File) {
+//     // optional: file type & size validation
+//     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+//     if (!allowedTypes.includes(data.guarantor_bank_passbook_photo.type)) {
+//       newErrors.guarantor_bank_passbook_photo = "Only JPG and PNG files are allowed";
+//     }
+//     if (data.guarantor_bank_passbook_photo.size > 2 * 1024 * 1024) {
+//       // 2MB limit
+//       newErrors.guarantor_bank_passbook_photo = "File size must be less than 2MB";
+//     }
+//   }
+
+
+
+//       if(!data.guarantor_bank_name)
+//         newErrors.guarantor_bank_name = "Enter Bank Name "
+
+//       if(!data.guarantor_occupation_sub)
+//         newErrors.guarantor_occupation_sub = "Enter Occupation Catagory "
+      
+//       if(!data.guarantor_bussiness_type)
+//         newErrors.guarantor_bussiness_type = "Enter Occupation Type is Required  "
+
+// if(!data.guarantor_bussiness_address)
+//         newErrors.guarantor_bussiness_address = "Enter Address  "
+
+//       if(!data.guarantor_bussiness_name)
+//         newErrors.guarantor_bussiness_name = "Enter Occupation Name is Required "
+
+
+//       if (!data.guarantor_income)
+//         newErrors.guarantor_income = "Guarantor income Details is required";
+//     }
+
+//     if (data.guarantor_referred_type === "Property") {
+//       if (!data.guarantor_description?.trim())
+//         newErrors.guarantor_description = "Description is required";
+//     }
+//     if (data.guarantor_referred_type === "Customer") {
+//       if (!data.guarantor_description?.trim())
+//         newErrors.guarantor_description = "Description is required";
+//     }
+//     if (data.guarantor_referred_type === "Property") {
+//       if (!data.guarantor_document_name?.trim())
+//         newErrors.guarantor_document_name = "Document Name is required";
+//     }
+
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
+
+const validateForm = (type) => {
+  const newErrors = {};
+  const data = type === "addGuarantor" ? formData : updateFormData;
+
+  // Define a single regex object
+  const regex = {
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    phone: /^[6-9]\d{9}$/,
+    pincode: /^\d{6}$/,
+    adhaar: /^\d{12}$/,
+    pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
   };
+
+  // Helper function for file validation
+  const validateFile = (file, name) => {
+    if (!file) {
+      return `${name} is required`;
+    }
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (file instanceof File) {
+      if (!allowedTypes.includes(file.type)) {
+        return "Only JPG and PNG files are allowed";
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        return "File size must be less than 2MB";
+      }
+    } else if (typeof file === "string" && file.trim() === "") {
+      return `${name} is required`;
+    }
+    return null;
+  };
+
+  // General validation for all types
+  if (!data.user_id) newErrors.user_id = "Customer Name is required";
+  if (!data.guarantor_referred_type) newErrors.guarantor_referred_type = "Referred Type is required";
+  if (!data.enrollment_ids || data.enrollment_ids.length === 0) newErrors.enrollment_ids = "Enrollment is required";
+
+  // Conditional validation based on referred type
+  if (data.guarantor_referred_type === "Customer") {
+    if (!data.user_guarantor) newErrors.user_guarantor = "Referred Customer is required";
+    if (!data.guarantor_description?.trim()) newErrors.guarantor_description = "Description is required";
+  } else if (data.guarantor_referred_type === "Property") {
+    if (!data.guarantor_description?.trim()) newErrors.guarantor_description = "Description is required";
+    if (!data.guarantor_document_name?.trim()) newErrors.guarantor_document_name = "Document Name is required";
+    let fileError = validateFile(data.guarantor_document, "Property Document Photo");
+    if (fileError) newErrors.guarantor_document = fileError;
+  } else if (data.guarantor_referred_type === "Third Party") {
+    // Personal Information
+    if (!data.guarantor_name?.trim()) newErrors.guarantor_name = "Guarantor Name is required";
+    if (!data.guarantor_relationship_type?.trim()) newErrors.guarantor_relationship_type = "Guarantor Relationship is required";
+    if (!data.guarantor_phone_number || !regex.phone.test(data.guarantor_phone_number)) {
+      newErrors.guarantor_phone_number = "Invalid Phone Number";
+    }
+    if (!data.guarantor_email || !regex.email.test(data.guarantor_email)) {
+      newErrors.guarantor_email = "Invalid Email";
+    }
+    if (!data.guarantor_address?.trim()) newErrors.guarantor_address = "Address is required";
+    if (!data.guarantor_pincode || !regex.pincode.test(data.guarantor_pincode)) {
+      newErrors.guarantor_pincode = "Invalid Pincode";
+    }
+
+    // KYC Documents
+    if (!data.guarantor_adhaar_no || !regex.adhaar.test(data.guarantor_adhaar_no)) {
+      newErrors.guarantor_adhaar_no = "Invalid Aadhaar Number";
+    }
+    if (!data.guarantor_pan_no || !regex.pan.test(data.guarantor_pan_no)) {
+      newErrors.guarantor_pan_no = "Invalid PAN Capital Alphabet with Number";
+    }
+    let fileError = validateFile(data.guarantor_photo, "Profile Photo");
+    if (fileError) newErrors.guarantor_photo = fileError;
+    fileError = validateFile(data.guarantor_pan_document, "PAN Card Photo");
+    if (fileError) newErrors.guarantor_pan_document = fileError;
+    fileError = validateFile(data.guarantor_aadhar_document, "Aadhaar Card Photo");
+    if (fileError) newErrors.guarantor_aadhar_document = fileError;
+
+    // Occupation Details
+    if (!data.guarantor_occupation) newErrors.guarantor_occupation = "Occupation is required";
+    
+    // Conditional validation for Occupation fields
+    switch (data.guarantor_occupation) {
+      case "Self Employed":
+      case "Salaried":
+        if (!data.guarantor_bussiness_type?.trim()) newErrors.guarantor_bussiness_type = "Business Type is required";
+        if (!data.guarantor_bussiness_name?.trim()) newErrors.guarantor_bussiness_name = "Business Name is required";
+        if (!data.guarantor_bussiness_address?.trim()) newErrors.guarantor_bussiness_address = "Business Address is required";
+        break;
+      case "Professional":
+        if (!data.guarantor_profession_type?.trim()) newErrors.guarantor_profession_type = "Profession Type is required";
+        if (!data.guarantor_bussiness_address?.trim()) newErrors.guarantor_bussiness_address = "Business Address is required";
+        break;
+      case "Agri Allied":
+        if (!data.guarantor_agri_rtc_no?.trim()) newErrors.guarantor_agri_rtc_no = "RTC Number is required";
+        if (!data.guarantor_land_holdings) newErrors.guarantor_land_holdings = "Land Holdings is required";
+        if (!data.guarantor_bussiness_address?.trim()) newErrors.guarantor_bussiness_address = "Business Address is required";
+        break;
+      case "Other":
+        if (!data.guarantor_occupation_sub?.trim()) newErrors.guarantor_occupation_sub = "Occupation Sub-category is required";
+        if (data.guarantor_occupation_sub === "Running an unregistered Business" && !data.guarantor_bussiness_address?.trim()) {
+          newErrors.guarantor_bussiness_address = "Address is required for this occupation";
+        }
+        break;
+      default:
+        break;
+    }
+    fileError = validateFile(data.guarantor_income_document, "Income Document Photo");
+    if (fileError) newErrors.guarantor_income_document = fileError;
+
+    // Bank Details
+    if (!data.guarantor_bank_name?.trim()) newErrors.guarantor_bank_name = "Bank Name is required";
+    if (!data.guarantor_bank_account_number?.trim()) newErrors.guarantor_bank_account_number = "Bank Account Number is required";
+    if (!data.guarantor_bank_branch?.trim()) newErrors.guarantor_bank_branch = "Bank Branch is required";
+    if (!data.guarantor_bank_ifsc_code?.trim()) newErrors.guarantor_bank_ifsc_code = "Bank IFSC Code is required";
+    fileError = validateFile(data.guarantor_bank_passbook_photo, "Bank Passbook Photo");
+    if (fileError) newErrors.guarantor_bank_passbook_photo = fileError;
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   // const isvalid = validateForm("addGuarantor");
-   // if (isvalid) {
+    const isvalid = validateForm("addGuarantor");
+    if (isvalid) {
       try {
         const fmData = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
-  if (value instanceof File) {
-    fmData.append(key, value); //  actual file
-  } else if (Array.isArray(value)) {
-    value.forEach((v) => fmData.append(`${key}[]`, v));
-  } else if (value) {
-    fmData.append(key, value);
-  }
-});
+          if (value instanceof File) {
+            fmData.append(key, value); //  actual file
+          } else if (Array.isArray(value)) {
+            value.forEach((v) => fmData.append(`${key}[]`, v));
+          } else if (value) {
+            fmData.append(key, value);
+          }
+        });
 
-// extraDocs.forEach((doc, i) => {
-//         if (doc.file) {
-//           fmData.append("guarantor_all_document", doc.file);
-//           fmData.append(
-//             "guarantor_all_document_name",
-//             doc.document_name || `Doc_${i + 1}`
-//           );
-//         }
-//       });
-// extraDocs.forEach((doc, i) => {
-//     if (doc.file) {
-//       fmData.append("guarantor_all_document", doc.file); // multiple files
-//       fmData.append("guarantor_all_document", doc.document_name || `Document_${i + 1}`);
-//     }
-//   });
+        // extraDocs.forEach((doc, i) => {
+        //         if (doc.file) {
+        //           fmData.append("guarantor_all_document", doc.file);
+        //           fmData.append(
+        //             "guarantor_all_document_name",
+        //             doc.document_name || `Doc_${i + 1}`
+        //           );
+        //         }
+        //       });
+        // extraDocs.forEach((doc, i) => {
+        //     if (doc.file) {
+        //       fmData.append("guarantor_all_document", doc.file); // multiple files
+        //       fmData.append("guarantor_all_document", doc.document_name || `Document_${i + 1}`);
+        //     }
+        //   });
 
-extraDocs.forEach((doc, i) => {
-  if (doc.file) {
-    fmData.append("guarantor_all_document", doc.file); // file
-    fmData.append("document_name[]", doc.document_name || `Document_${i + 1}`); // name separately
-  }
-});
+        extraDocs.forEach((doc, i) => {
+          if (doc.file) {
+            fmData.append("guarantor_all_document", doc.file); // file
+            fmData.append(
+              "document_name[]",
+              doc.document_name || `Document_${i + 1}`
+            ); // name separately
+          }
+        });
 
         const response = await api.post(
           "/guarantor/add-guarantor-info",
@@ -558,7 +825,7 @@ extraDocs.forEach((doc, i) => {
           visibility: true,
         });
       }
-  //  }
+    }
   };
 
   const handleUpdate = async (e) => {
@@ -573,30 +840,35 @@ extraDocs.forEach((doc, i) => {
 
       const { guarantor_all_document, ...rest } = updateFormData;
 
-        // Append non-file fields and existing URLs
-        Object.entries(rest).forEach(([key, value]) => {
-            if (value) fmData.append(key, value);
+      // Append non-file fields and existing URLs
+      Object.entries(rest).forEach(([key, value]) => {
+        if (value) fmData.append(key, value);
+      });
+
+      // Append new files only if they are of type 'File'
+      if (updateFormData.guarantor_photo instanceof File) {
+        fmData.append("guarantor_photo", updateFormData.guarantor_photo);
+      }
+      // Repeat this logic for all other single file fields...
+      if (updateFormData.guarantor_aadhar_document instanceof File) {
+        fmData.append(
+          "guarantor_aadhar_document",
+          updateFormData.guarantor_aadhar_document
+        );
+      }
+
+      if (extraDocs && Array.isArray(extraDocs)) {
+        extraDocs.forEach((doc, i) => {
+          // Check if the item has a file and it's a new file object
+          if (doc.file instanceof File) {
+            fmData.append("guarantor_all_document", doc.file);
+            fmData.append(
+              "guarantor_all_document",
+              doc.document_name || `Doc_${i + 1}`
+            );
+          }
         });
-
-        // 🆕 Append new files only if they are of type 'File'
-        if (updateFormData.guarantor_photo instanceof File) {
-            fmData.append("guarantor_photo", updateFormData.guarantor_photo);
-        }
-        // Repeat this logic for all other single file fields...
-        if (updateFormData.guarantor_aadhar_document instanceof File) {
-             fmData.append("guarantor_aadhar_document", updateFormData.guarantor_aadhar_document);
-        }
-
-       
-        if (extraDocs && Array.isArray(extraDocs)) {
-            extraDocs.forEach((doc, i) => {
-                // Check if the item has a file and it's a new file object
-                if (doc.file instanceof File) {
-                    fmData.append("guarantor_all_document", doc.file);
-                    fmData.append("guarantor_all_document", doc.document_name || `Doc_${i + 1}`);
-                }
-            });
-        }
+      }
       await api.put(
         `/guarantor/update-guarantor-info/${currentUpdateGuarantor?._id}`,
         fmData,
@@ -632,7 +904,7 @@ extraDocs.forEach((doc, i) => {
     { key: "guarantor_phone_number", header: "Guarantor Phone Number" },
     // { key: "guarantor_address", header: "Guarantor Address" },
     // { key: "guarantor_pincode", header: "Guarantor Pincode" },
-   // { key: "guarantor_description", header: "Guarantor Description" },
+    // { key: "guarantor_description", header: "Guarantor Description" },
     { key: "action", header: "Action" },
   ];
 
@@ -652,18 +924,18 @@ extraDocs.forEach((doc, i) => {
     }
   };
 
-const handleFileChange = (e) => {
-  const { name, files } = e.target;
-  const file = files[0];
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    const file = files[0];
 
-  if (file) {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: file,                  // ✅ keep real file object
-      [`${name}_preview`]: URL.createObjectURL(file), // for preview
-    }));
-  }
-};
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: file, // ✅ keep real file object
+        [`${name}_preview`]: URL.createObjectURL(file), // for preview
+      }));
+    }
+  };
 
   const handleUpdateModalOpen = async (userId) => {
     try {
@@ -718,25 +990,27 @@ const handleFileChange = (e) => {
         guarantor_bank_ifsc_code: guarantor?.guarantor_bank_ifsc_code || "",
         guarantor_bank_passbook_photo:
           guarantor?.guarantor_bank_passbook_photo || "",
-        guarantor_income_document:guarantor.guarantor_income_document || "",
+        guarantor_income_document: guarantor.guarantor_income_document || "",
         guarantor_bussiness_type: guarantor.guarantor_bussiness_type || "",
         guarantor_bussiness_name: guarantor.guarantor_bussiness_name || "",
-        guarantor_bussiness_address: guarantor?.guarantor_bussiness_address || "",
+        guarantor_bussiness_address:
+          guarantor?.guarantor_bussiness_address || "",
         guarantor_profession_type: guarantor?.guarantor_profession_type || "",
         guarantor_agri_rtc_no: guarantor?.guarantor_agri_rtc_no || "",
         guarantor_land_holdings: guarantor?.guarantor_land_holdings || "",
         guarantor_occupation_sub: guarantor?.guarantor_occupation_sub || "",
-        guarantor_all_document_name: guarantor?.guarantor_all_document_name || "",
+        guarantor_all_document_name:
+          guarantor?.guarantor_all_document_name || "",
         guarantor_all_document: guarantor?.guarantor_all_document || "",
       });
       setExtraDocs(
-      (guarantor?.guarantor_all_document || []).map((d) => ({
-        document_name: d.document_name,
-        file: null, // no new file yet
-        preview: d.document_url, // show existing file preview
-        existingUrl: d.document_url, // keep original in case user doesn’t replace
-      }))
-    );
+        (guarantor?.guarantor_all_document || []).map((d) => ({
+          document_name: d.document_name,
+          file: null, // no new file yet
+          preview: d.document_url, // show existing file preview
+          existingUrl: d.document_url, // keep original in case user doesn’t replace
+        }))
+      );
 
       setCurrentUpdateGuarantor(guarantor);
       setShowModalUpdate(true);
@@ -835,7 +1109,13 @@ const handleFileChange = (e) => {
             <h3 className="mb-4 text-xl font-bold text-gray-900">
               Add Guarantor
             </h3>
-            <form className="space-y-6" method="POST" onSubmit={handleSubmit} enctype="multipart/form-data" noValidate>
+            <form
+              className="space-y-6"
+              method="POST"
+              onSubmit={handleSubmit}
+              enctype="multipart/form-data"
+              noValidate
+            >
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900">
                   Customer Name <span className="text-red-500">*</span>
@@ -993,11 +1273,16 @@ const handleFileChange = (e) => {
                         </Select.Option>
                       ))}
                     </Select>
+                    {errors.user_guarantor && (
+                      <p className="mt-2 text-sm text-red-600">
+                        {errors.user_guarantor}
+                      </p>
+                    )}
                   </div>
                   <div className="w-full">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="email"
+                      htmlFor="desc"
                     >
                       Description <span className="text-red-500 ">*</span>
                     </label>
@@ -1031,7 +1316,7 @@ const handleFileChange = (e) => {
                     <div className="flex flex-row justify-between space-x-4 mt-4">
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
-                          Guarantor Name
+                          Guarantor Name <span className="text-red-500">*</span>
                         </label>
                         <Input
                           type="text"
@@ -1042,6 +1327,11 @@ const handleFileChange = (e) => {
                           required
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
+                        {errors.guarantor_name && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_name}
+                          </p>
+                        )}
                       </div>
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -1096,6 +1386,11 @@ const handleFileChange = (e) => {
                             </Select.Option>
                           ))}
                         </Select>
+                        {errors.guarantor_relationship_type && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_relationship_type}
+                          </p>
+                        )}
                       </div>
 
                       {formData.guarantor_relationship_type === "Other" && (
@@ -1393,280 +1688,207 @@ const handleFileChange = (e) => {
 
                   {/* KYC Documents Card */}
                   <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
-        KYC Documents
-      </h2>
-
-      {/* Aadhaar & PAN Number */}
-      <div className="flex flex-row justify-between space-x-4">
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            Aadhaar Number <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="text"
-            name="guarantor_adhaar_no"
-            value={formData.guarantor_adhaar_no}
-            onChange={handleChange}
-            placeholder="Enter Aadhaar Number"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {errors.guarantor_adhaar_no && (
-            <p className="mt-2 text-sm text-red-600">{errors.guarantor_adhaar_no}</p>
-          )}
-        </div>
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            PAN Number <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="text"
-            name="guarantor_pan_no"
-            value={formData.guarantor_pan_no}
-            onChange={handleChange}
-            placeholder="Enter PAN Number"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {errors.guarantor_pan_no && (
-            <p className="mt-2 text-sm text-red-600">{errors.guarantor_pan_no}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Profile Photo */}
-      <div className="mt-4">
-        <label className="block mb-2 text-sm font-medium text-gray-900">
-          Profile Photo <span className="text-red-500">*</span>
-        </label>
-        <Input
-          type="file"
-          name="guarantor_photo"
-          onChange={handleFileChange}
-          accept="image/*"
-          required
-          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-        />
-        {formData.guarantor_photo && (
-          <Link to={formData.guarantor_photo} download>
-            <img
-              src={formData.guarantor_photo_preview}
-              alt="Profile"
-              className="w-56 h-56 object-cover mt-4 rounded-md shadow"
-            />
-          </Link>
-        )}
-      </div>
-
-      {/* PAN & Aadhaar Docs */}
-      <div className="flex flex-row justify-between space-x-4 mt-6">
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            PAN Card Photo <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="file"
-            name="guarantor_pan_document"
-            onChange={handleFileChange}
-            accept="image/*"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {formData.guarantor_pan_document && (
-            <Link to={formData.guarantor_pan_document} download>
-              <img
-                src={formData.guarantor_pan_document_preview}
-                alt="PAN"
-                className="w-56 h-56 object-cover mt-4 rounded-md shadow"
-              />
-            </Link>
-          )}
-        </div>
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            Aadhaar Card Photo <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="file"
-            name="guarantor_aadhar_document"
-            onChange={handleFileChange}
-            accept="image/*"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {formData.guarantor_aadhar_document && (
-            <Link to={formData.guarantor_aadhar_document} download>
-              <img
-                src={formData.guarantor_aadhar_document_preview}
-                alt=""
-                className="w-56 h-56 object-cover mt-4 rounded-md shadow"
-              />
-            </Link>
-          )}
-        </div>
-      </div>
-
-      {/* 🔽 Extra Dynamic Documents Section */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-2">Additional Documents</h3>
-       {extraDocs.map((doc, index) => (
-  <div key={index} className="mb-6 p-3 border border-gray-200 rounded-lg bg-gray-50">
-    {/* Row for inputs + remove button */}
-    <div className="flex items-center space-x-4">
-      <Input
-        type="text"
-        placeholder="Document Name (e.g. Passport, Voter ID)"
-        value={doc.document_name}
-        onChange={(e) => handleExtraDocNameChange(index, e)}
-        className="w-1/2 h-12 border border-gray-300 rounded-lg p-2"
-      />
-      <input
-  type="file"
-  name="guarantor_all_document" // ⚠️ must match multer config
-  onChange={(e) => handleExtraDocFileChange(index, e)}
-  accept="image/*"
-  className="w-1/2 h-12 border border-gray-300 rounded-lg"
-/>
-      <button
-        type="button"
-        onClick={() => removeDocField(index)}
-        className="text-blue-600 font-bold text-xl"
-      >
-        <IoMdClose />
-      </button>
-    </div>
-
-    {/* Preview shown below */}
-    {doc.preview && (
-      <div className="mt-4">
-        <img
-          src={doc.preview}
-          alt={doc.document_name}
-          className="w-56 h-56 object-cover rounded-md shadow"
-        />
-      </div>
-    )}
-  </div>
-))}
-
-        <button
-          type="button"
-          onClick={addNewDocField}
-          className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-        >
-          + Add Document
-        </button>
-      </div>
-    </div>
-
-                  {/* Income Details Card */}
-                  {/* <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-md">
                     <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
-                      Income Details
+                      KYC Documents
                     </h2>
 
+                    {/* Aadhaar & PAN Number */}
                     <div className="flex flex-row justify-between space-x-4">
                       <div className="w-1/2">
-                        <label className="block mb-2 text-sm font-medium text-gray-700">
-                          Guarantor Occupation
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          Aadhaar Number <span className="text-red-500">*</span>
                         </label>
                         <Input
                           type="text"
-                          name="guarantor_occupation"
-                          value={formData.guarantor_occupation}
+                          name="guarantor_adhaar_no"
+                          value={formData.guarantor_adhaar_no}
                           onChange={handleChange}
-                          placeholder="Enter Occupation"
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter Aadhaar Number"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
-                        <Select
-                          className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                          placeholder="guarantor_occupation"
-                          showSearch
-                          name="guarantor_occupation"
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .includes(input.toLowerCase())
-                          }
-                          value={formData.guarantor_occupation || undefined}
-                          onChange={(value) =>
-                            handleAntDSelect("guarantor_occupation", value)
-                          }
-                        >
-                          {["Self Employed","Salaried","Professional", "Agri Allied", "Other"].map((nation) => (
-                            <Select.Option key={nation} value={nation}>
-                              {nation}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                        {formData.guarantor_occupation === "Other" && (
-                        <div className="w-full">
-                          <label className="block mb-2 text-sm font-medium text-gray-900">
-                            Please specify Occupation:
-                          </label>
-                          <Select
-                          className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                          placeholder="guarantor_occupation"
-                          showSearch
-                          name="guarantor_occupation"
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .includes(input.toLowerCase())
-                          }
-                          value={formData.guarantor_occupation || undefined}
-                          onChange={(value) =>
-                            handleAntDSelect("guarantor_occupation", value)
-                          }
-                        >
-                          {["House Wife","Retired","Student", "Investment", "Running an unregistered Bussiness"].map((nation) => (
-                            <Select.Option key={nation} value={nation}>
-                              {nation}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                        </div>
-                      )}
+                        {errors.guarantor_adhaar_no && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_adhaar_no}
+                          </p>
+                        )}
                       </div>
                       <div className="w-1/2">
-                        <label className="block mb-2 text-sm font-medium text-gray-700">
-                          Guarantor Sector
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          PAN Number <span className="text-red-500">*</span>
                         </label>
                         <Input
                           type="text"
-                          name="guarantor_sector_name"
-                          value={formData.guarantor_sector_name}
+                          name="guarantor_pan_no"
+                          value={formData.guarantor_pan_no}
                           onChange={handleChange}
-                          placeholder="Enter Working Sector"
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter PAN Number"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_pan_no && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_pan_no}
+                          </p>
+                        )}
                       </div>
                     </div>
 
-                    <div className="mt-6">
-                      <label className="block mb-2 text-sm font-medium text-gray-700">
-                        Document Photo <span className="text-red-500">*</span>
+                    {/* Profile Photo */}
+                    <div className="mt-4">
+                      <label className="block mb-2 text-sm font-medium text-gray-900">
+                        Profile Photo <span className="text-red-500">*</span>
                       </label>
                       <Input
                         type="file"
-                        name="guarantor_income_document"
+                        name="guarantor_photo"
                         onChange={handleFileChange}
                         accept="image/*"
                         required
-                        className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                       />
-                      {formData.guarantor_income_document && (
-                        <Link to={formData.guarantor_income_document} download>
+                      {errors.guarantor_photo && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_photo}
+                          </p>
+                        )}
+                      {formData.guarantor_photo && (
+                        <Link to={formData.guarantor_photo} download>
                           <img
-                            src={formData.guarantor_income_document}
-                            alt="Income Document"
-                            className="w-56 h-56 object-cover mt-4 rounded-md shadow-md border"
+                            src={formData.guarantor_photo_preview}
+                            alt="Profile"
+                            className="w-56 h-56 object-cover mt-4 rounded-md shadow"
                           />
                         </Link>
                       )}
+                      
                     </div>
-                  </div> */}
+
+                    {/* PAN & Aadhaar Docs */}
+                    <div className="flex flex-row justify-between space-x-4 mt-6">
+                      <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          PAN Card Photo <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          type="file"
+                          name="guarantor_pan_document"
+                          onChange={handleFileChange}
+                          accept="image/*"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                        />
+                        {errors.guarantor_pan_document && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_pan_document}
+                          </p>
+                        )}
+                        {formData.guarantor_pan_document && (
+                          <Link to={formData.guarantor_pan_document} download>
+                            <img
+                              src={formData.guarantor_pan_document_preview}
+                              alt="PAN"
+                              className="w-56 h-56 object-cover mt-4 rounded-md shadow"
+                            />
+                          </Link>
+                        )}
+                        
+                      </div>
+                      <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          Aadhaar Card Photo{" "}
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          type="file"
+                          name="guarantor_aadhar_document"
+                          onChange={handleFileChange}
+                          accept="image/*"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                        />
+                        {errors.guarantor_aadhar_document && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_aadhar_document}
+                          </p>
+                        )}
+                        {formData.guarantor_aadhar_document && (
+                          <Link
+                            to={formData.guarantor_aadhar_document}
+                            download
+                          >
+                            <img
+                              src={formData.guarantor_aadhar_document_preview}
+                              alt=""
+                              className="w-56 h-56 object-cover mt-4 rounded-md shadow"
+                            />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/*  Extra Dynamic Documents Section */}
+                    <div className="mt-6">
+                      <h3 className="text-lg font-semibold mb-2">
+                        Additional Documents
+                      </h3>
+                      {extraDocs.map((doc, index) => (
+                        <div
+                          key={index}
+                          className="mb-6 p-3 border border-gray-200 rounded-lg bg-gray-50"
+                        >
+                          {/* Row for inputs + remove button */}
+                          <div className="flex items-center space-x-4">
+                            <Input
+                              type="text"
+                              placeholder="Document Name (e.g. Passport, Voter ID)"
+                              value={doc.document_name}
+                              onChange={(e) =>
+                                handleExtraDocNameChange(index, e)
+                              }
+                              className="w-1/2 h-12 border border-gray-300 rounded-lg p-2"
+                            />
+                            <input
+                              type="file"
+                              name="guarantor_all_document" // ⚠️ must match multer config
+                              onChange={(e) =>
+                                handleExtraDocFileChange(index, e)
+                              }
+                              accept="image/*"
+                              className="w-1/2 h-12 border border-gray-300 rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeDocField(index)}
+                              className="text-blue-600 font-bold text-xl"
+                            >
+                              <IoMdClose />
+                            </button>
+                          </div>
+
+                          {/* Preview shown below */}
+                          {doc.preview && (
+                            <div className="mt-4">
+                              <img
+                                src={doc.preview}
+                                alt={doc.document_name}
+                                className="w-56 h-56 object-cover rounded-md shadow"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={addNewDocField}
+                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+                      >
+                        + Add Document
+                      </button>
+                    </div>
+                  </div>
+
                   <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-md">
                     <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
                       Occupation Details
@@ -1717,7 +1939,11 @@ const handleFileChange = (e) => {
                             </Select.Option>
                           ))}
                         </Select>
-
+                        {errors.guarantor_occupation && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_occupation}
+                          </p>
+                        )}
                         {/* Sub-option for "Other" */}
                         {formData.guarantor_occupation === "Other" && (
                           <>
@@ -1756,6 +1982,11 @@ const handleFileChange = (e) => {
                                   </Select.Option>
                                 ))}
                               </Select>
+                              {errors.guarantor_occupation_sub && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_occupation_sub}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -1769,6 +2000,11 @@ const handleFileChange = (e) => {
                                 placeholder="Enter  Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                               {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </>
                         )}
@@ -1790,6 +2026,11 @@ const handleFileChange = (e) => {
                                 placeholder="e.g., Retail, Manufacturing"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_type && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_type}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -1803,6 +2044,11 @@ const handleFileChange = (e) => {
                                 placeholder="Enter Business Name"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_name && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_name}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -1816,6 +2062,11 @@ const handleFileChange = (e) => {
                                 placeholder="Enter Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </div>
                         )}
@@ -1835,6 +2086,11 @@ const handleFileChange = (e) => {
                                 placeholder="e.g., Doctor, CA, Engineer"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_profession_type && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_profession_type}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -1848,6 +2104,11 @@ const handleFileChange = (e) => {
                                 placeholder="Clinic/Office Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </div>
                         )}
@@ -1867,6 +2128,11 @@ const handleFileChange = (e) => {
                                 placeholder="Enter RTC Number"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_agri_rtc_no && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_agri_rtc_no}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -1880,6 +2146,11 @@ const handleFileChange = (e) => {
                                 placeholder="e.g., 5.5"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_land_holdings && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_land_holdings}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -1893,6 +2164,11 @@ const handleFileChange = (e) => {
                                 placeholder="Farm or Operation Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </div>
                         )}
@@ -1913,6 +2189,11 @@ const handleFileChange = (e) => {
                                 placeholder="Enter Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           )}
                       </div>
@@ -1921,7 +2202,7 @@ const handleFileChange = (e) => {
                     {/* Document Upload Section */}
                     <div className="mt-6">
                       <label className="block mb-2 text-sm font-medium text-gray-700">
-                        Document Photo <span className="text-red-500">*</span>
+                       Salary/Income Document Photo <span className="text-red-500">*</span>
                       </label>
                       <Input
                         type="file"
@@ -1931,6 +2212,11 @@ const handleFileChange = (e) => {
                         required
                         className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
                       />
+                      {errors.guarantor_income_document && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_income_document}
+                          </p>
+                        )}
                       {formData.guarantor_income_document && (
                         <Link to={formData.guarantor_income_document} download>
                           <img
@@ -1962,6 +2248,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter Bank Name"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_name && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_name}
+                          </p>
+                        )}
                       </div>
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -1975,6 +2266,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter Account Number"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_account_number && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_account_number}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -1991,6 +2287,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter Branch"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_branch && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_branch}
+                          </p>
+                        )}
                       </div>
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -2004,6 +2305,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter IFSC Code"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_ifsc_code && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_ifsc_code}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -2019,6 +2325,11 @@ const handleFileChange = (e) => {
                         required
                         className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                       />
+                      {errors.guarantor_bank_passbook_photo && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_passbook_photo}
+                          </p>
+                        )}
                       {formData.guarantor_bank_passbook_photo && (
                         <Link
                           to={formData.guarantor_bank_passbook_photo}
@@ -2037,8 +2348,6 @@ const handleFileChange = (e) => {
               )}
               {formData.guarantor_referred_type === "Property" && (
                 <>
-                  
-
                   <div>
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
@@ -2080,13 +2389,20 @@ const handleFileChange = (e) => {
                       required
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
-                    <Link to={formData?.guarantor_document} download>
-                      <img
-                        src={formData?.guarantor_document}
-                        alt=""
-                        className="w-56 mx-2 my-4 h-56"
-                      />
-                    </Link>
+                     {errors.guarantor_document && (
+                      <p className="mt-2 text-sm text-red-600">
+                        {errors.guarantor_document}
+                      </p>
+                    )}
+                   {formData.guarantor_document && (
+                        <Link to={formData.guarantor_document} download>
+                          <img
+                            src={formData.guarantor_document_preview}
+                            alt="Property"
+                            className="w-56 h-56 object-cover mt-4 rounded-md shadow"
+                          />
+                        </Link>
+                      )}
                   </div>
                   <div>
                     <label
@@ -2173,6 +2489,9 @@ const handleFileChange = (e) => {
                       </Select.Option>
                     ))}
                 </Select>
+                {errors.user_id && (
+                  <p className="mt-2 text-sm text-red-600">{errors.user_id}</p>
+                )}
               </div>
               <div className="mt-4">
                 <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -2207,6 +2526,11 @@ const handleFileChange = (e) => {
                     );
                   })}
                 </Select>
+                {errors.enrollment_ids && (
+                  <p className="mt-2 text-sm text-red-600">
+                    {errors.enrollment_ids}
+                  </p>
+                )}
               </div>
 
               <div className="w-full">
@@ -2236,6 +2560,11 @@ const handleFileChange = (e) => {
                     </Select.Option>
                   ))}
                 </Select>
+                {errors.guarantor_referred_type && (
+                  <p className="mt-2 text-sm text-red-600">
+                    {errors.guarantor_referred_type}
+                  </p>
+                )}
               </div>
 
               {updateFormData.guarantor_referred_type === "Customer" && (
@@ -2272,6 +2601,11 @@ const handleFileChange = (e) => {
                         </Select.Option>
                       ))}
                     </Select>
+                    {errors.user_guarantor && (
+                      <p className="mt-2 text-sm text-red-600">
+                        {errors.user_guarantor}
+                      </p>
+                    )}
                   </div>
                   <div className="w-full">
                     <label
@@ -2298,7 +2632,7 @@ const handleFileChange = (e) => {
                   </div>
                 </div>
               )}
-             {updateFormData.guarantor_referred_type === "Third Party" && (
+              {updateFormData.guarantor_referred_type === "Third Party" && (
                 <div className="space-y-6 mt-6">
                   {/* Personal Information Card */}
                   <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-md">
@@ -2310,7 +2644,7 @@ const handleFileChange = (e) => {
                     <div className="flex flex-row justify-between space-x-4 mt-4">
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
-                          Guarantor Name
+                          Guarantor Name <span className="text-red-500">*</span>
                         </label>
                         <Input
                           type="text"
@@ -2321,7 +2655,13 @@ const handleFileChange = (e) => {
                           required
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
+                        {errors.guarantor_name && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_name}
+                          </p>
+                        )}
                       </div>
+
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
                           Phone Number <span className="text-red-500">*</span>
@@ -2360,7 +2700,8 @@ const handleFileChange = (e) => {
                               .includes(input.toLowerCase())
                           }
                           value={
-                            updateFormData.guarantor_relationship_type || undefined
+                            updateFormData.guarantor_relationship_type ||
+                            undefined
                           }
                           onChange={(value) =>
                             handleAntInputDSelect(
@@ -2375,9 +2716,15 @@ const handleFileChange = (e) => {
                             </Select.Option>
                           ))}
                         </Select>
+                        {errors.guarantor_relationship_type && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_relationship_type}
+                          </p>
+                        )}
                       </div>
 
-                      {updateFormData.guarantor_relationship_type === "Other" && (
+                      {updateFormData.guarantor_relationship_type ===
+                        "Other" && (
                         <div className="w-full">
                           <label className="block mb-2 text-sm font-medium text-gray-900">
                             Please specify the relationship:
@@ -2452,9 +2799,14 @@ const handleFileChange = (e) => {
                               .toLowerCase()
                               .includes(input.toLowerCase())
                           }
-                          value={updateFormData.guarantor_marital_status || undefined}
+                          value={
+                            updateFormData.guarantor_marital_status || undefined
+                          }
                           onChange={(value) =>
-                            handleAntInputDSelect("guarantor_marital_status", value)
+                            handleAntInputDSelect(
+                              "guarantor_marital_status",
+                              value
+                            )
                           }
                         >
                           {["Married", "Unmarried", "Widow", "Divorced"].map(
@@ -2642,9 +2994,14 @@ const handleFileChange = (e) => {
                               .toLowerCase()
                               .includes(input.toLowerCase())
                           }
-                          value={updateFormData.guarantor_nationality || undefined}
+                          value={
+                            updateFormData.guarantor_nationality || undefined
+                          }
                           onChange={(value) =>
-                            handleAntInputDSelect("guarantor_nationality", value)
+                            handleAntInputDSelect(
+                              "guarantor_nationality",
+                              value
+                            )
                           }
                         >
                           {["Indian", "Other"].map((nation) => (
@@ -2672,172 +3029,207 @@ const handleFileChange = (e) => {
 
                   {/* KYC Documents Card */}
                   <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
-        KYC Documents
-      </h2>
+                    <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
+                      KYC Documents
+                    </h2>
 
-      {/* Aadhaar & PAN Number */}
-      <div className="flex flex-row justify-between space-x-4">
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            Aadhaar Number <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="text"
-            name="guarantor_adhaar_no"
-            value={updateFormData.guarantor_adhaar_no}
-            onChange={handleInputChange}
-            placeholder="Enter Aadhaar Number"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {errors.guarantor_adhaar_no && (
-            <p className="mt-2 text-sm text-red-600">{errors.guarantor_adhaar_no}</p>
-          )}
-        </div>
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            PAN Number <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="text"
-            name="guarantor_pan_no"
-            value={updateFormData.guarantor_pan_no}
-            onChange={handleInputChange}
-            placeholder="Enter PAN Number"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {errors.guarantor_pan_no && (
-            <p className="mt-2 text-sm text-red-600">{errors.guarantor_pan_no}</p>
-          )}
-        </div>
-      </div>
+                    {/* Aadhaar & PAN Number */}
+                    <div className="flex flex-row justify-between space-x-4">
+                      <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          Aadhaar Number <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          type="text"
+                          name="guarantor_adhaar_no"
+                          value={updateFormData.guarantor_adhaar_no}
+                          onChange={handleInputChange}
+                          placeholder="Enter Aadhaar Number"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                        />
+                        {errors.guarantor_adhaar_no && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_adhaar_no}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          PAN Number <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          type="text"
+                          name="guarantor_pan_no"
+                          value={updateFormData.guarantor_pan_no}
+                          onChange={handleInputChange}
+                          placeholder="Enter PAN Number"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                        />
+                        {errors.guarantor_pan_no && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_pan_no}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
-      {/* Profile Photo */}
-      <div className="mt-4">
-        <label className="block mb-2 text-sm font-medium text-gray-900">
-          Profile Photo <span className="text-red-500">*</span>
-        </label>
-        <Input
-          type="file"
-          name="guarantor_photo"
-          onChange={handleFileChange}
-          accept="image/*"
-          required
-          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-        />
-        {updateFormData.guarantor_photo && (
-          <Link to={updateFormData.guarantor_photo} download>
-            <img
-              src={updateFormData.guarantor_photo}
-              alt="Profile"
-              className="w-56 h-56 object-cover mt-4 rounded-md shadow"
-            />
-          </Link>
-        )}
-      </div>
+                    {/* Profile Photo */}
+                    <div className="mt-4">
+                      <label className="block mb-2 text-sm font-medium text-gray-900">
+                        Profile Photo <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        type="file"
+                        name="guarantor_photo"
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        required
+                        className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                      />
+                       {errors.guarantor_photo && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_photo}
+                          </p>
+                        )}
+                      {updateFormData.guarantor_photo && (
+                        <Link to={updateFormData.guarantor_photo} download>
+                          <img
+                            src={updateFormData.guarantor_photo}
+                            alt="Profile"
+                            className="w-56 h-56 object-cover mt-4 rounded-md shadow"
+                          />
+                        </Link>
+                      )}
+                    </div>
 
-      {/* PAN & Aadhaar Docs */}
-      <div className="flex flex-row justify-between space-x-4 mt-6">
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            PAN Card Photo <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="file"
-            name="guarantor_pan_document"
-            onChange={handleFileChange}
-            accept="image/*"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {updateFormData.guarantor_pan_document && (
-            <Link to={updateFormData.guarantor_pan_document} download>
-              <img
-                src={updateFormData.guarantor_pan_document}
-                alt="PAN"
-                className="w-56 h-56 object-cover mt-4 rounded-md shadow"
-              />
-            </Link>
-          )}
-        </div>
-        <div className="w-1/2">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            Aadhaar Card Photo <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="file"
-            name="guarantor_aadhar_document"
-            onChange={handleFileChange}
-            accept="image/*"
-            required
-            className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-          {updateFormData.guarantor_aadhar_document && (
-            <Link to={updateFormData.guarantor_aadhar_document} download>
-              <img
-                src={updateFormData.guarantor_aadhar_document}
-                alt=""
-                className="w-56 h-56 object-cover mt-4 rounded-md shadow"
-              />
-            </Link>
-          )}
-        </div>
-      </div>
+                    {/* PAN & Aadhaar Docs */}
+                    <div className="flex flex-row justify-between space-x-4 mt-6">
+                      <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          PAN Card Photo <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          type="file"
+                          name="guarantor_pan_document"
+                          onChange={handleFileChange}
+                          accept="image/*"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                        />
+                        {errors.guarantor_pan_document && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_pan_document}
+                          </p>
+                        )}
+                        {updateFormData.guarantor_pan_document && (
+                          <Link
+                            to={updateFormData.guarantor_pan_document}
+                            download
+                          >
+                            <img
+                              src={updateFormData.guarantor_pan_document}
+                              alt="PAN"
+                              className="w-56 h-56 object-cover mt-4 rounded-md shadow"
+                            />
+                          </Link>
+                        )}
+                      </div>
+                      <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          Aadhaar Card Photo{" "}
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          type="file"
+                          name="guarantor_aadhar_document"
+                          onChange={handleFileChange}
+                          accept="image/*"
+                          required
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                        />
+                        {errors.guarantor_aadhar_document && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_aadhar_document}
+                          </p>
+                        )}
+                        {updateFormData.guarantor_aadhar_document && (
+                          <Link
+                            to={updateFormData.guarantor_aadhar_document}
+                            download
+                          >
+                            <img
+                              src={updateFormData.guarantor_aadhar_document}
+                              alt=""
+                              className="w-56 h-56 object-cover mt-4 rounded-md shadow"
+                            />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
 
-      {/* 🔽 Extra Dynamic Documents Section */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-2">Additional Documents</h3>
-       {extraDocs.map((doc, index) => (
-  <div key={index} className="mb-6 p-3 border border-gray-200 rounded-lg bg-gray-50">
-    {/* Row for inputs + remove button */}
-    <div className="flex items-center space-x-4">
-      <Input
-        type="text"
-        placeholder="Document Name (e.g. Passport, Voter ID)"
-        value={doc.document_name}
-        onChange={(e) => handleExtraDocNameChange(index, e)}
-        className="w-1/2 h-12 border border-gray-300 rounded-lg p-2"
-      />
-      <input
-  type="file"
-  name="guarantor_all_document" // ⚠️ must match multer config
-  onChange={(e) => handleExtraDocFileChange(index, e)}
-  accept="image/*"
-  className="w-1/2 h-12 border border-gray-300 rounded-lg"
-/>
-      <button
-        type="button"
-        onClick={() => removeDocField(index)}
-        className="text-blue-600 font-bold text-xl"
-      >
-        <IoMdClose />
-      </button>
-    </div>
+                    {/*  Extra Dynamic Documents Section */}
+                    <div className="mt-6">
+                      <h3 className="text-lg font-semibold mb-2">
+                        Additional Documents
+                      </h3>
+                      {extraDocs.map((doc, index) => (
+                        <div
+                          key={index}
+                          className="mb-6 p-3 border border-gray-200 rounded-lg bg-gray-50"
+                        >
+                          {/* Row for inputs + remove button */}
+                          <div className="flex items-center space-x-4">
+                            <Input
+                              type="text"
+                              placeholder="Document Name (e.g. Passport, Voter ID)"
+                              value={doc.document_name}
+                              onChange={(e) =>
+                                handleExtraDocNameChange(index, e)
+                              }
+                              className="w-1/2 h-12 border border-gray-300 rounded-lg p-2"
+                            />
+                            <input
+                              type="file"
+                              name="guarantor_all_document" // ⚠️ must match multer config
+                              onChange={(e) =>
+                                handleExtraDocFileChange(index, e)
+                              }
+                              accept="image/*"
+                              className="w-1/2 h-12 border border-gray-300 rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeDocField(index)}
+                              className="text-blue-600 font-bold text-xl"
+                            >
+                              <IoMdClose />
+                            </button>
+                          </div>
 
-    {/* Preview shown below */}
-    {doc.preview && (
-      <div className="mt-4">
-        <img
-          src={doc.preview}
-          alt={doc.document_name}
-          className="w-56 h-56 object-cover rounded-md shadow"
-        />
-      </div>
-    )}
-  </div>
-))}
+                          {/* Preview shown below */}
+                          {doc.preview && (
+                            <div className="mt-4">
+                              <img
+                                src={doc.preview}
+                                alt={doc.document_name}
+                                className="w-56 h-56 object-cover rounded-md shadow"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
 
-        <button
-          type="button"
-          onClick={addNewDocField}
-          className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-        >
-          + Add Document
-        </button>
-      </div>
-    </div>
+                      <button
+                        type="button"
+                        onClick={addNewDocField}
+                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+                      >
+                        + Add Document
+                      </button>
+                    </div>
+                  </div>
 
                   {/* Income Details Card */}
                   {/* <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-md">
@@ -2963,7 +3355,9 @@ const handleFileChange = (e) => {
                           className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                           placeholder="Select Occupation"
                           showSearch
-                          value={updateFormData.guarantor_occupation || undefined}
+                          value={
+                            updateFormData.guarantor_occupation || undefined
+                          }
                           onChange={(value) => {
                             // Reset related fields when occupation changes
                             setUpdateFormData((prev) => ({
@@ -2996,6 +3390,11 @@ const handleFileChange = (e) => {
                             </Select.Option>
                           ))}
                         </Select>
+                        {errors.guarantor_occupation && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_occupation}
+                          </p>
+                        )}
 
                         {/* Sub-option for "Other" */}
                         {updateFormData.guarantor_occupation === "Other" && (
@@ -3009,7 +3408,8 @@ const handleFileChange = (e) => {
                                 placeholder="Select Sub-Category"
                                 showSearch
                                 value={
-                                  updateFormData.guarantor_occupation_sub || undefined
+                                  updateFormData.guarantor_occupation_sub ||
+                                  undefined
                                 }
                                 onChange={(value) =>
                                   setFormData((prev) => ({
@@ -3035,6 +3435,11 @@ const handleFileChange = (e) => {
                                   </Select.Option>
                                 ))}
                               </Select>
+                              {errors.guarantor_occupation_sub && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_occupation_sub}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3043,11 +3448,18 @@ const handleFileChange = (e) => {
                               <Input
                                 type="text"
                                 name="guarantor_bussiness_address"
-                                value={updateFormData.guarantor_bussiness_address}
+                                value={
+                                  updateFormData.guarantor_bussiness_address
+                                }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </>
                         )}
@@ -3069,6 +3481,11 @@ const handleFileChange = (e) => {
                                 placeholder="e.g., Retail, Manufacturing"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_type && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_type}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3082,6 +3499,11 @@ const handleFileChange = (e) => {
                                 placeholder="Enter Business Name"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_name && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_name}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3090,17 +3512,25 @@ const handleFileChange = (e) => {
                               <Input
                                 type="text"
                                 name="guarantor_bussiness_address"
-                                value={updateFormData.guarantor_bussiness_address}
+                                value={
+                                  updateFormData.guarantor_bussiness_address
+                                }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </div>
                         )}
 
                         {/* Professional: Profession Type + Business Address */}
-                        {updateFormData.guarantor_occupation === "Professional" && (
+                        {updateFormData.guarantor_occupation ===
+                          "Professional" && (
                           <div className="mt-4 space-y-4">
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3114,6 +3544,11 @@ const handleFileChange = (e) => {
                                 placeholder="e.g., Doctor, CA, Engineer"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_profession_type && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_profession_type}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3122,17 +3557,25 @@ const handleFileChange = (e) => {
                               <Input
                                 type="text"
                                 name="guarantor_bussiness_address"
-                                value={updateFormData.guarantor_bussiness_address}
+                                value={
+                                  updateFormData.guarantor_bussiness_address
+                                }
                                 onChange={handleInputChange}
                                 placeholder="Clinic/Office Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </div>
                         )}
 
                         {/* Agri Allied: RTC No, Land Holdings, Business Address */}
-                        {updateFormData.guarantor_occupation === "Agri Allied" && (
+                        {updateFormData.guarantor_occupation ===
+                          "Agri Allied" && (
                           <div className="mt-4 w-full space-y-4">
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3146,6 +3589,11 @@ const handleFileChange = (e) => {
                                 placeholder="Enter RTC Number"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                               {errors.guarantor_agri_rtc_no && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_agri_rtc_no}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3159,6 +3607,11 @@ const handleFileChange = (e) => {
                                 placeholder="e.g., 5.5"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_land_holdings && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_land_holdings}
+                          </p>
+                        )}
                             </div>
                             <div className="w-full">
                               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -3167,11 +3620,18 @@ const handleFileChange = (e) => {
                               <Input
                                 type="text"
                                 name="guarantor_bussiness_address"
-                                value={updateFormData.guarantor_bussiness_address}
+                                value={
+                                  updateFormData.guarantor_bussiness_address
+                                }
                                 onChange={handleInputChange}
                                 placeholder="Farm or Operation Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                              {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           </div>
                         )}
@@ -3187,11 +3647,18 @@ const handleFileChange = (e) => {
                               <Input
                                 type="text"
                                 name="guarantor_bussiness_address"
-                                value={updateFormData.guarantor_bussiness_address}
+                                value={
+                                  updateFormData.guarantor_bussiness_address
+                                }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
                                 className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
+                               {errors.guarantor_bussiness_address && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bussiness_address}
+                          </p>
+                        )}
                             </div>
                           )}
                       </div>
@@ -3200,7 +3667,7 @@ const handleFileChange = (e) => {
                     {/* Document Upload Section */}
                     <div className="mt-6">
                       <label className="block mb-2 text-sm font-medium text-gray-700">
-                        Document Photo <span className="text-red-500">*</span>
+                       Salary/Income Document Photo <span className="text-red-500">*</span>
                       </label>
                       <Input
                         type="file"
@@ -3210,8 +3677,16 @@ const handleFileChange = (e) => {
                         required
                         className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
                       />
+                      {errors.guarantor_income_document && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_income_document}
+                          </p>
+                        )}
                       {updateFormData.guarantor_income_document && (
-                        <Link to={updateFormData.guarantor_income_document} download>
+                        <Link
+                          to={updateFormData.guarantor_income_document}
+                          download
+                        >
                           <img
                             src={updateFormData.guarantor_income_document}
                             alt="Income Document"
@@ -3241,6 +3716,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter Bank Name"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_name && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_name}
+                          </p>
+                        )}
                       </div>
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -3254,6 +3734,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter Account Number"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_account_number && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_account_number}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -3270,6 +3755,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter Branch"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_branch && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_branch}
+                          </p>
+                        )}
                       </div>
                       <div className="w-1/2">
                         <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -3283,6 +3773,11 @@ const handleFileChange = (e) => {
                           placeholder="Enter IFSC Code"
                           className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                         />
+                        {errors.guarantor_bank_ifsc_code && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_ifsc_code}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -3298,6 +3793,11 @@ const handleFileChange = (e) => {
                         required
                         className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-2.5"
                       />
+                      {errors.guarantor_bank_passbook_photo && (
+                          <p className="mt-2 text-sm text-red-600">
+                            {errors.guarantor_bank_passbook_photo}
+                          </p>
+                        )}
                       {updateFormData.guarantor_bank_passbook_photo && (
                         <Link
                           to={updateFormData.guarantor_bank_passbook_photo}
@@ -3357,13 +3857,23 @@ const handleFileChange = (e) => {
                       required
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
-                    <Link to={updateFormData?.guarantor_document} download>
-                      <img
-                        src={updateFormData?.guarantor_document}
-                        alt=""
-                        className="w-56 mx-2 my-4 h-56"
-                      />
-                    </Link>
+                     {errors.guarantor_document && (
+                      <p className="mt-2 text-sm text-red-600">
+                        {errors.guarantor_document}
+                      </p>
+                    )}
+                    {updateFormData.guarantor_document && (
+                        <Link
+                          to={updateFormData.guarantor_document}
+                          download
+                        >
+                          <img
+                            src={updateFormData.guarantor_document}
+                            alt="Property"
+                            className="w-56 h-56 object-cover mt-4 rounded-md shadow"
+                          />
+                        </Link>
+                      )}
                   </div>
                   <div>
                     <label
