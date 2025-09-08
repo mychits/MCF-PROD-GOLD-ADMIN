@@ -7,11 +7,13 @@ import Navbar from "../components/layouts/Navbar";
 import Modal from "../components/modals/Modal";
 import SettingSidebar from "../components/layouts/SettingSidebar";
 
-const TargetCommissionReport = () => {
+const TargetCommission = () => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [tempFromDate, setTempFromDate] = useState();
   const [tempToDate, setTempToDate] = useState();
+
+  const [agentLoading, setAgentLoading] = useState(false);
 
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [employeeCustomerData, setEmployeeCustomerData] = useState([]);
@@ -79,40 +81,28 @@ const TargetCommissionReport = () => {
 
   const fetchTargetData = async (employeeId) => {
     try {
+      if (!employeeId) return;
       const abortController = new AbortController();
-      const targetRes = await api.get("/target/get-targets", {
-        params: { fromDate, toDate, agentId: employeeId },
-        signal:abortController.signal
+
+      // use current year from fromDate, else fallback to today
+      const year = new Date(fromDate || new Date()).getFullYear();
+
+      // Fetch target details for the selected agent
+      const targetRes = await api.get(`/target/agent/${employeeId}`, {
+        params: { year },
+        signal: abortController.signal,
       });
 
-      const rawTargets = targetRes.data || [];
-
-      const monthMap = {};
-      rawTargets.forEach((t) => {
-        if ((t.agentId?._id || t.agentId) !== employeeId) return;
-        const date = new Date(t.startDate);
-        const key = `${date.getFullYear()}-${date.getMonth()}`;
-        if (!monthMap[key]) monthMap[key] = t.totalTarget || 0;
-
-      });
-
-      const defaultTarget = Object.values(monthMap)[0] || 0;
       let totalTarget = 0;
-      const start = new Date(fromDate);
-      const end = new Date(toDate);
-      let date = new Date(start);
-      while (date <= end) {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const key = `${year}-${month}`;
-        const monthTarget = monthMap[key] ?? defaultTarget;
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const perDayTarget = monthTarget / daysInMonth;
-
-        totalTarget += perDayTarget;
-        date.setDate(date.getDate() + 1);
+      if (targetRes.data && targetRes.data.length > 0) {
+        const monthData = targetRes.data[0].monthData || {};
+        totalTarget = Object.values(monthData).reduce(
+          (sum, val) => sum + (Number(val) || 0),
+          0
+        );
       }
 
+      // Fetch commission data to get achieved
       const { data: comm } = await api.get(
         "/enroll/get-detailed-commission-per-month",
         {
@@ -121,7 +111,7 @@ const TargetCommissionReport = () => {
             from_date: fromDate,
             to_date: toDate,
           },
-          signal:abortController.abort
+          signal: abortController.signal,
         }
       );
 
@@ -133,59 +123,30 @@ const TargetCommissionReport = () => {
       const remaining = Math.max(totalTarget - achieved, 0);
       const difference = totalTarget - achieved;
 
-      const designation =
-        rawTargets.find((t) => (t.agentId?._id || t.agentId) === employeeId)
-          ?.agentId?.designation_id?.title || "N/A";
-      const title = designation.toLowerCase();
-
-      let incentiveAmount = 0;
-      let incentivePercent = "0%";
-
-      if (title === "business agent" && achieved <= totalTarget) {
-        incentiveAmount = difference * 0.005;
-        incentivePercent = "0.5%";
-      } else if (difference < 0) {
-        incentiveAmount = Math.abs(difference) * 0.01;
-        incentivePercent = "1%";
-      }
-
-      const startDate = rawTargets.reduce(
-        (min, t) => (t.startDate < min ? t.startDate : min),
-        rawTargets[0]?.startDate || ""
-      );
-      const endDate = rawTargets.reduce(
-        (max, t) => (t.endDate > max ? t.endDate : max),
-        rawTargets[0]?.endDate || ""
-      );
-
       setTargetData({
         target: Math.round(totalTarget),
         achieved,
-        remaining: Math.max(totalTarget - achieved, 0),
+        remaining,
         difference,
-        startDate: startDate?.split("T")[0] || "",
-        endDate: endDate?.split("T")[0] || "",
-        designation,
-        incentiveAmount: `₹${incentiveAmount.toFixed(2)}`,
-        incentivePercent,
+        startDate: fromDate || "",
+        endDate: toDate || "",
       });
     } catch (err) {
-      if(err.name !== "AbortError"){
-      console.error("Error fetching target data:", err);
-      setTargetData({
-        target: 0,
-        achieved: 0,
-        remaining: 0,
-        difference: 0,
-        startDate: "",
-        endDate: "",
-        designation: "-",
-        incentiveAmount: "₹0.00",
-        incentivePercent: "0%",
-      });
+      if (err.name !== "AbortError") {
+        console.error("Error fetching target data:", err);
+        setTargetData({
+          target: 0,
+          achieved: 0,
+          remaining: 0,
+          difference: 0,
+          startDate: "",
+          endDate: "",
+        });
+      }
     }
   };
-}
+
+
 
   const fetchAllCommissionReport = async () => {
     const abortController = new AbortController();
@@ -193,46 +154,53 @@ const TargetCommissionReport = () => {
     try {
       const res = await api.get("enroll/get-detailed-commission-all", {
         params: { from_date: fromDate, to_date: toDate },
-        signal:abortController.signal
+        signal: abortController.signal
       });
       setEmployeeCustomerData(res.data?.commission_data);
       setCommissionTotalDetails(res.data?.summary);
     } catch (err) {
-      if(err.name !== "AbortError"){
-      console.error("Error fetching all commission report:", err);
-      setEmployeeCustomerData([]);
-      setCommissionTotalDetails({});
+      if (err.name !== "AbortError") {
+        console.error("Error fetching all commission report:", err);
+        setEmployeeCustomerData([]);
+        setCommissionTotalDetails({});
       }
     } finally {
-      if(!abortController.signal.aborted){
+      if (!abortController.signal.aborted) {
         setLoading(false);
 
       }
     }
   };
 
-  const handleEmployeeChange = async (value) => {
-    setSelectedEmployeeId(value);
 
-    if (value === "ALL") {
-      setSelectedEmployeeDetails(null);
-      setTargetData({
-        target: 0,
-        achieved: 0,
-        remaining: 0,
-        startDate: "",
-        endDate: "",
-        designation: "",
-        incentiveAmount: "₹0.00",
-        incentivePercent: "0%",
-      });
-      fetchAllCommissionReport();
-    } else {
-      const selectedEmp = employees.find((emp) => emp._id === value);
-      setSelectedEmployeeDetails(selectedEmp || null);
-      await fetchCommissionReport(value);
-    }
-  };
+
+const handleEmployeeChange = async (value) => {
+  setSelectedEmployeeId(value);
+  setAgentLoading(true); 
+
+  if (value === "ALL") {
+    setSelectedEmployeeDetails(null);
+    setTargetData({
+      target: 0,
+      achieved: 0,
+      remaining: 0,
+      startDate: "",
+      endDate: "",
+      designation: "",
+      incentiveAmount: "₹0.00",
+      incentivePercent: "0%",
+    });
+    await fetchAllCommissionReport();
+  } else {
+    const selectedEmp = employees.find((emp) => emp._id === value);
+    setSelectedEmployeeDetails(selectedEmp || null);
+    await fetchCommissionReport(value);
+    await fetchTargetData(value);
+  }
+
+  setAgentLoading(false); 
+};
+
 
   useEffect(() => {
     fetchEmployees();
@@ -443,35 +411,120 @@ const TargetCommissionReport = () => {
               </div>
             </div>
           </div>
+          {agentLoading ? (
+            <div className="flex justify-center py-10">
+              <CircularLoader isLoading={true} />
+            </div>
+          ) : (
+            <>
+              {/* Employee Info */}
+              {(selectedEmployeeId === "ALL" || selectedEmployeeDetails) && (
+                <div className="mb-8 bg-gray-50 rounded-md shadow-md p-6 space-y-4">
+                  {selectedEmployeeId !== "ALL" && selectedEmployeeDetails && (
+                    <>
+                      <div className="flex gap-4">
+                        <div className="flex flex-col flex-1">
+                          <label className="text-sm font-medium mb-1">Name</label>
+                          <input
+                            value={selectedEmployeeDetails.name || "-"}
+                            readOnly
+                            className="border border-gray-300 rounded px-4 py-2 bg-white"
+                          />
+                        </div>
+                        <div className="flex flex-col flex-1">
+                          <label className="text-sm font-medium mb-1">Email</label>
+                          <input
+                            value={selectedEmployeeDetails.email || "-"}
+                            readOnly
+                            className="border border-gray-300 rounded px-4 py-2 bg-white"
+                          />
+                        </div>
+                        <div className="flex flex-col flex-1">
+                          <label className="text-sm font-medium mb-1">
+                            Phone Number
+                          </label>
+                          <input
+                            value={selectedEmployeeDetails.phone_number || "-"}
+                            readOnly
+                            className="border border-gray-300 rounded px-4 py-2 bg-white"
+                          />
+                        </div>
+                      </div>
 
-          {/* Employee Info */}
-          {(selectedEmployeeId === "ALL" || selectedEmployeeDetails) && (
-            <div className="mb-8 bg-gray-50 rounded-md shadow-md p-6 space-y-4">
-              {selectedEmployeeId !== "ALL" && selectedEmployeeDetails && (
-                <>
+                      <div className="flex gap-4">
+                        <div className="flex flex-col flex-1">
+                          <label className="text-sm font-medium mb-1">
+                            Adhaar Number
+                          </label>
+                          <input
+                            value={selectedEmployeeDetails.adhaar_no || "-"}
+                            readOnly
+                            className="border border-gray-300 rounded px-4 py-2 bg-white"
+                          />
+                        </div>
+                        <div className="flex flex-col flex-1">
+                          <label className="text-sm font-medium mb-1">
+                            PAN Number
+                          </label>
+                          <input
+                            value={selectedEmployeeDetails.pan_no || "-"}
+                            readOnly
+                            className="border border-gray-300 rounded px-4 py-2 bg-white"
+                          />
+                        </div>
+                        <div className="flex flex-col flex-1">
+                          <label className="text-sm font-medium mb-1">
+                            Pincode
+                          </label>
+                          <input
+                            value={selectedEmployeeDetails.pincode || "-"}
+                            readOnly
+                            className="border border-gray-300 rounded px-4 py-2 bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium mb-1">Address</label>
+                        <input
+                          value={selectedEmployeeDetails.address || "-"}
+                          readOnly
+                          className="border border-gray-300 rounded px-4 py-2 bg-white"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Summary always shown */}
                   <div className="flex gap-4">
                     <div className="flex flex-col flex-1">
-                      <label className="text-sm font-medium mb-1">Name</label>
-                      <input
-                        value={selectedEmployeeDetails.name || "-"}
-                        readOnly
-                        className="border border-gray-300 rounded px-4 py-2 bg-white"
-                      />
-                    </div>
-                    <div className="flex flex-col flex-1">
-                      <label className="text-sm font-medium mb-1">Email</label>
-                      <input
-                        value={selectedEmployeeDetails.email || "-"}
-                        readOnly
-                        className="border border-gray-300 rounded px-4 py-2 bg-white"
-                      />
-                    </div>
-                    <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        Phone Number
+                        Actual Business
                       </label>
                       <input
-                        value={selectedEmployeeDetails.phone_number || "-"}
+                        value={commissionTotalDetails?.actual_business || "-"}
+                        readOnly
+                        className="border border-gray-300 rounded px-4 py-2 bg-white text-green-700 font-bold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col flex-1">
+                      <label className="text-sm font-medium mb-1">
+                        Actual Commission
+                      </label>
+                      <input
+                        value={commissionTotalDetails?.total_actual || "-"}
+                        readOnly
+                        className="border border-gray-300 rounded px-4 py-2 bg-white  text-green-700 font-bold"
+                      />
+                    </div>
+
+                    <div className="flex flex-col flex-1">
+                      <label className="text-sm font-medium mb-1">
+                        Gross Business
+                      </label>
+                      <input
+                        value={commissionTotalDetails?.expected_business || "-"}
                         readOnly
                         className="border border-gray-300 rounded px-4 py-2 bg-white"
                       />
@@ -481,424 +534,320 @@ const TargetCommissionReport = () => {
                   <div className="flex gap-4">
                     <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        Adhaar Number
+                        Gross Commission
                       </label>
                       <input
-                        value={selectedEmployeeDetails.adhaar_no || "-"}
+                        value={commissionTotalDetails?.total_estimated || "-"}
                         readOnly
                         className="border border-gray-300 rounded px-4 py-2 bg-white"
                       />
                     </div>
                     <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        PAN Number
+                        Total Customers
                       </label>
                       <input
-                        value={selectedEmployeeDetails.pan_no || "-"}
+                        value={commissionTotalDetails?.total_customers || "-"}
                         readOnly
                         className="border border-gray-300 rounded px-4 py-2 bg-white"
                       />
                     </div>
                     <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        Pincode
+                        Total Groups
                       </label>
                       <input
-                        value={selectedEmployeeDetails.pincode || "-"}
+                        value={commissionTotalDetails?.total_groups || "-"}
                         readOnly
                         className="border border-gray-300 rounded px-4 py-2 bg-white"
                       />
                     </div>
                   </div>
-
-                  <div className="flex flex-col">
-                    <label className="text-sm font-medium mb-1">Address</label>
-                    <input
-                      value={selectedEmployeeDetails.address || "-"}
-                      readOnly
-                      className="border border-gray-300 rounded px-4 py-2 bg-white"
-                    />
-                  </div>
-                </>
+                </div>
               )}
 
-              {/* Summary always shown */}
-              <div className="flex gap-4">
-                <div className="flex flex-col flex-1">
-                  <label className="text-sm font-medium mb-1">
-                    Actual Business
-                  </label>
-                  <input
-                    value={commissionTotalDetails?.actual_business || "-"}
-                    readOnly
-                    className="border border-gray-300 rounded px-4 py-2 bg-white text-green-700 font-bold"
-                  />
-                </div>
+              {selectedEmployeeId &&
+                selectedEmployeeId !== "ALL" &&
+                fromDate &&
+                toDate && (
+                  <div className="bg-gray-100  p-4 rounded-lg shadow mb-6">
+                    <h2 className="text-lg font-bold text-yellow-800 mb-2">
+                      Target Details
+                    </h2>
 
-                <div className="flex flex-col flex-1">
-                  <label className="text-sm font-medium mb-1">
-                    Actual Commission
-                  </label>
-                  <input
-                    value={commissionTotalDetails?.total_actual || "-"}
-                    readOnly
-                    className="border border-gray-300 rounded px-4 py-2 bg-white  text-green-700 font-bold"
-                  />
-                </div>
+                    {targetData.achieved >= targetData.target && (
+                      <div className="text-green-800 font-semibold mb-3">
+                        🎉 Target Achieved
+                      </div>
+                    )}
 
-                <div className="flex flex-col flex-1">
-                  <label className="text-sm font-medium mb-1">
-                    Gross Business
-                  </label>
-                  <input
-                    value={commissionTotalDetails?.expected_business || "-"}
-                    readOnly
-                    className="border border-gray-300 rounded px-4 py-2 bg-white"
-                  />
-                </div>
-              </div>
+                    <div className="grid md:grid-cols-3 gap-4 bg-gray-50 ">
+                      <div>
+                        <label className="block font-medium">Target Set</label>
+                        <input
+                          value={`₹${targetData.target?.toLocaleString("en-IN")}`}
+                          readOnly
+                          className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-medium">Achieved</label>
+                        <input
+                          value={`₹${targetData.achieved?.toLocaleString("en-IN")}`}
+                          readOnly
+                          className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-medium">Difference</label>
+                        <input
+                          value={`₹${targetData.difference?.toLocaleString("en-IN")}`}
+                          readOnly
+                          className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
+                        />
+                      </div>
 
-              <div className="flex gap-4">
-                <div className="flex flex-col flex-1">
-                  <label className="text-sm font-medium mb-1">
-                    Gross Commission
-                  </label>
-                  <input
-                    value={commissionTotalDetails?.total_estimated || "-"}
-                    readOnly
-                    className="border border-gray-300 rounded px-4 py-2 bg-white"
-                  />
-                </div>
-                <div className="flex flex-col flex-1">
-                  <label className="text-sm font-medium mb-1">
-                    Total Customers
-                  </label>
-                  <input
-                    value={commissionTotalDetails?.total_customers || "-"}
-                    readOnly
-                    className="border border-gray-300 rounded px-4 py-2 bg-white"
-                  />
-                </div>
-                <div className="flex flex-col flex-1">
-                  <label className="text-sm font-medium mb-1">
-                    Total Groups
-                  </label>
-                  <input
-                    value={commissionTotalDetails?.total_groups || "-"}
-                    readOnly
-                    className="border border-gray-300 rounded px-4 py-2 bg-white"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+                      <div>
+                        <label className="block font-medium">Total Payable</label>
+                        <input
+                          readOnly
+                          value={(() => {
+                            const actual = parseFloat(
+                              (commissionTotalDetails?.total_actual || "0")
+                                .toString()
+                                .replace(/[^0-9.-]+/g, "")
+                            );
 
-          {selectedEmployeeId &&
-            selectedEmployeeId !== "ALL" &&
-            fromDate &&
-            toDate && (
-              <div className="bg-gray-100  p-4 rounded-lg shadow mb-6">
-                <h2 className="text-lg font-bold text-yellow-800 mb-2">
-                  Target Details
-                </h2>
 
-                {targetData.achieved >= targetData.target && (
-                  <div className="text-green-800 font-semibold mb-3">
-                    🎉 Target Achieved
+
+
+                            const total = actual;
+
+                            return `₹${total.toLocaleString("en-IN")}`;
+                          })()}
+                          className="border px-3 py-2 rounded w-full bg-gray-50 text-green-700 font-bold"
+                        />
+
+                      </div>
+
+
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4 mt-4">
+
+                      <div className="flex justify-end mt-4">
+                        <button
+                          onClick={handlePayNow}
+                          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+                        >
+                          Pay Now
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
 
-                <div className="grid md:grid-cols-3 gap-4 bg-gray-50 ">
-                  <div>
-                    <label className="block font-medium">Target Set</label>
-                    <input
-                      value={`₹${targetData.target?.toLocaleString("en-IN")}`}
-                      readOnly
-                      className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-medium">Achieved</label>
-                    <input
-                      value={`₹${targetData.achieved?.toLocaleString("en-IN")}`}
-                      readOnly
-                      className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-medium">Remaining</label>
-                    <input
-                      value={`₹${targetData.remaining?.toLocaleString(
-                        "en-IN"
-                      )}`}
-                      readOnly
-                      className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
-                    />
-                  </div>
+              <Modal
+                isVisible={showCommissionModal}
+                onClose={() => setShowCommissionModal(false)}
+                width="max-w-md"
+              >
+                <div className="py-6 px-5 text-left">
+                  <h3 className="mb-4 text-xl font-bold text-gray-900 border-b pb-2">
+                    Add Commission Payment
+                  </h3>
+                  <form className="space-y-4" onSubmit={handleCommissionSubmit}>
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Agent Name
+                      </label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={
+                          employees.find(
+                            (emp) => emp._id === commissionForm.agent_id
+                          )?.name || ""
+                        }
+                        className="w-full border p-2 rounded bg-gray-100 font-semibold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Payment Date
+                      </label>
+                      <input
+                        type="date"
+                        name="pay_date"
+                        value={commissionForm.pay_date}
+                        onChange={handleCommissionChange}
+                        className="w-full border p-2 rounded"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Total Payable Commission
+                      </label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={`₹${commissionForm.amount || "0.00"}`}
+                        className="w-full border p-2 rounded bg-gray-100 text-green-700 font-semibold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Payment Mode
+                      </label>
+                      <select
+                        name="pay_type"
+                        value={commissionForm.pay_type}
+                        onChange={handleCommissionChange}
+                        className="w-full border p-2 rounded"
+                      >
+                        <option value="cash">Cash</option>
+                        <option value="online">Online</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                      </select>
+                    </div>
+
+                    {commissionForm.pay_type === "online" && (
+                      <div>
+                        <label className="block text-sm font-medium">
+                          Transaction ID
+                        </label>
+                        <input
+                          type="text"
+                          name="transaction_id"
+                          value={commissionForm.transaction_id}
+                          onChange={handleCommissionChange}
+                          className="w-full border p-2 rounded"
+                        />
+                        {errors.transaction_id && (
+                          <p className="text-red-500 text-sm">
+                            {errors.transaction_id}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-sm font-medium">Note</label>
+                      <textarea
+                        name="note"
+                        value={commissionForm.note}
+                        onChange={handleCommissionChange}
+                        className="w-full border p-2 rounded"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-3 mt-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowCommissionModal(false)}
+                        className="px-4 py-2 border rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-600 text-white rounded"
+                      >
+                        Save Payment
+                      </button>
+                    </div>
+                  </form>
                 </div>
+              </Modal>
 
-                <div className="grid md:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <label className="block font-medium">Incentive (%)</label>
-                    <input
-                      value={targetData.incentivePercent || "0%"}
-                      readOnly
-                      className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium">
-                      Incentive Amount
-                    </label>
-                    <input
-                      value={targetData.incentiveAmount || "₹0.00"}
-                      readOnly
-                      className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium">Total Payable </label>
-                    <input
-                      readOnly
-                      value={(() => {
+              {loading ? (
+                <CircularLoader isLoading={true} />
+              ) : employeeCustomerData.length > 0 ? (
+                <>
+                  <DataTable
+                    data={processedTableData}
+                    columns={columns}
+                    exportedPdfName={`Commission Report`}
+                    printHeaderKeys={[
+                      "Name",
+                      "Phone Number",
+                      "From Date",
+                      "To Date",
+                      "Target Set",
+                      "Achieved",
+                      "Remaining",
+                      "Incentive (%)",
+                      "Incentive Amount",
+                      "Total Payable Commission",
+                      "Actual Business",
+                      "Actual Commission",
+                      "Gross Business",
+                      "Gross Commission",
+                      "Total Customers",
+                      "Total Groups",
+                    ]}
+                    printHeaderValues={[
+                      selectedEmployeeId === "ALL"
+                        ? "All Employees"
+                        : selectedEmployeeDetails?.name || "-",
+                      selectedEmployeeId === "ALL"
+                        ? "-"
+                        : selectedEmployeeDetails?.phone_number || "-",
+                      tempFromDate || "-",
+                      tempToDate || "-",
+                      `₹${targetData?.target?.toLocaleString("en-IN") || "0"}`,
+                      `₹${targetData?.achieved?.toLocaleString("en-IN") || "0"}`,
+                      `₹${targetData?.remaining?.toLocaleString("en-IN") || "0"}`,
+                      targetData?.incentivePercent || "0%",
+                      targetData?.incentiveAmount || "₹0.00",
+                      (() => {
                         const actual = parseFloat(
                           (commissionTotalDetails?.total_actual || "0")
                             .toString()
                             .replace(/[^0-9.-]+/g, "")
                         );
-
                         const incentive = parseFloat(
-                          (targetData?.incentiveAmount || "0").replace(
-                            /[^0-9.-]+/g,
-                            ""
-                          )
+                          (targetData?.incentiveAmount || "0")
+                            .toString()
+                            .replace(/[^0-9.-]+/g, "")
                         );
-
-                        const total = incentive;
-
+                        const total = actual + incentive;
                         return `₹${total.toLocaleString("en-IN")}`;
-                      })()}
-                      className="border px-3 py-2 rounded w-full bg-gray-50 text-green-700 font-bold"
-                    />
-                  </div>
-                  <div className="flex justify-end mt-4">
-                    <button
-                      onClick={handlePayNow}
-                      className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
-                    >
-                      Pay Now
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-          <Modal
-            isVisible={showCommissionModal}
-            onClose={() => setShowCommissionModal(false)}
-            width="max-w-md"
-          >
-            <div className="py-6 px-5 text-left">
-              <h3 className="mb-4 text-xl font-bold text-gray-900 border-b pb-2">
-                Add Commission Payment
-              </h3>
-              <form className="space-y-4" onSubmit={handleCommissionSubmit}>
-                <div>
-                  <label className="block text-sm font-medium">
-                    Agent Name
-                  </label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={
-                      employees.find(
-                        (emp) => emp._id === commissionForm.agent_id
-                      )?.name || ""
-                    }
-                    className="w-full border p-2 rounded bg-gray-100 font-semibold"
+                      })(),
+                      `₹${commissionTotalDetails?.actual_business?.toLocaleString(
+                        "en-IN"
+                      ) || "0"
+                      }`,
+                      `₹${commissionTotalDetails?.total_actual?.toLocaleString(
+                        "en-IN"
+                      ) || "0"
+                      }`,
+                      `₹${commissionTotalDetails?.expected_business?.toLocaleString(
+                        "en-IN"
+                      ) || "0"
+                      }`,
+                      `₹${commissionTotalDetails?.total_estimated?.toLocaleString(
+                        "en-IN"
+                      ) || "0"
+                      }`,
+                      commissionTotalDetails?.total_customers || "0",
+                      commissionTotalDetails?.total_groups || "0",
+                    ]}
+                    exportedFileName={`CommissionReport-${selectedEmployeeDetails?.name || "all"
+                      }.csv`}
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium">
-                    Payment Date
-                  </label>
-                  <input
-                    type="date"
-                    name="pay_date"
-                    value={commissionForm.pay_date}
-                    onChange={handleCommissionChange}
-                    className="w-full border p-2 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium">
-                    Total Payable Commission
-                  </label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={`₹${commissionForm.amount || "0.00"}`}
-                    className="w-full border p-2 rounded bg-gray-100 text-green-700 font-semibold"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium">
-                    Payment Mode
-                  </label>
-                  <select
-                    name="pay_type"
-                    value={commissionForm.pay_type}
-                    onChange={handleCommissionChange}
-                    className="w-full border p-2 rounded"
-                  >
-                    <option value="cash">Cash</option>
-                    <option value="online">Online</option>
-                    <option value="cheque">Cheque</option>
-                    <option value="bank_transfer">Bank Transfer</option>
-                  </select>
-                </div>
-
-                {commissionForm.pay_type === "online" && (
-                  <div>
-                    <label className="block text-sm font-medium">
-                      Transaction ID
-                    </label>
-                    <input
-                      type="text"
-                      name="transaction_id"
-                      value={commissionForm.transaction_id}
-                      onChange={handleCommissionChange}
-                      className="w-full border p-2 rounded"
-                    />
-                    {errors.transaction_id && (
-                      <p className="text-red-500 text-sm">
-                        {errors.transaction_id}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium">Note</label>
-                  <textarea
-                    name="note"
-                    value={commissionForm.note}
-                    onChange={handleCommissionChange}
-                    className="w-full border p-2 rounded"
-                  />
-                </div>
-
-                <div className="flex justify-end gap-3 mt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowCommissionModal(false)}
-                    className="px-4 py-2 border rounded"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded"
-                  >
-                    Save Payment
-                  </button>
-                </div>
-              </form>
-            </div>
-          </Modal>
-
-          {loading ? (
-            <CircularLoader isLoading={true} />
-          ) : employeeCustomerData.length > 0 ? (
-            <>
-              <DataTable
-                data={processedTableData}
-                columns={columns}
-                exportedPdfName={`Commission Report`}
-                printHeaderKeys={[
-                  "Name",
-                  "Phone Number",
-                  "From Date",
-                  "To Date",
-                  "Target Set",
-                  "Achieved",
-                  "Remaining",
-                  "Incentive (%)",
-                  "Incentive Amount",
-                  "Total Payable Commission",
-                  "Actual Business",
-                  "Actual Commission",
-                  "Gross Business",
-                  "Gross Commission",
-                  "Total Customers",
-                  "Total Groups",
-                ]}
-                printHeaderValues={[
-                  selectedEmployeeId === "ALL"
-                    ? "All Employees"
-                    : selectedEmployeeDetails?.name || "-",
-                  selectedEmployeeId === "ALL"
-                    ? "-"
-                    : selectedEmployeeDetails?.phone_number || "-",
-                  tempFromDate || "-",
-                  tempToDate || "-",
-                  `₹${targetData?.target?.toLocaleString("en-IN") || "0"}`,
-                  `₹${targetData?.achieved?.toLocaleString("en-IN") || "0"}`,
-                  `₹${targetData?.remaining?.toLocaleString("en-IN") || "0"}`,
-                  targetData?.incentivePercent || "0%",
-                  targetData?.incentiveAmount || "₹0.00",
-                  (() => {
-                    const actual = parseFloat(
-                      (commissionTotalDetails?.total_actual || "0")
-                        .toString()
-                        .replace(/[^0-9.-]+/g, "")
-                    );
-                    const incentive = parseFloat(
-                      (targetData?.incentiveAmount || "0")
-                        .toString()
-                        .replace(/[^0-9.-]+/g, "")
-                    );
-                    const total = actual + incentive;
-                    return `₹${total.toLocaleString("en-IN")}`;
-                  })(),
-                  `₹${
-                    commissionTotalDetails?.actual_business?.toLocaleString(
-                      "en-IN"
-                    ) || "0"
-                  }`,
-                  `₹${
-                    commissionTotalDetails?.total_actual?.toLocaleString(
-                      "en-IN"
-                    ) || "0"
-                  }`,
-                  `₹${
-                    commissionTotalDetails?.expected_business?.toLocaleString(
-                      "en-IN"
-                    ) || "0"
-                  }`,
-                  `₹${
-                    commissionTotalDetails?.total_estimated?.toLocaleString(
-                      "en-IN"
-                    ) || "0"
-                  }`,
-                  commissionTotalDetails?.total_customers || "0",
-                  commissionTotalDetails?.total_groups || "0",
-                ]}
-                exportedFileName={`CommissionReport-${
-                  selectedEmployeeDetails?.name || "all"
-                }.csv`}
-              />
+                </>
+              ) : (
+                selectedEmployeeDetails?.name && (
+                  <p className="text-center font-bold text-lg">
+                    No Commission Data found.
+                  </p>
+                )
+              )}
             </>
-          ) : (
-            selectedEmployeeDetails?.name && (
-              <p className="text-center font-bold text-lg">
-                No Commission Data found.
-              </p>
-            )
           )}
         </div>
       </div>
@@ -907,4 +856,4 @@ const TargetCommissionReport = () => {
 };
 
 
-export default TargetCommissionReport;
+export default TargetCommission;

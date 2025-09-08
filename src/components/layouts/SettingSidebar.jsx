@@ -107,13 +107,16 @@ const MenuSidebar = [
       },
       {
         title: "Accounts",
-        icon: <MdAccountBalanceWallet  />,
+        icon: <MdAccountBalanceWallet />,
         submenu: true,
         submenuItems: [
           {
-            title: "PayOut",
-            icon: <RiMoneyRupeeCircleFill  size={20} />,
-            link: "/target-commission",
+            title: "PayOut Menu",
+            icon: <RiMoneyRupeeCircleFill size={20} />,
+            link:"/target-payout-menu"
+          
+
+          
           },
         ],
       },

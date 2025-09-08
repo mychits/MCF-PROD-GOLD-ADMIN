@@ -8,8 +8,7 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification } from "antd";
-import { useParams } from "react-router-dom";
-// daily customer automated message
+
 const PayOutCommission = () => {
   const paymentFor = "commission"
   const [api, contextHolder] = notification.useNotification();
@@ -26,6 +25,9 @@ const PayOutCommission = () => {
   const [employees, setEmployees] = useState([]);
   const [agentType, setAgentType] = useState("");
   const [calculatedAmount, setCalculatedAmount] = useState("0.00");
+
+  const [alreadyPaid, setAlreadyPaid] = useState("0.00");
+const [remainingPayable, setRemainingPayable] = useState("0.00");
 
   const [selectedUserList, setSelectedUserList] = useState([]);
   const [commissionPayments, setCommissionPayments] = useState([]);
@@ -93,58 +95,50 @@ const PayOutCommission = () => {
     }
   };
 
+const formatDate = (date) => {
+  if (!date) return "";
+  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date;
+  }
+  const d = new Date(date);
+  if (isNaN(d)) return "";
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
-  const fetchTargetDetails = async (agentId, fromDate, toDate) => {
-    try {
-      const targetRes = await API.get("/target/get-targets", {
-        params: { agentId, fromDate, toDate },
-      });
-      const targetList = targetRes.data || [];
+const fetchTargetDetails = async (agentId, fromDate, toDate) => {
+  if (!agentId || !fromDate || !toDate) {
+    setTargetData({
+      target: 0,
+      achieved: 0,
+      remaining: 0,
+      difference: 0,
+      incentiveAmount: "₹0.00",
+      incentivePercent: "0%",
+    });
+    return;
+  }
 
-      const filteredTargets = targetList.filter(t => {
-        const id = t.agentId?._id || t.agentId;
-        return id === agentId;
-      });
+  try {
+    const res = await API.get(`/target/employee/${agentId}`, {
+      params: { from_date: formatDate(fromDate), to_date: formatDate(toDate) },
+    });
 
-      const totalTarget = filteredTargets.reduce(
-        (sum, t) => sum + parseFloat(t.totalTarget || 0),
-        0
-      );
-
-      const commissionRes = await API.get(`/enroll/get-detailed-commission/${agentId}`, {
-        params: { from_date: fromDate, to_date: toDate },
-      });
-
-      let achieved = commissionRes?.data?.summary?.actual_business || 0;
-      if (typeof achieved === "string") {
-        achieved = Number(achieved.replace(/[^0-9.-]+/g, ""));
-      }
-
-      let incentiveAmount = 0;
-      let incentivePercent = "0%";
-      let difference = totalTarget - achieved;
-
-      if (agentType === "agent") {
-        if (achieved > 5000000) {
-          incentiveAmount = achieved * 0.01;
-          incentivePercent = "1%";
-        }
-        difference = totalTarget - achieved; // Still compute for form use (if needed)
-      } else if (difference < 0) {
-        incentiveAmount = Math.abs(difference) * 0.01;
-        incentivePercent = "1%";
-      }
+    if (res.data?.success && res.data?.summary) {
+      const empSummary = res.data.summary;
 
       setTargetData({
-        target: Math.round(totalTarget),
-        achieved,
-        remaining: Math.max(totalTarget - achieved, 0),
-        difference,
-        incentiveAmount: `₹${incentiveAmount.toFixed(2)}`,
-        incentivePercent,
+        target: empSummary.agent?.target?.value || "Not Set",
+        achieved: empSummary.metrics?.actual_business || "₹0.00",
+        difference: empSummary.metrics?.target_difference || "₹0.00",
+        remaining: empSummary.metrics?.target_remaining || "₹0.00",
+        incentiveAmount: empSummary.metrics?.incentive || "₹0.00",  
+        incentivePercent:
+          (empSummary.agent?.target?.achievement_percent || "0") + "%",
       });
-    } catch (error) {
-      console.error("Failed to fetch target or commission", error);
+    } else {
       setTargetData({
         target: 0,
         achieved: 0,
@@ -154,7 +148,18 @@ const PayOutCommission = () => {
         incentivePercent: "0%",
       });
     }
-  };
+  } catch (error) {
+    console.error("Failed to fetch target details", error);
+    setTargetData({
+      target: 0,
+      achieved: 0,
+      remaining: 0,
+      difference: 0,
+      incentiveAmount: "₹0.00",
+      incentivePercent: "0%",
+    });
+  }
+};
 
   const fetchCommissionPayments = async () => {
     setIsLoading(true);
@@ -185,6 +190,16 @@ const PayOutCommission = () => {
     }
   };
 
+//   useEffect(() => {
+//   const { agent_id, commissionCalculationFromDate, commissionCalculationToDate } = commissionForm;
+//   if (agent_id && commissionCalculationFromDate && commissionCalculationToDate) {
+//     const fd = formatDate(commissionCalculationFromDate);
+//     const td = formatDate(commissionCalculationToDate);
+//     fetchTargetDetails(agent_id, fd, td);
+//   }
+// }, [commissionForm.agent_id, commissionForm.commissionCalculationFromDate, commissionForm.commissionCalculationToDate]);
+
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
@@ -201,99 +216,58 @@ const PayOutCommission = () => {
     fetchCommissionPayments();
   }, [reRender]);
 
-  const calculateTotalPayableCommission = async (agentId, calcFromDate, calcToDate) => {
-    if (!agentId || !calcFromDate || !calcToDate) {
-      setCommissionForm((prev) => ({ ...prev, amount: "" }));
-      return;
+const calculateTotalPayableCommission = async (agentId, calcFromDate, calcToDate) => {
+  if (!agentId || !calcFromDate || !calcToDate) {
+    setCommissionForm((prev) => ({ ...prev, amount: "" }));
+    return;
+  }
+
+  setIsLoadingCommissionCalculation(true);
+  try {
+    const { data: comm } = await API.get(
+      "/enroll/get-detailed-commission-per-month",
+      { params: { agent_id: agentId, from_date: formatDate(calcFromDate), to_date: formatDate(calcToDate) } }
+    );
+
+    const summary = comm?.summary || {};
+    const breakdown = comm?.commission_data || [];
+    setCommissionBreakdown(breakdown);
+
+    let achieved = summary?.actual_business || 0;
+    if (typeof achieved === "string") {
+      achieved = Number(achieved.replace(/[^0-9.-]+/g, ""));
     }
 
-    setIsLoadingCommissionCalculation(true);
+    const actualCommission = parseFloat(
+      (summary?.total_actual || "0").toString().replace(/[^0-9.-]+/g, "")
+    );
 
-    try {
-      // ✅ 1. Get Commission Summary
-      const { data: comm } = await API.get(
-        "/enroll/get-detailed-commission-per-month",
-        { params: { agent_id: agentId, from_date: calcFromDate, to_date: calcToDate } }
-      );
-
-      const summary = comm?.summary || {};
-      const breakdown = comm?.commission_data || [];
-      setCommissionBreakdown(breakdown);
-
-      // ✅ 2. Achieved Business
-      let achieved = summary?.actual_business || 0;
-      if (typeof achieved === "string") {
-        achieved = Number(achieved.replace(/[^0-9.-]+/g, ""));
-      }
-
-      // ✅ 3. Get Target
-      const targetRes = await API.get("/target/get-targets", {
-        params: { fromDate: calcFromDate, toDate: calcToDate, agentId },
-      });
-
-      const rawTargets = targetRes.data || [];
-
-      const monthMap = {};
-      rawTargets.forEach((t) => {
-        if ((t.agentId?._id || t.agentId) !== agentId) return;
-        const date = new Date(t.startDate);
-        const key = `${date.getFullYear()}-${date.getMonth()}`;
-        if (!monthMap[key]) monthMap[key] = t.totalTarget || 0;
-      });
-
-      const start = new Date(calcFromDate);
-      const end = new Date(calcToDate);
-      let totalTarget = 0;
-      let date = new Date(start);
-      while (date <= end) {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const key = `${year}-${month}`;
-        const monthTarget = monthMap[key] ?? Object.values(monthMap)[0] ?? 0;
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const perDayTarget = monthTarget / daysInMonth;
-        totalTarget += perDayTarget;
-        date.setDate(date.getDate() + 1);
-      }
-
-      // ✅ 4. Compute Incentive
-      const difference = totalTarget - achieved;
-      let incentiveAmount = 0;
-      let incentivePercent = "0%";
-
-      if (difference < 0) {
-        incentiveAmount = Math.abs(difference) * 0.01;
-        incentivePercent = "1%";
-      }
-
-      setTargetData({
-        target: Math.round(totalTarget),
-        achieved,
-        remaining: Math.max(totalTarget - achieved, 0),
-        difference,
-        incentiveAmount: `₹${incentiveAmount.toFixed(2)}`,
-        incentivePercent,
-      });
-
-      const actual = parseFloat((summary?.total_actual || "0").toString().replace(/[^0-9.-]+/g, ""));
-      const incentive = parseFloat(incentiveAmount.toFixed(2));
-      const totalPayable = agentType === "employee" ? incentive : actual + incentive;
-
-      setCalculatedAmount(totalPayable.toFixed(2));
-    } catch (error) {
-      console.error("Failed to calculate payout commission:", error);
-      setCommissionForm((prev) => ({ ...prev, amount: "" }));
-      api.open({
-        message: "Commission Calculation Failed",
-        description: error.message || "Could not calculate commission for the selected agent.",
-        className: "bg-red-400 rounded-lg font-bold",
-        showProgress: true,
-        pauseOnHover: false,
-      });
-    } finally {
-      setIsLoadingCommissionCalculation(false);
+    // agent incentive = 1% of difference (if > 0), else 0
+    const difference = achieved - (summary?.target_value || 0);
+    let incentive = 0;
+    if (difference > 0) {
+      incentive = difference * 0.01;
     }
-  };
+
+    setTargetData({
+      target: summary?.target_value || 0,
+      achieved,
+      remaining: Math.max((summary?.target_value || 0) - achieved, 0),
+      difference,
+      incentiveAmount: `₹${incentive.toFixed(2)}`,
+      incentivePercent: "1%",
+    });
+
+    
+    const totalPayable = actualCommission ;
+    setCalculatedAmount(totalPayable.toFixed(2));
+  } catch (error) {
+    console.error("Failed to calculate agent commission:", error);
+    setCommissionForm((prev) => ({ ...prev, amount: "" }));
+  } finally {
+    setIsLoadingCommissionCalculation(false);
+  }
+};
 
   const handleCommissionChange = (e) => {
     const { name, value } = e.target;
@@ -658,47 +632,51 @@ const PayOutCommission = () => {
                   </button>
                 </div>
 
-                {(agentType === "agent" || agentType === "employee") && (
-                  <div className="grid grid-cols-2 gap-4 mt-6 bg-blue-50 p-3 rounded-lg">
-                    {/* Show Target only for employee */}
-                    {agentType !== "agent" && (
-                      <div>
-                        <label className="block text-sm font-medium">Target</label>
-                        <input
-                          value={`₹${targetData.target?.toLocaleString("en-IN")}`}
-                          readOnly
-                          className="w-full border rounded px-3 py-2 bg-white font-semibold"
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <label className="block text-sm font-medium">Achieved</label>
-                      <input
-                        value={`₹${targetData.achieved?.toLocaleString("en-IN")}`}
-                        readOnly
-                        className="w-full border rounded px-3 py-2 bg-white font-semibold"
-                      />
-                    </div>
-                    {/* Show Difference only for employee */}
-                    {agentType !== "agent" && (
-                      <div>
-                        <label className="block text-sm font-medium">Difference</label>
-                        <input
-                          value={`₹${targetData.difference?.toLocaleString("en-IN")}`}
-                          readOnly
-                          className="w-full border rounded px-3 py-2 bg-white font-semibold"
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <label className="block text-sm font-medium">Incentive</label>
-                      <input
-                        value={`${targetData.incentiveAmount}`}
-                        readOnly
-                        className="w-full border rounded px-3 py-2 bg-white font-semibold"
-                      />
-                    </div>
-                  </div>
+                { agentType === "employee" && (
+                 
+<div className="grid grid-cols-2 gap-4 mt-6 p-3 rounded-lg bg-blue-50">
+  <div>
+    <label className="block text-sm font-medium">Target</label>
+    <input
+      value={targetData.target}
+      readOnly
+      className="w-full border rounded px-3 py-2 bg-white font-semibold"
+    />
+  </div>
+  <div>
+    <label className="block text-sm font-medium">Achieved</label>
+    <input
+      value={targetData.achieved}
+      readOnly
+      className="w-full border rounded px-3 py-2 bg-white font-semibold"
+    />
+  </div>
+  <div>
+    <label className="block text-sm font-medium">Difference</label>
+    <input
+      value={targetData.difference}
+      readOnly
+      className="w-full border rounded px-3 py-2 bg-white font-semibold"
+    />
+  </div>
+  <div>
+    <label className="block text-sm font-medium">Remaining</label>
+    <input
+      value={targetData.remaining}
+      readOnly
+      className="w-full border rounded px-3 py-2 bg-white font-semibold"
+    />
+  </div>
+  <div className="col-span-2">
+    <label className="block text-sm font-medium">Incentive</label>
+    <input
+      value={`${targetData.incentiveAmount} `}
+      readOnly
+      className="w-full border rounded px-3 py-2 bg-white font-semibold"
+    />
+  </div>
+</div>
+
                 )}
 
 
@@ -831,15 +809,15 @@ const PayOutCommission = () => {
                             </tr>
                           ))}
 
-                          {/* ✅ Final Incentive Row */}
-                          <tr className="bg-green-100 font-semibold">
+                         
+                          {/* <tr className="bg-green-100 font-semibold">
                             <td className="border px-3 py-2" colSpan={3}>
                               Incentive (Bonus)
                             </td>
                             <td className="border px-3 py-2 text-right text-green-800">
                               ₹{parseFloat(incentiveAmount).toLocaleString("en-IN")}
                             </td>
-                          </tr>
+                          </tr> */}
                         </tbody>
                       </table>
                     </div>

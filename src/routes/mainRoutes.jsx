@@ -86,6 +86,10 @@ import CollectionAreaMapping from "../pages/CollectionAreaMapping";
 import IndividualRegistrationChitPaymentLink from "../pages/IndividualRegistrationChitPaymentLink";
 import TargetCommissionReport from "../pages/TargetCommission";
 import TargetIncentiveReport from "../pages/TargetIncentive";
+import TargetPayOutMenu from "../pages/TargetPayoutMenu";
+import TargetPayOutSalary from "../pages/TargetPayoutSalary";
+import TargetPayOutCommissionIncentive from "../pages/TargetPayOutCommissionIncentive";
+import TargetCommission from "../pages/TargetCommission";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -538,7 +542,19 @@ const mainRoutes = createBrowserRouter([
   },
   {
     path: "/target-commission",
-    element: <TargetCommissionReport />,
+    element: <TargetCommission />,
+  },
+  {
+    path: "/target-commission-incentive",
+    element: <TargetPayOutCommissionIncentive />,
+  },
+  {
+    path: "/target-payout-menu",
+    element: <TargetPayOutMenu />,
+  },
+  {
+    path: "/target-payout-salary",
+    element: <TargetPayOutSalary />,
   },
   {
     path: "/target-incentive",
