@@ -84,12 +84,11 @@ import ChitBulkPaymentLink from "../pages/BulkChitPaymentLink";
 import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
 import CollectionAreaMapping from "../pages/CollectionAreaMapping";
 import IndividualRegistrationChitPaymentLink from "../pages/IndividualRegistrationChitPaymentLink";
-import TargetCommissionReport from "../pages/TargetCommission";
 import TargetIncentiveReport from "../pages/TargetIncentive";
-import TargetPayOutMenu from "../pages/TargetPayoutMenu";
 import TargetPayOutSalary from "../pages/TargetPayoutSalary";
 import TargetPayOutCommissionIncentive from "../pages/TargetPayOutCommissionIncentive";
 import TargetCommission from "../pages/TargetCommission";
+import TargetPayOutMenu from "../pages/TargetPayOutMenu";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",

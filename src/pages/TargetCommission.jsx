@@ -10,19 +10,12 @@ import SettingSidebar from "../components/layouts/SettingSidebar";
 const TargetCommission = () => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
-  const [tempFromDate, setTempFromDate] = useState();
-  const [tempToDate, setTempToDate] = useState();
-
+  const [selectedMonth, setSelectedMonth] = useState(null); // YYYY-MM format
   const [agentLoading, setAgentLoading] = useState(false);
-
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [employeeCustomerData, setEmployeeCustomerData] = useState([]);
   const [commissionTotalDetails, setCommissionTotalDetails] = useState({});
   const [loading, setLoading] = useState(false);
-  const formatDate = (date) => date.toISOString().split("T")[0];
-  const today = formatDate(new Date());
-  const [fromDate, setFromDate] = useState();
-  const [toDate, setToDate] = useState();
   const [showCommissionModal, setShowCommissionModal] = useState(false);
   const [commissionForm, setCommissionForm] = useState({
     agent_id: "",
@@ -37,7 +30,6 @@ const TargetCommission = () => {
   const [errors, setErrors] = useState({});
   const [adminId, setAdminId] = useState("");
   const [adminName, setAdminName] = useState("");
-
   const [targetData, setTargetData] = useState({
     target: 0,
     achieved: 0,
@@ -45,6 +37,23 @@ const TargetCommission = () => {
     startDate: "",
     endDate: "",
   });
+
+  // Initialize with current month
+  useEffect(() => {
+    const today = new Date();
+    const currentMonth = `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}`;
+    setSelectedMonth(currentMonth);
+  }, []);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setAdminId(user._id);
+      setAdminName(user.name || "");
+    }
+  }, []);
 
   const fetchEmployees = async () => {
     try {
@@ -56,12 +65,21 @@ const TargetCommission = () => {
   };
 
   const fetchCommissionReport = async (employeeId) => {
-    if (!employeeId) return;
+    if (!employeeId || !selectedMonth) return;
     const abortController = new AbortController();
     setLoading(true);
     try {
+      // Calculate first and last day of selected month
+      const [year, month] = selectedMonth.split("-");
+      const firstDay = `${year}-${month}-01`;
+      const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+
       const res = await api.get("/enroll/get-detailed-commission-per-month", {
-        params: { agent_id: employeeId, from_date: fromDate, to_date: toDate },
+        params: {
+          agent_id: employeeId,
+          from_date: firstDay,
+          to_date: lastDay,
+        },
         signal: abortController.signal,
       });
       setEmployeeCustomerData(res.data?.commission_data);
@@ -81,11 +99,10 @@ const TargetCommission = () => {
 
   const fetchTargetData = async (employeeId) => {
     try {
-      if (!employeeId) return;
+      if (!employeeId || !selectedMonth) return;
       const abortController = new AbortController();
 
-      // use current year from fromDate, else fallback to today
-      const year = new Date(fromDate || new Date()).getFullYear();
+      const [year] = selectedMonth.split("-");
 
       // Fetch target details for the selected agent
       const targetRes = await api.get(`/target/agent/${employeeId}`, {
@@ -93,14 +110,36 @@ const TargetCommission = () => {
         signal: abortController.signal,
       });
 
-      let totalTarget = 0;
+      // Map month number to month name (01-12 to January-December)
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const monthNumber = parseInt(selectedMonth.split("-")[1], 10);
+      const monthName = monthNames[monthNumber - 1];
+
+      let targetForMonth = 0;
       if (targetRes.data && targetRes.data.length > 0) {
         const monthData = targetRes.data[0].monthData || {};
-        totalTarget = Object.values(monthData).reduce(
-          (sum, val) => sum + (Number(val) || 0),
-          0
-        );
+        targetForMonth = Number(monthData[monthName] || 0);
       }
+
+      // Calculate first and last day of selected month
+      const [yearPart, monthPart] = selectedMonth.split("-");
+      const firstDay = `${yearPart}-${monthPart}-01`;
+      const lastDay = new Date(yearPart, monthPart, 0)
+        .toISOString()
+        .split("T")[0];
 
       // Fetch commission data to get achieved
       const { data: comm } = await api.get(
@@ -108,8 +147,8 @@ const TargetCommission = () => {
         {
           params: {
             agent_id: employeeId,
-            from_date: fromDate,
-            to_date: toDate,
+            from_date: firstDay,
+            to_date: lastDay,
           },
           signal: abortController.signal,
         }
@@ -120,16 +159,20 @@ const TargetCommission = () => {
         achieved = Number(achieved.replace(/[^0-9.-]+/g, ""));
       }
 
-      const remaining = Math.max(totalTarget - achieved, 0);
-      const difference = totalTarget - achieved;
+      const remaining = Math.max(targetForMonth - achieved, 0);
+      const difference = targetForMonth - achieved;
+
+      // Format first and last day for display
+      const startDateDisplay = firstDay;
+      const endDateDisplay = lastDay;
 
       setTargetData({
-        target: Math.round(totalTarget),
+        target: Math.round(targetForMonth),
         achieved,
         remaining,
         difference,
-        startDate: fromDate || "",
-        endDate: toDate || "",
+        startDate: startDateDisplay,
+        endDate: endDateDisplay,
       });
     } catch (err) {
       if (err.name !== "AbortError") {
@@ -145,16 +188,23 @@ const TargetCommission = () => {
       }
     }
   };
-
-
-
   const fetchAllCommissionReport = async () => {
+    if (!selectedMonth) return;
+
     const abortController = new AbortController();
     setLoading(true);
     try {
+      // Calculate first and last day of selected month
+      const [year, month] = selectedMonth.split("-");
+      const firstDay = `${year}-${month}-01`;
+      const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+
       const res = await api.get("enroll/get-detailed-commission-all", {
-        params: { from_date: fromDate, to_date: toDate },
-        signal: abortController.signal
+        params: {
+          from_date: firstDay,
+          to_date: lastDay,
+        },
+        signal: abortController.signal,
       });
       setEmployeeCustomerData(res.data?.commission_data);
       setCommissionTotalDetails(res.data?.summary);
@@ -167,60 +217,54 @@ const TargetCommission = () => {
     } finally {
       if (!abortController.signal.aborted) {
         setLoading(false);
-
       }
     }
   };
 
+  const handleEmployeeChange = async (value) => {
+    setSelectedEmployeeId(value);
+    setAgentLoading(true);
 
+    if (value === "ALL") {
+      setSelectedEmployeeDetails(null);
+      setTargetData({
+        target: 0,
+        achieved: 0,
+        remaining: 0,
+        startDate: "",
+        endDate: "",
+        designation: "",
+        incentiveAmount: "₹0.00",
+        incentivePercent: "0%",
+      });
+      await fetchAllCommissionReport();
+    } else {
+      const selectedEmp = employees.find((emp) => emp._id === value);
+      setSelectedEmployeeDetails(selectedEmp || null);
+      await fetchCommissionReport(value);
+      await fetchTargetData(value);
+    }
 
-const handleEmployeeChange = async (value) => {
-  setSelectedEmployeeId(value);
-  setAgentLoading(true); 
-
-  if (value === "ALL") {
-    setSelectedEmployeeDetails(null);
-    setTargetData({
-      target: 0,
-      achieved: 0,
-      remaining: 0,
-      startDate: "",
-      endDate: "",
-      designation: "",
-      incentiveAmount: "₹0.00",
-      incentivePercent: "0%",
-    });
-    await fetchAllCommissionReport();
-  } else {
-    const selectedEmp = employees.find((emp) => emp._id === value);
-    setSelectedEmployeeDetails(selectedEmp || null);
-    await fetchCommissionReport(value);
-    await fetchTargetData(value);
-  }
-
-  setAgentLoading(false); 
-};
-
+    setAgentLoading(false);
+  };
 
   useEffect(() => {
     fetchEmployees();
   }, []);
 
   useEffect(() => {
-    const todayDate = formatDate(new Date());
-    setTempFromDate();
-    setTempToDate();
-    setFromDate();
-    setToDate();
-  }, []);
+    if (selectedEmployeeId === "ALL") {
+      fetchAllCommissionReport();
+    } else if (selectedEmployeeId && selectedMonth) {
+      fetchCommissionReport(selectedEmployeeId);
+    }
+  }, [selectedMonth]);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      setAdminId(user._id);
-      setAdminName(user.name || "");
+    if (selectedEmployeeId && selectedEmployeeId !== "ALL" && selectedMonth) {
+      fetchTargetData(selectedEmployeeId);
     }
-  }, []);
+  }, [employeeCustomerData, selectedMonth]);
 
   const handleCommissionChange = (e) => {
     const { name, value } = e.target;
@@ -253,26 +297,13 @@ const handleEmployeeChange = async (value) => {
   };
 
   const handlePayNow = () => {
-    const actual = employeeCustomerData.reduce((sum, item) => {
-      const payDate = new Date(item.start_date);
-      const f = new Date(fromDate);
-      const t = new Date(toDate);
-      if (payDate >= f && payDate <= t) {
-        const actual = parseFloat(
-          (commissionTotalDetails?.total_actual || "0")
-            .toString()
-            .replace(/[^0-9.-]+/g, "")
-        );
-        return sum + val;
-      }
-      return sum;
-    }, 0);
-
-    const incentive = parseFloat(
-      (targetData?.incentiveAmount || "0").replace(/[^0-9.-]+/g, "")
+    const actual = parseFloat(
+      (commissionTotalDetails?.total_actual || "0")
+        .toString()
+        .replace(/[^0-9.-]+/g, "")
     );
 
-    const total = actual + incentive;
+    const total = actual;
 
     setCommissionForm({
       agent_id: selectedEmployeeId,
@@ -288,32 +319,6 @@ const handleEmployeeChange = async (value) => {
     setErrors({});
     setShowCommissionModal(true);
   };
-
-  useEffect(() => {
-    if (selectedEmployeeId === "ALL") {
-      fetchAllCommissionReport();
-    } else if (selectedEmployeeId) {
-      fetchCommissionReport(selectedEmployeeId);
-    }
-  }, [fromDate, toDate]);
-
-  useEffect(() => {
-    if (selectedEmployeeId && selectedEmployeeId !== "ALL") {
-      fetchTargetData(selectedEmployeeId);
-    }
-  }, [employeeCustomerData, fromDate, toDate]);
-
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
-
-  useEffect(() => {
-    if (selectedEmployeeId === "ALL") {
-      fetchAllCommissionReport();
-    } else if (selectedEmployeeId) {
-      fetchCommissionReport(selectedEmployeeId);
-    }
-  }, [fromDate, toDate]);
 
   const processedTableData = employeeCustomerData.map((item, index) => ({
     ...item,
@@ -335,6 +340,12 @@ const handleEmployeeChange = async (value) => {
     { key: "required_installment_digits", header: "Required Installment" },
     { key: "commission_released", header: "Commission Released" },
   ];
+
+  // Get current month for max attribute
+  const today = new Date();
+  const currentMonth = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}`;
 
   return (
     <div className="w-screen min-h-screen">
@@ -376,38 +387,19 @@ const handleEmployeeChange = async (value) => {
                   </Select>
                 </div>
 
-                <input
-                  type="date"
-                  value={tempFromDate || ""}
-                  max={today}
-                  onChange={(e) => {
-                    const newFrom = e.target.value;
-                    if (tempToDate && tempToDate < newFrom)
-                      setTempToDate(newFrom);
-                    setTempFromDate(newFrom);
-                  }}
-                  className="border border-gray-300 rounded px-4 mt-7 py-2 w-[200px]"
-                />
-
-                <input
-                  type="date"
-                  value={tempToDate || ""}
-                  min={tempFromDate || ""}
-                  max={today}
-                  onChange={(e) => setTempToDate(e.target.value)}
-                  className="border border-gray-300 rounded px-4 mt-7 py-2 w-[200px]"
-                />
-
-                <button
-                  onClick={() => {
-                    setFromDate(tempFromDate);
-                    setToDate(tempToDate);
-                  }}
-                  disabled={!tempFromDate || !tempToDate}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 mt-7 py-2 rounded"
-                >
-                  Filter
-                </button>
+                {/* Single month picker */}
+                <div className="mb-2">
+                  <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
+                    Month
+                  </label>
+                  <input
+                    type="month"
+                    value={selectedMonth || ""}
+                    max={currentMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    className="border border-gray-300 rounded px-4 py-2 w-[200px] h-[50px]"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -424,7 +416,9 @@ const handleEmployeeChange = async (value) => {
                     <>
                       <div className="flex gap-4">
                         <div className="flex flex-col flex-1">
-                          <label className="text-sm font-medium mb-1">Name</label>
+                          <label className="text-sm font-medium mb-1">
+                            Name
+                          </label>
                           <input
                             value={selectedEmployeeDetails.name || "-"}
                             readOnly
@@ -432,7 +426,9 @@ const handleEmployeeChange = async (value) => {
                           />
                         </div>
                         <div className="flex flex-col flex-1">
-                          <label className="text-sm font-medium mb-1">Email</label>
+                          <label className="text-sm font-medium mb-1">
+                            Email
+                          </label>
                           <input
                             value={selectedEmployeeDetails.email || "-"}
                             readOnly
@@ -485,7 +481,9 @@ const handleEmployeeChange = async (value) => {
                       </div>
 
                       <div className="flex flex-col">
-                        <label className="text-sm font-medium mb-1">Address</label>
+                        <label className="text-sm font-medium mb-1">
+                          Address
+                        </label>
                         <input
                           value={selectedEmployeeDetails.address || "-"}
                           readOnly
@@ -568,8 +566,7 @@ const handleEmployeeChange = async (value) => {
 
               {selectedEmployeeId &&
                 selectedEmployeeId !== "ALL" &&
-                fromDate &&
-                toDate && (
+                selectedMonth && (
                   <div className="bg-gray-100  p-4 rounded-lg shadow mb-6">
                     <h2 className="text-lg font-bold text-yellow-800 mb-2">
                       Target Details
@@ -585,7 +582,9 @@ const handleEmployeeChange = async (value) => {
                       <div>
                         <label className="block font-medium">Target Set</label>
                         <input
-                          value={`₹${targetData.target?.toLocaleString("en-IN")}`}
+                          value={`₹${targetData.target?.toLocaleString(
+                            "en-IN"
+                          )}`}
                           readOnly
                           className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
                         />
@@ -593,7 +592,9 @@ const handleEmployeeChange = async (value) => {
                       <div>
                         <label className="block font-medium">Achieved</label>
                         <input
-                          value={`₹${targetData.achieved?.toLocaleString("en-IN")}`}
+                          value={`₹${targetData.achieved?.toLocaleString(
+                            "en-IN"
+                          )}`}
                           readOnly
                           className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
                         />
@@ -601,14 +602,18 @@ const handleEmployeeChange = async (value) => {
                       <div>
                         <label className="block font-medium">Difference</label>
                         <input
-                          value={`₹${targetData.difference?.toLocaleString("en-IN")}`}
+                          value={`₹${targetData.difference?.toLocaleString(
+                            "en-IN"
+                          )}`}
                           readOnly
                           className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
                         />
                       </div>
 
                       <div>
-                        <label className="block font-medium">Total Payable</label>
+                        <label className="block font-medium">
+                          Total Payable
+                        </label>
                         <input
                           readOnly
                           value={(() => {
@@ -617,31 +622,10 @@ const handleEmployeeChange = async (value) => {
                                 .toString()
                                 .replace(/[^0-9.-]+/g, "")
                             );
-
-
-
-
-                            const total = actual;
-
-                            return `₹${total.toLocaleString("en-IN")}`;
+                            return `₹${actual.toLocaleString("en-IN")}`;
                           })()}
                           className="border px-3 py-2 rounded w-full bg-gray-50 text-green-700 font-bold"
                         />
-
-                      </div>
-
-
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4 mt-4">
-
-                      <div className="flex justify-end mt-4">
-                        <button
-                          onClick={handlePayNow}
-                          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
-                        >
-                          Pay Now
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -774,13 +758,10 @@ const handleEmployeeChange = async (value) => {
                     printHeaderKeys={[
                       "Name",
                       "Phone Number",
-                      "From Date",
-                      "To Date",
+                      "Month",
                       "Target Set",
                       "Achieved",
                       "Remaining",
-                      "Incentive (%)",
-                      "Incentive Amount",
                       "Total Payable Commission",
                       "Actual Business",
                       "Actual Commission",
@@ -796,48 +777,56 @@ const handleEmployeeChange = async (value) => {
                       selectedEmployeeId === "ALL"
                         ? "-"
                         : selectedEmployeeDetails?.phone_number || "-",
-                      tempFromDate || "-",
-                      tempToDate || "-",
+                      selectedMonth
+                        ? new Date(`${selectedMonth}-01`).toLocaleString(
+                            "default",
+                            {
+                              month: "long",
+                              year: "numeric",
+                            }
+                          )
+                        : "-",
                       `₹${targetData?.target?.toLocaleString("en-IN") || "0"}`,
-                      `₹${targetData?.achieved?.toLocaleString("en-IN") || "0"}`,
-                      `₹${targetData?.remaining?.toLocaleString("en-IN") || "0"}`,
-                      targetData?.incentivePercent || "0%",
-                      targetData?.incentiveAmount || "₹0.00",
+                      `₹${
+                        targetData?.achieved?.toLocaleString("en-IN") || "0"
+                      }`,
+                      `₹${
+                        targetData?.remaining?.toLocaleString("en-IN") || "0"
+                      }`,
                       (() => {
                         const actual = parseFloat(
                           (commissionTotalDetails?.total_actual || "0")
                             .toString()
                             .replace(/[^0-9.-]+/g, "")
                         );
-                        const incentive = parseFloat(
-                          (targetData?.incentiveAmount || "0")
-                            .toString()
-                            .replace(/[^0-9.-]+/g, "")
-                        );
-                        const total = actual + incentive;
-                        return `₹${total.toLocaleString("en-IN")}`;
+                        return `₹${actual.toLocaleString("en-IN")}`;
                       })(),
-                      `₹${commissionTotalDetails?.actual_business?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `₹${
+                        commissionTotalDetails?.actual_business?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
-                      `₹${commissionTotalDetails?.total_actual?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `₹${
+                        commissionTotalDetails?.total_actual?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
-                      `₹${commissionTotalDetails?.expected_business?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `₹${
+                        commissionTotalDetails?.expected_business?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
-                      `₹${commissionTotalDetails?.total_estimated?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `₹${
+                        commissionTotalDetails?.total_estimated?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
                       commissionTotalDetails?.total_customers || "0",
                       commissionTotalDetails?.total_groups || "0",
                     ]}
-                    exportedFileName={`CommissionReport-${selectedEmployeeDetails?.name || "all"
-                      }.csv`}
+                    exportedFileName={`CommissionReport-${
+                      selectedEmployeeDetails?.name || "all"
+                    }-${selectedMonth}.csv`}
                   />
                 </>
               ) : (
@@ -854,6 +843,4 @@ const handleEmployeeChange = async (value) => {
     </div>
   );
 };
-
-
 export default TargetCommission;
