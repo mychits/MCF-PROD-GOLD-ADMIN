@@ -7,12 +7,21 @@ import { Dropdown, Drawer } from "antd";
 import { IoMdMore, IoMdAdd, IoMdClose } from "react-icons/io";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import Loader from "../components/loaders/CircularLoader";
-
+import { Collapse } from "antd";
+import { Link } from "react-router-dom";
+import {
+  FileTextOutlined,
+  DollarOutlined,
+  UserOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+import { BiRupee } from "react-icons/bi";
+import { FaMoneyBill } from "react-icons/fa";
+import { MdPayments } from "react-icons/md";
 const today = new Date();
 const currentYear = today.getFullYear();
 const currentMonth = String(today.getMonth() + 1).padStart(2, "0");
 const currentYearMonth = `${currentYear}-${currentMonth}`;
-
 function formatDate(date) {
   const year = date.getFullYear();
   const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -182,11 +191,6 @@ const Target = () => {
         if (err.name !== "AbortError") {
           console.error("Error fetching targets:", err);
           if (!alertShownRef.current.targets) {
-            setAlertConfig({
-              visibility: true,
-              message: "Failed to fetch targets",
-              type: "error",
-            });
             alertShownRef.current.targets = true;
 
             setTimeout(() => {
@@ -213,15 +217,13 @@ const Target = () => {
 
   useEffect(() => {
     if (targetData.length > 0) {
-
       let filteredData = targetData;
-      
+
       if (selectedId !== "all") {
         filteredData = targetData.filter(
           (item) => item.agent.id === selectedId
         );
       }
-    
 
       const anyTargetExists = filteredData.some(
         (item) => item.agent.target.value !== "Not Set"
@@ -262,9 +264,9 @@ const Target = () => {
         return {
           name: item.agent.name,
           phone_number: item.agent.phone,
-          actual_business:item?.metrics?.actual_business,
-          target_difference:item?.metrics?.target_difference,
-          target_remaining_digits:item?.metrics?.target_remaining_digits,
+          actual_business: item?.metrics?.actual_business,
+          target_difference: item?.metrics?.target_difference,
+          target_remaining_digits: item?.metrics?.target_remaining_digits,
           target: item.agent?.target?.value,
           action: actionDropdown,
           _item: item,
@@ -304,7 +306,7 @@ const Target = () => {
   const openSetDrawer = async (item) => {
     setSelectedPerson(item);
     setIsEditMode(false);
-    setIsBulkMode(false); 
+    setIsBulkMode(false);
     setEditTargetId(item.agent.id);
 
     const monthData = await fetchTargetDetails(item);
@@ -337,7 +339,7 @@ const Target = () => {
   const openEditDrawer = async (item) => {
     setSelectedPerson(item);
     setIsEditMode(true);
-    setIsBulkMode(false); 
+    setIsBulkMode(false);
     setEditTargetId(item.agent.id);
 
     const monthData = await fetchTargetDetails(item);
@@ -467,7 +469,7 @@ const Target = () => {
       });
     }
   };
- 
+
   const getColumns = () => {
     return [
       { key: "name", header: "Name" },
@@ -511,6 +513,57 @@ const Target = () => {
             </div>
           ) : (
             <>
+              <div className="my-6">
+                <Collapse
+                  items={[
+                    {
+                      key: "1",
+                      label: (
+                        <span className="font-semibold text-gray-800 text-base">
+                          Shortcut Keys
+                        </span>
+                      ),
+                      children: (
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                          <Link
+                            to="/target-commission"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                          >
+                            <DollarOutlined className="text-blue-500" size={30} />
+                            Commission Report
+                          </Link>
+
+                          <Link
+                            to="/target-incentive"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                          >
+                            <FileTextOutlined className="text-blue-500" size={30}/>
+                            Incentive Report
+                          </Link>
+
+                          <Link
+                            to="/target-commission-incentive"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                          >
+                            <MdPayments className="text-blue-500" size={30}/>
+                            Commission or Incentive Payout
+                          </Link>
+
+                          <Link
+                            to="/target-payout-salary"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                          >
+                            <FaMoneyBill className="text-blue-500" size={30} />
+                            Salary Payout
+                          </Link>
+                        </div>
+                      ),
+                    },
+                  ]}
+                  defaultActiveKey={["1"]}
+                  className="rounded-lg border border-gray-200 bg-white shadow-sm"
+                />
+              </div>
               <div className="flex gap-4 flex-wrap mb-6 items-end">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
