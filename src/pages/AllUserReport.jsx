@@ -322,7 +322,7 @@ const AllUserReport = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-8 mb-8">
                     <div className="flex flex-col border p-4 rounded shadow">
                       <span className="text-xl font-bold text-gray-700">
                         Total Customers
