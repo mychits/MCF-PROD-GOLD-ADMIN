@@ -348,15 +348,18 @@ const UserReport = () => {
       try {
         setLoanCustomers([]);
         const response = await api.get(
-          `/loans/get-borrower-by-user-id/${selectedGroup}`
+          `/payment/loan/user/${selectedGroup}`
         );
         if (response.data) {
-          const filteredBorrowerData = response.data.map((loan, index) => ({
+          const filteredBorrowerData = response.data?.overall_loan?.map((loan, index) => ({
             sl_no: index + 1,
-            loan: loan.loan_id,
-            loan_amount: loan.loan_amount,
-            tenure: loan.tenure,
-            service_charge: loan.service_charges,
+            loan: loan?.loan_details?.loan?.loan_id,
+            loan_amount: loan?.loan_value,
+            tenure: loan?.loan_details?.loan?.tenure,
+            service_charge: loan?.loan_details?.loan?.service_charges,
+            total_paid_amount:loan?.total_paid_amount,
+            balance: loan?.balance,
+            
           }));
           setFilteredBorrowerData(filteredBorrowerData);
         }
@@ -519,16 +522,10 @@ const UserReport = () => {
     { key: "loan_amount", header: "Loan Amount" },
     { key: "service_charge", header: "Service Charge" },
     { key: "tenure", header: "Tenure" },
+    { key: "total_paid_amount", header: "Total Paid Amount" },
+    { key: "balance", header: "Balance" },
   ];
-  const columns = [
-    { key: "id", header: "SL. NO" },
-    { key: "group", header: "Group Name" },
-    { key: "name", header: "Customer Name" },
-    { key: "phone_number", header: "Customer Phone Number" },
-    { key: "ticket", header: "Ticket" },
-    { key: "amount", header: "Amount" },
-    { key: "mode", header: "Payment Mode" },
-  ];
+
 
   const handleGroupAuctionChange = async (groupId) => {
     setFilteredAuction([]);
