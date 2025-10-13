@@ -139,13 +139,7 @@ const subMenus = [
     category: "Employee",
     color: "from-indigo-500 to-indigo-600"
   },
-  {
-    title: "Monthly Attendance Report",
-    link: "/reports/employee-monthly-report",
-    Icon: SlCalender,
-    category: "Employee",
-    color: "from-purple-500 to-purple-600"
-  },
+ 
 ];
 
 const categories = ["All", "Reports", "Customer", "Employee", "Finance"];
