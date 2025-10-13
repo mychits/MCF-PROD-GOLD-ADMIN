@@ -167,11 +167,11 @@ const subMenus = [
     link: "/reports/monthly-install-turnover",
     Icon: SlCalender,
   },
-  {
-    title: "Employee Attendance Report",
-    link: "/reports/employee-attendance-report",
-    Icon: SlCalender,
-  },
+  // {
+  //   title: "Employee Attendance Report",
+  //   link: "/reports/employee-attendance-report",
+  //   Icon: SlCalender,
+  // },
   {
     title: "Monthly Attendance Report",
     link: "/reports/employee-monthly-report",
