@@ -314,8 +314,8 @@ const Employee = () => {
     if (data.deductions && data.deductions.length > 0) {
       for (let i = 0; i < data.deductions.length; i++) {
         const amount = parseFloat(data.deductions[i].deduction_amount);
-        if (isNaN(amount) || amount <= 0) {
-          newErrors[`deduction_amount_${i}`] = "Deduction amount must be greater than 0";
+        if (isNaN(amount) ) {
+          newErrors[`deduction_amount_${i}`] = "Deduction amount must be digit";
         }
       }
     }
