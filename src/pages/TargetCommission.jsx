@@ -1,27 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Select } from "antd";
+import { Select, Radio } from "antd";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import Modal from "../components/modals/Modal";
-import SettingSidebar from "../components/layouts/SettingSidebar";
-import Sidebar from "../components/layouts/Sidebar";
 import { GiPartyPopper } from "react-icons/gi";
-import {
-  FileTextOutlined,
-  DollarOutlined,
-  UserOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { FileTextOutlined, DollarOutlined } from "@ant-design/icons";
 import { Collapse } from "antd";
 import { FaMoneyBill } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { FiTarget } from "react-icons/fi";
 const TargetCommission = () => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(null); // YYYY-MM format
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [dateSelectionMode, setDateSelectionMode] = useState("month");
   const [agentLoading, setAgentLoading] = useState(false);
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [employeeCustomerData, setEmployeeCustomerData] = useState([]);
@@ -47,8 +42,16 @@ const TargetCommission = () => {
     remaining: 0,
     startDate: "",
     endDate: "",
-    targetCommission: 0, // NEW: Store calculated target-based commission
+    targetCommission: 0,
   });
+
+  // Temporary state for date selection (not applied until filter is clicked)
+  const [tempSelectedMonth, setTempSelectedMonth] = useState(null);
+  const [tempFromDate, setTempFromDate] = useState(null);
+  const [tempToDate, setTempToDate] = useState(null);
+
+  // Flag to track if filter has been applied
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
 
   // Initialize with current month
   useEffect(() => {
@@ -56,7 +59,15 @@ const TargetCommission = () => {
     const currentMonth = `${today.getFullYear()}-${String(
       today.getMonth() + 1
     ).padStart(2, "0")}`;
-    setSelectedMonth(currentMonth);
+    setTempSelectedMonth(currentMonth);
+
+    // Set current month's date range
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const firstDay = `${year}-${String(month).padStart(2, "0")}-01`;
+    const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+    setTempFromDate(firstDay);
+    setTempToDate(lastDay);
   }, []);
 
   useEffect(() => {
@@ -76,26 +87,31 @@ const TargetCommission = () => {
     }
   };
 
-  const fetchCommissionReport = async (employeeId) => {
-    if (!employeeId || !selectedMonth) return;
+  // Modified to accept date parameters directly
+  const fetchCommissionReport = async (employeeId, startDate, endDate) => {
+    if (!employeeId || !startDate || !endDate) return;
     const abortController = new AbortController();
     setLoading(true);
     try {
-      // Calculate first and last day of selected month
-      const [year, month] = selectedMonth.split("-");
-      const firstDay = `${year}-${month}-01`;
-      const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+      };
 
-      const res = await api.get("/enroll/get-detailed-commission-per-month", {
-        params: {
-          agent_id: employeeId,
-          from_date: firstDay,
-          to_date: lastDay,
-        },
+      const res = await api.get(`/enroll/agent/${employeeId}/commission`, {
+        params,
         signal: abortController.signal,
       });
-      setEmployeeCustomerData(res.data?.commission_data);
-      setCommissionTotalDetails(res.data?.summary);
+
+      setEmployeeCustomerData(res.data?.commissionData);
+      setCommissionTotalDetails({
+        actual_business: res.data?.commissionSummary?.total_group_value,
+        total_actual: res.data?.commissionSummary?.total_commission_value,
+        total_customers: res.data?.commissionSummary?.total_enrollments,
+        total_groups: res.data?.commissionSummary?.total_enrollments,
+        expected_business: res.data?.commissionSummary?.total_group_value,
+        total_estimated: res.data?.commissionSummary?.total_commission_value,
+      });
     } catch (err) {
       if (err.name !== "AbortController") {
         console.error("Error fetching employee report:", err);
@@ -109,9 +125,7 @@ const TargetCommission = () => {
     }
   };
 
-  // NEW: Calculate target-based commission
   const calculateTargetCommission = (achievedBusiness, targetAmount) => {
-    // Convert to numbers if they're strings
     const achievedNum =
       typeof achievedBusiness === "string"
         ? Number(achievedBusiness.replace(/[^0-9.-]+/g, ""))
@@ -122,87 +136,45 @@ const TargetCommission = () => {
         : targetAmount;
 
     if (achievedNum <= targetNum) {
-      // Up to target: 0.5% of achieved business
       return achievedNum * 0.005;
     } else {
-      // Up to target: 0.5% of target
       const upToTarget = targetNum * 0.005;
-      // Beyond target: 1% of remaining business
       const beyondTarget = (achievedNum - targetNum) * 0.01;
       return upToTarget + beyondTarget;
     }
   };
 
-  const fetchTargetData = async (employeeId) => {
+  // Modified to accept date parameters directly
+  const fetchTargetData = async (employeeId, startDate, endDate) => {
+    if (!employeeId || !startDate || !endDate) return;
+
     try {
-      if (!employeeId || !selectedMonth) return;
       const abortController = new AbortController();
 
-      const [year] = selectedMonth.split("-");
-
-     
-      const targetRes = await api.get(`/target/agent/${employeeId}`, {
-        params: { year },
+      // First get target data
+      const targetRes = await api.get(`/target/agents/${employeeId}`, {
+        params: { start_date: startDate, end_date: endDate },
         signal: abortController.signal,
       });
 
-      // Map month number to month name (01-12 to January-December)
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      const monthNumber = parseInt(selectedMonth.split("-")[1], 10);
-      const monthName = monthNames[monthNumber - 1];
+      const targetForMonth = targetRes.data?.total_target || 0;
 
-      let targetForMonth = 0;
-      if (targetRes.data && targetRes.data.length > 0) {
-        const monthData = targetRes.data[0].monthData || {};
-        targetForMonth = Number(monthData[monthName] || 0);
-      }
-
-      // Calculate first and last day of selected month
-      const [yearPart, monthPart] = selectedMonth.split("-");
-      const firstDay = `${yearPart}-${monthPart}-01`;
-      const lastDay = new Date(yearPart, monthPart, 0)
-        .toISOString()
-        .split("T")[0];
-
-      // Fetch commission data to get achieved
+      // Then get commission data
       const { data: comm } = await api.get(
-        "/enroll/get-detailed-commission-per-month",
+        `/enroll/agent/${employeeId}/commission`,
         {
-          params: {
-            agent_id: employeeId,
-            from_date: firstDay,
-            to_date: lastDay,
-          },
+          params: { start_date: startDate, end_date: endDate },
           signal: abortController.signal,
         }
       );
 
-      let achieved = comm?.summary?.actual_business || 0;
+      let achieved = comm?.commissionSummary?.total_group_value || 0;
       if (typeof achieved === "string") {
         achieved = Number(achieved.replace(/[^0-9.-]+/g, ""));
       }
 
       const remaining = Math.max(targetForMonth - achieved, 0);
       const difference = targetForMonth - achieved;
-
-      // Format first and last day for display
-      const startDateDisplay = firstDay;
-      const endDateDisplay = lastDay;
-
-      // Calculate target-based commission
       const targetCommission = calculateTargetCommission(
         achieved,
         targetForMonth
@@ -213,9 +185,9 @@ const TargetCommission = () => {
         achieved,
         remaining,
         difference,
-        startDate: startDateDisplay,
-        endDate: endDateDisplay,
-        targetCommission, // Store the calculated commission
+        startDate: startDate,
+        endDate: endDate,
+        targetCommission,
       });
     } catch (err) {
       if (err.name !== "AbortError") {
@@ -233,26 +205,32 @@ const TargetCommission = () => {
     }
   };
 
-  const fetchAllCommissionReport = async () => {
-    if (!selectedMonth) return;
+  // Modified to accept date parameters directly
+  const fetchAllCommissionReport = async (startDate, endDate) => {
+    if (!startDate || !endDate) return;
 
     const abortController = new AbortController();
     setLoading(true);
     try {
-      // Calculate first and last day of selected month
-      const [year, month] = selectedMonth.split("-");
-      const firstDay = `${year}-${month}-01`;
-      const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+      };
 
-      const res = await api.get("enroll/get-detailed-commission-all", {
-        params: {
-          from_date: firstDay,
-          to_date: lastDay,
-        },
+      const res = await api.get("/enroll/commission", {
+        params,
         signal: abortController.signal,
       });
-      setEmployeeCustomerData(res.data?.commission_data);
-      setCommissionTotalDetails(res.data?.summary);
+
+      setEmployeeCustomerData(res.data?.commissionData);
+      setCommissionTotalDetails({
+        actual_business: res.data?.commissionSummary?.total_group_value,
+        total_actual: res.data?.commissionSummary?.total_commission_value,
+        total_customers: res.data?.commissionSummary?.total_enrollments,
+        total_groups: res.data?.commissionSummary?.total_enrollments,
+        expected_business: res.data?.commissionSummary?.total_group_value,
+        total_estimated: res.data?.commissionSummary?.total_commission_value,
+      });
     } catch (err) {
       if (err.name !== "AbortError") {
         console.error("Error fetching all commission report:", err);
@@ -266,51 +244,97 @@ const TargetCommission = () => {
     }
   };
 
-  const handleEmployeeChange = async (value) => {
+  const handleEmployeeChange = (value) => {
     setSelectedEmployeeId(value);
-    setAgentLoading(true);
+    setSelectedEmployeeDetails(null);
+    setEmployeeCustomerData([]);
+    setCommissionTotalDetails({});
+    setTargetData({
+      target: 0,
+      achieved: 0,
+      remaining: 0,
+      startDate: "",
+      endDate: "",
+      targetCommission: 0,
+    });
+    setIsFilterApplied(false);
+  };
 
-    if (value === "ALL") {
-      setSelectedEmployeeDetails(null);
-      setTargetData({
-        target: 0,
-        achieved: 0,
-        remaining: 0,
-        startDate: "",
-        endDate: "",
-        designation: "",
-        incentiveAmount: "₹0.00",
-        incentivePercent: "0%",
-        targetCommission: 0,
-      });
-      await fetchAllCommissionReport();
-    } else {
-      const selectedEmp = employees.find((emp) => emp._id === value);
-      setSelectedEmployeeDetails(selectedEmp || null);
-      await fetchCommissionReport(value);
-      await fetchTargetData(value);
+  // Handle month change - update temp date range
+  const handleTempMonthChange = (e) => {
+    const selectedMonth = e.target.value;
+    setTempSelectedMonth(selectedMonth);
+    if (selectedMonth) {
+      const [year, month] = selectedMonth.split("-");
+      const firstDay = `${year}-${month}-01`;
+      const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+      setTempFromDate(firstDay);
+      setTempToDate(lastDay);
+    }
+  };
+
+  const applyFilter = async () => {
+    if (!selectedEmployeeId) {
+      alert("Please select an agent.");
+      return;
     }
 
-    setAgentLoading(false);
+    if (dateSelectionMode === "month" && !tempSelectedMonth) {
+      alert("Please select a month.");
+      return;
+    }
+
+    if (dateSelectionMode === "date-range" && (!tempFromDate || !tempToDate)) {
+      alert("Please select both From and To dates.");
+      return;
+    }
+
+    // Calculate the date range
+    let startDate, endDate;
+
+    if (dateSelectionMode === "month") {
+      setSelectedMonth(tempSelectedMonth);
+      const [year, month] = tempSelectedMonth.split("-");
+      startDate = `${year}-${month}-01`;
+      endDate = new Date(year, month, 0).toISOString().split("T")[0];
+    } else {
+      startDate = tempFromDate;
+      endDate = tempToDate;
+    }
+
+    setAgentLoading(true);
+    setLoading(true);
+
+    try {
+      // Mark that filter has been applied
+      setIsFilterApplied(true);
+
+      if (selectedEmployeeId === "ALL") {
+        setSelectedEmployeeDetails(null);
+        setTargetData({
+          target: 0,
+          achieved: 0,
+          remaining: 0,
+          startDate: "",
+          endDate: "",
+          targetCommission: 0,
+        });
+        await fetchAllCommissionReport(startDate, endDate);
+      } else {
+        const emp = employees.find((e) => e._id === selectedEmployeeId);
+        setSelectedEmployeeDetails(emp || null);
+        await fetchCommissionReport(selectedEmployeeId, startDate, endDate);
+        await fetchTargetData(selectedEmployeeId, startDate, endDate);
+      }
+    } finally {
+      setAgentLoading(false);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchEmployees();
   }, []);
-
-  useEffect(() => {
-    if (selectedEmployeeId === "ALL") {
-      fetchAllCommissionReport();
-    } else if (selectedEmployeeId && selectedMonth) {
-      fetchCommissionReport(selectedEmployeeId);
-    }
-  }, [selectedMonth]);
-
-  useEffect(() => {
-    if (selectedEmployeeId && selectedEmployeeId !== "ALL" && selectedMonth) {
-      fetchTargetData(selectedEmployeeId);
-    }
-  }, [employeeCustomerData, selectedMonth]);
 
   const handleCommissionChange = (e) => {
     const { name, value } = e.target;
@@ -342,41 +366,36 @@ const TargetCommission = () => {
     }
   };
 
-  const handlePayNow = () => {
-    // Use target-based commission calculation instead of total_actual
-    const targetCommission = targetData.targetCommission;
-
-    setCommissionForm({
-      agent_id: selectedEmployeeId,
-      pay_date: new Date().toISOString().split("T")[0],
-      amount: targetCommission.toFixed(2),
-      pay_type: "cash",
-      transaction_id: "",
-      note: "",
-      pay_for: "commission",
-      admin_type: adminId,
-    });
-
-    setErrors({});
-    setShowCommissionModal(true);
-  };
-
   const processedTableData = employeeCustomerData.map((item, index) => ({
     ...item,
+  
+    group_value_digits: item.group_id?.group_value || 0,
+    estimated_commission_digits: item.estimated_commission || 0,
+    actual_commission_digits: item.commission_value || 0,
+    total_paid_digits: item.total_paid_amount || 0,
+
+    required_installment_digits: item.group_id?.monthly_installment || 0,
+    group_ticket: item?.ticket || 0,
+    net_commission_percentage: item?.group_id?.commission || 0,
+
+    commission_released: item.commission_released ? "Yes" : "No",
+    user_name: item.user_id?.full_name || "N/A",
+    phone_number: item.user_id?.phone_number || "N/A",
+    group_name: item.group_id?.group_name || "N/A",
+    start_date: item.group_id?.start_date
+      ? new Date(item.group_id.start_date).toLocaleDateString()
+      : "N/A",
   }));
 
   const columns = [
-    ...(selectedEmployeeId === "ALL"
-      ? [{ key: "agent_name", header: "Agent Name" }]
-      : []),
     { key: "user_name", header: "Customer Name" },
     { key: "phone_number", header: "Phone Number" },
     { key: "group_name", header: "Group Name" },
+    { key: "group_ticket", header: "Ticket No" },
     { key: "group_value_digits", header: "Group Value" },
-    { key: "commission_rate", header: "Commission Rate" },
     { key: "start_date", header: "Start Date" },
-    { key: "estimated_commission_digits", header: "Estimated Commission" },
-    { key: "actual_commission_digits", header: "Actual Commission" },
+    { key: "net_commission_percentage", header: "Net Commission Percentage" },
+    { key: "actual_commission_digits", header: "Net Commission" },
     { key: "total_paid_digits", header: "Total Paid" },
     { key: "required_installment_digits", header: "Required Installment" },
     { key: "commission_released", header: "Commission Released" },
@@ -391,13 +410,11 @@ const TargetCommission = () => {
   return (
     <div className="w-screen min-h-screen">
       <div className="flex mt-30">
-     
         <Navbar visibility={true} />
         <div className="flex-grow p-7">
           <h1 className="text-2xl font-bold text-center ">
             Reports - Commission
           </h1>
-
           <div className="mt-11 mb-8">
             <div className="mb-2">
               <div className="flex justify-center items-center w-full gap-4 bg-blue-50 p-2 w-30 h-40 rounded-3xl border   space-x-2">
@@ -419,7 +436,6 @@ const TargetCommission = () => {
                     }
                     style={{ height: "50px", width: "600px" }}
                   >
-                    <Select.Option value="ALL">All</Select.Option>
                     {employees.map((emp) => (
                       <Select.Option key={emp._id} value={emp._id}>
                         {emp.name} - {emp.phone_number}
@@ -427,19 +443,70 @@ const TargetCommission = () => {
                     ))}
                   </Select>
                 </div>
-
-                {/* Single month picker */}
+                {/* Date Selection Mode Toggle */}
                 <div className="mb-2">
                   <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
-                    Month
+                    Date Selection
                   </label>
-                  <input
-                    type="month"
-                    value={selectedMonth || ""}
-                    max={currentMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    className="border border-gray-300 rounded px-4 py-2 w-[200px] h-[50px]"
-                  />
+                  <Radio.Group
+                    value={dateSelectionMode}
+                    onChange={(e) => setDateSelectionMode(e.target.value)}
+                    className="flex space-x-4"
+                  >
+                    <Radio value="month">By Month</Radio>
+                    <Radio value="date-range">By Date Range</Radio>
+                  </Radio.Group>
+                </div>
+                {/* Show appropriate date picker based on selection mode */}
+                {dateSelectionMode === "month" ? (
+                  <div className="mb-2">
+                    <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
+                      Month
+                    </label>
+                    <input
+                      type="month"
+                      value={tempSelectedMonth || ""}
+                      max={currentMonth}
+                      onChange={handleTempMonthChange}
+                      className="border border-gray-300 rounded px-4 py-2 w-[200px] h-[50px]"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-2">
+                      <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
+                        From Date
+                      </label>
+                      <input
+                        type="date"
+                        value={tempFromDate || ""}
+                        max={tempToDate || currentMonth}
+                        onChange={(e) => setTempFromDate(e.target.value)}
+                        className="border border-gray-300 rounded px-4 py-2 w-[200px] h-[50px]"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
+                        To Date
+                      </label>
+                      <input
+                        type="date"
+                        value={tempToDate || ""}
+                        min={tempFromDate || ""}
+                        max={currentMonth}
+                        onChange={(e) => setTempToDate(e.target.value)}
+                        className="border border-gray-300 rounded px-4 py-2 w-[200px] h-[50px]"
+                      />
+                    </div>
+                  </>
+                )}
+                <div className="mb-2 flex items-end">
+                  <button
+                    onClick={applyFilter}
+                    className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Apply Filter
+                  </button>
                 </div>
               </div>
             </div>
@@ -463,14 +530,13 @@ const TargetCommission = () => {
                       children: (
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                           <Link
-                            to="/reports/target-commission"
+                            to="/target-menu/target"
                             className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
                           >
-                            <DollarOutlined
-                              className="text-blue-500"
-                              size={30}
-                            />
-                            Commission Report
+                           
+                            <FiTarget className="text-blue-500"
+                              size={30}/>
+                            Set Target
                           </Link>
 
                           <Link
@@ -483,21 +549,12 @@ const TargetCommission = () => {
                             />
                             Incentive Report
                           </Link>
-
                           <Link
                             to="/target-commission-incentive"
                             className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
                           >
                             <MdPayments className="text-blue-500" size={30} />
                             Commission or Incentive Payout
-                          </Link>
-
-                          <Link
-                            to="/target-payout-salary"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
-                          >
-                            <FaMoneyBill className="text-blue-500" size={30} />
-                            Salary Payout
                           </Link>
                         </div>
                       ),
@@ -507,7 +564,9 @@ const TargetCommission = () => {
                   className="rounded-lg border border-gray-200 bg-white shadow-sm"
                 />
               </div>
-              {(selectedEmployeeId === "ALL" || selectedEmployeeDetails) && (
+
+              {/* Show employee details section only after filter is applied */}
+              {isFilterApplied && (
                 <div className="mb-8 bg-gray-50 rounded-md shadow-md p-6 space-y-4">
                   {selectedEmployeeId !== "ALL" && selectedEmployeeDetails && (
                     <>
@@ -543,7 +602,6 @@ const TargetCommission = () => {
                           />
                         </div>
                       </div>
-
                       <div className="flex gap-4">
                         <div className="flex flex-col flex-1">
                           <label className="text-sm font-medium mb-1">
@@ -576,7 +634,6 @@ const TargetCommission = () => {
                           />
                         </div>
                       </div>
-
                       <div className="flex flex-col">
                         <label className="text-sm font-medium mb-1">
                           Address
@@ -589,12 +646,11 @@ const TargetCommission = () => {
                       </div>
                     </>
                   )}
-
                   {/* Summary always shown */}
                   <div className="flex gap-4">
                     <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        Actual Business
+                        Net Business
                       </label>
                       <input
                         value={commissionTotalDetails?.actual_business || "-"}
@@ -602,10 +658,9 @@ const TargetCommission = () => {
                         className="border border-gray-300 rounded px-4 py-2 bg-white text-green-700 font-bold"
                       />
                     </div>
-
                     <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        Commission (1% each)
+                        Net Commission (1% each)
                       </label>
                       <input
                         value={commissionTotalDetails?.total_actual || "-"}
@@ -614,11 +669,10 @@ const TargetCommission = () => {
                       />
                     </div>
                   </div>
-
                   <div className="flex gap-4">
                     <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        Total Customers
+                        Net Customers
                       </label>
                       <input
                         value={commissionTotalDetails?.total_customers || "-"}
@@ -628,7 +682,7 @@ const TargetCommission = () => {
                     </div>
                     <div className="flex flex-col flex-1">
                       <label className="text-sm font-medium mb-1">
-                        Total Groups
+                        Net Groups
                       </label>
                       <input
                         value={commissionTotalDetails?.total_groups || "-"}
@@ -640,14 +694,14 @@ const TargetCommission = () => {
                 </div>
               )}
 
-              {selectedEmployeeId &&
-                selectedEmployeeId !== "ALL" &&
-                selectedMonth && (
+              {/* Show target details only after filter is applied and employee is selected */}
+              {isFilterApplied &&
+                selectedEmployeeId &&
+                selectedEmployeeId !== "ALL" && (
                   <div className="bg-gray-100  p-4 rounded-lg shadow mb-6">
                     <h2 className="text-lg font-bold text-yellow-800 mb-2">
                       Target Details
                     </h2>
-
                     {targetData.achieved >= targetData.target && (
                       <div className="flex items-center gap-2 p-3 rounded-lg bg-green-100 border border-green-400 my-4">
                         <GiPartyPopper size={30} color="green" />
@@ -657,18 +711,16 @@ const TargetCommission = () => {
                           strokeWidth={2}
                           d="M5 13l4 4L19 7"
                         />
-
                         <span className="text-green-800 font-semibold">
                           Target Achieved
                         </span>
                       </div>
                     )}
-
                     <div className="grid md:grid-cols-3 gap-4 bg-gray-50 ">
                       <div>
                         <label className="block font-medium">Target Set</label>
                         <input
-                          value={`₹${targetData.target?.toLocaleString(
+                          value={`${targetData.target?.toLocaleString(
                             "en-IN"
                           )}`}
                           readOnly
@@ -678,7 +730,7 @@ const TargetCommission = () => {
                       <div>
                         <label className="block font-medium">Achieved</label>
                         <input
-                          value={`₹${targetData.achieved?.toLocaleString(
+                          value={`${targetData.achieved?.toLocaleString(
                             "en-IN"
                           )}`}
                           readOnly
@@ -688,14 +740,13 @@ const TargetCommission = () => {
                       <div>
                         <label className="block font-medium">Difference</label>
                         <input
-                          value={`₹${targetData.difference?.toLocaleString(
+                          value={`${targetData.difference?.toLocaleString(
                             "en-IN"
                           )}`}
                           readOnly
                           className="border px-3 py-2 rounded w-full bg-gray-50 font-semibold"
                         />
                       </div>
-
                       {/* MODIFIED: Total Payable now uses target-based commission */}
                       <div>
                         <label className="block font-medium">
@@ -703,7 +754,7 @@ const TargetCommission = () => {
                         </label>
                         <input
                           readOnly
-                          value={`₹${targetData.targetCommission.toLocaleString(
+                          value={`${targetData.targetCommission.toLocaleString(
                             "en-IN",
                             {
                               minimumFractionDigits: 2,
@@ -713,7 +764,6 @@ const TargetCommission = () => {
                           className="border px-3 py-2 rounded w-full bg-gray-50 text-green-700 font-bold"
                         />
                       </div>
-
                       {/* ADDED: Commission breakdown for clarity */}
                       <div className="col-span-3">
                         <div className="bg-blue-50 p-3 rounded">
@@ -722,7 +772,7 @@ const TargetCommission = () => {
                           </p>
                           <ul className="list-disc pl-5 text-sm text-gray-700 mt-1">
                             <li>
-                              Up to target (0.5%): ₹
+                              Up to target (0.5%):
                               {(
                                 Math.min(
                                   targetData.achieved,
@@ -735,7 +785,7 @@ const TargetCommission = () => {
                             </li>
                             {targetData.achieved > targetData.target && (
                               <li>
-                                Beyond target (1%): ₹
+                                Beyond target (1%):
                                 {(
                                   (targetData.achieved - targetData.target) *
                                   0.01
@@ -777,7 +827,6 @@ const TargetCommission = () => {
                         className="w-full border p-2 rounded bg-gray-100 font-semibold"
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium">
                         Payment Date
@@ -790,7 +839,6 @@ const TargetCommission = () => {
                         className="w-full border p-2 rounded"
                       />
                     </div>
-                    {/* MODIFIED: Total Payable Commission now shows target-based calculation */}
                     <div>
                       <label className="block text-sm font-medium">
                         Total Payable Commission
@@ -798,11 +846,10 @@ const TargetCommission = () => {
                       <input
                         type="text"
                         readOnly
-                        value={`₹${commissionForm.amount || "0.00"}`}
+                        value={`${commissionForm.amount || "0.00"}`}
                         className="w-full border p-2 rounded bg-gray-100 text-green-700 font-semibold"
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium">
                         Payment Mode
@@ -819,7 +866,6 @@ const TargetCommission = () => {
                         <option value="bank_transfer">Bank Transfer</option>
                       </select>
                     </div>
-
                     {commissionForm.pay_type === "online" && (
                       <div>
                         <label className="block text-sm font-medium">
@@ -839,7 +885,6 @@ const TargetCommission = () => {
                         )}
                       </div>
                     )}
-
                     <div>
                       <label className="block text-sm font-medium">Note</label>
                       <textarea
@@ -849,7 +894,6 @@ const TargetCommission = () => {
                         className="w-full border p-2 rounded"
                       />
                     </div>
-
                     <div className="flex justify-end gap-3 mt-4">
                       <button
                         type="button"
@@ -899,45 +943,48 @@ const TargetCommission = () => {
                       selectedEmployeeId === "ALL"
                         ? "-"
                         : selectedEmployeeDetails?.phone_number || "-",
-                      selectedMonth
-                        ? new Date(`${selectedMonth}-01`).toLocaleString(
-                            "default",
-                            {
-                              month: "long",
-                              year: "numeric",
-                            }
-                          )
+                      isFilterApplied
+                        ? dateSelectionMode === "month"
+                          ? new Date(`${selectedMonth}-01`).toLocaleString(
+                              "default",
+                              {
+                                month: "long",
+                                year: "numeric",
+                              }
+                            )
+                          : `${new Date(
+                              tempFromDate
+                            ).toLocaleDateString()} - ${new Date(
+                              tempToDate
+                            ).toLocaleDateString()}`
                         : "-",
-                      `₹${targetData?.target?.toLocaleString("en-IN") || "0"}`,
-                      `₹${
-                        targetData?.achieved?.toLocaleString("en-IN") || "0"
-                      }`,
-                      `₹${
+                      `${targetData?.target?.toLocaleString("en-IN") || "0"}`,
+                      `${targetData?.achieved?.toLocaleString("en-IN") || "0"}`,
+                      `${
                         targetData?.remaining?.toLocaleString("en-IN") || "0"
                       }`,
-                      // MODIFIED: Using target-based commission
-                      `₹${
+                      `${
                         targetData?.targetCommission?.toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         }) || "0.00"
                       }`,
-                      `₹${
+                      `${
                         commissionTotalDetails?.actual_business?.toLocaleString(
                           "en-IN"
                         ) || "0"
                       }`,
-                      `₹${
+                      `${
                         commissionTotalDetails?.total_actual?.toLocaleString(
                           "en-IN"
                         ) || "0"
                       }`,
-                      `₹${
+                      `${
                         commissionTotalDetails?.expected_business?.toLocaleString(
                           "en-IN"
                         ) || "0"
                       }`,
-                      `₹${
+                      `${
                         commissionTotalDetails?.total_estimated?.toLocaleString(
                           "en-IN"
                         ) || "0"
@@ -947,10 +994,17 @@ const TargetCommission = () => {
                     ]}
                     exportedFileName={`CommissionReport-${
                       selectedEmployeeDetails?.name || "all"
-                    }-${selectedMonth}.csv`}
+                    }-${
+                      isFilterApplied
+                        ? dateSelectionMode === "month"
+                          ? selectedMonth
+                          : `${tempFromDate}_to_${tempToDate}`
+                        : "unfiltered"
+                    }.csv`}
                   />
                 </>
               ) : (
+                isFilterApplied &&
                 selectedEmployeeDetails?.name && (
                   <p className="text-center font-bold text-lg">
                     No Commission Data found.
@@ -964,4 +1018,5 @@ const TargetCommission = () => {
     </div>
   );
 };
+
 export default TargetCommission;

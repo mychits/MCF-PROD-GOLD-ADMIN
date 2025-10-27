@@ -8,12 +8,10 @@ import Modal from "../components/modals/Modal";
 import { GiPartyPopper } from "react-icons/gi";
 import { Collapse } from "antd";
 import { Link } from "react-router-dom";
-import {
-  FileTextOutlined,
-  DollarOutlined,
-} from "@ant-design/icons";
+import { FileTextOutlined, DollarOutlined } from "@ant-design/icons";
 import { FaMoneyBill } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
+import { FiTarget } from "react-icons/fi";
 const TargetIncentive = () => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
@@ -86,7 +84,7 @@ const TargetIncentive = () => {
       console.error("Error fetching employees:", err);
     }
   };
-  
+
   // Modified to accept date parameters directly
   const fetchCommissionReport = async (employeeId, startDate, endDate) => {
     if (!employeeId || !startDate || !endDate) return;
@@ -97,7 +95,7 @@ const TargetIncentive = () => {
         start_date: startDate,
         end_date: endDate,
       };
-      
+
       const res = await api.get(`/enroll/employee/${employeeId}/incentive`, {
         params,
         signal: abortController.signal,
@@ -109,7 +107,7 @@ const TargetIncentive = () => {
         total_customers: res.data?.incentiveSummary?.total_enrollments,
         total_groups: res.data?.incentiveSummary?.total_enrollments,
         expected_business: res.data?.incentiveSummary?.total_group_value,
-        total_estimated: res.data?.incentiveSummary?.total_incentive_value
+        total_estimated: res.data?.incentiveSummary?.total_incentive_value,
       });
     } catch (err) {
       if (err.name !== "AbortController") {
@@ -123,9 +121,7 @@ const TargetIncentive = () => {
       }
     }
   };
-  
 
-  
   // Modified to accept date parameters directly
   const fetchTargetData = async (employeeId, startDate, endDate) => {
     if (!employeeId || !startDate || !endDate) return;
@@ -140,10 +136,13 @@ const TargetIncentive = () => {
           start_date: startDate,
           end_date: endDate,
         };
-        
-        const { data: comm } = await api.get(`/enroll/employee/${employeeId}/incentive`, {
-          params,
-        });
+
+        const { data: comm } = await api.get(
+          `/enroll/employee/${employeeId}/incentive`,
+          {
+            params,
+          }
+        );
         let achieved = comm?.incentiveSummary?.total_group_value || 0;
         if (typeof achieved === "string") {
           achieved = Number(achieved.replace(/[^0-9.-]+/g, ""));
@@ -176,7 +175,7 @@ const TargetIncentive = () => {
       });
     }
   };
-  
+
   const fetchAllCommissionReport = async () => {
     if (!fromDate || !toDate) return;
     const abortController = new AbortController();
@@ -186,7 +185,7 @@ const TargetIncentive = () => {
         start_date: fromDate,
         end_date: toDate,
       };
-      
+
       const res = await api.get("/enroll/incentive", {
         params,
         signal: abortController.signal,
@@ -199,7 +198,7 @@ const TargetIncentive = () => {
         total_customers: res.data?.commissionSummary?.total_enrollments,
         total_groups: res.data?.commissionSummary?.total_enrollments,
         expected_business: res.data?.commissionSummary?.total_group_value,
-        total_estimated: res.data?.commissionSummary?.total_commission_value
+        total_estimated: res.data?.commissionSummary?.total_commission_value,
       });
     } catch (err) {
       if (err.name !== "AbortError") {
@@ -213,7 +212,7 @@ const TargetIncentive = () => {
       }
     }
   };
-  
+
   const handleEmployeeChange = (value) => {
     setSelectedEmployeeId(value);
     setSelectedEmployeeDetails(null);
@@ -228,7 +227,7 @@ const TargetIncentive = () => {
       incentiveAmount: 0,
     });
   };
-  
+
   const handleTempMonthChange = (e) => {
     const selectedMonth = e.target.value;
     setTempSelectedMonth(selectedMonth);
@@ -240,7 +239,7 @@ const TargetIncentive = () => {
       setTempToDate(lastDay);
     }
   };
-  
+
   // CORRECTED: We now calculate the date range first and pass it directly to API calls
   const applyFilter = async () => {
     if (!selectedEmployeeId) {
@@ -255,12 +254,12 @@ const TargetIncentive = () => {
       alert("Please select both From and To dates.");
       return;
     }
-    
+
     // 👇 CRITICAL: Enable summary UI
     setIsFiltering(true);
-    
+
     let startDate, endDate;
-    
+
     // Calculate the date range we want to use
     if (dateSelectionMode === "month") {
       setSelectedMonth(tempSelectedMonth);
@@ -275,7 +274,7 @@ const TargetIncentive = () => {
       setFromDate(startDate);
       setToDate(endDate);
     }
-    
+
     setLoading(true);
     setAgentLoading(true);
     try {
@@ -291,7 +290,7 @@ const TargetIncentive = () => {
         });
         await fetchAllCommissionReport();
       } else {
-        const emp = employees.find(e => e._id === selectedEmployeeId);
+        const emp = employees.find((e) => e._id === selectedEmployeeId);
         setSelectedEmployeeDetails(emp || null);
         // Pass the calculated date range directly to the API calls
         await fetchCommissionReport(selectedEmployeeId, startDate, endDate);
@@ -302,17 +301,17 @@ const TargetIncentive = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchEmployees();
   }, []);
-  
+
   const handleCommissionChange = (e) => {
     const { name, value } = e.target;
     setCommissionForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
-  
+
   const validateForm = () => {
     const newErrors = {};
     if (!commissionForm.agent_id) newErrors.agent_id = "Please select an agent";
@@ -323,7 +322,7 @@ const TargetIncentive = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
   const handleCommissionSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -336,22 +335,22 @@ const TargetIncentive = () => {
       alert("Failed to add payment.");
     }
   };
-  
+
   const processedTableData = employeeCustomerData.map((item, index) => ({
     ...item,
     // Format the numeric values for display
     group_value_digits: item.group_id?.group_value,
-    group_ticket:item.ticket || "N/A",
-     
+    group_ticket: item.ticket || "N/A",
+
     estimated_commission_digits: item?.estimated_commission || 0,
-     
+
     net_incentive_digits: item?.incentive_value || 0,
     incentive_percentage: item?.group_id?.incentives || 0,
-      
+
     total_paid_digits: item?.total_paid_amount || 0,
-     
+
     required_installment_digits: item?.group_id?.monthly_installment || 0,
-      
+
     incentive_released: item.incentive_released ? "Yes" : "No",
     user_name: item.user_id?.full_name || "N/A",
     phone_number: item.user_id?.phone_number || "N/A",
@@ -360,7 +359,7 @@ const TargetIncentive = () => {
       ? new Date(item.group_id.start_date)?.toISOString()?.split("T")?.[0]
       : "N/A",
   }));
-  
+
   const columns = [
     { key: "user_name", header: "Customer Name" },
     { key: "phone_number", header: "Phone Number" },
@@ -374,13 +373,13 @@ const TargetIncentive = () => {
     { key: "required_installment_digits", header: "First Installment Amount" },
     { key: "incentive_released", header: "Incentive Released" },
   ];
-  
+
   // Get current month for max attribute
   const today = new Date();
   const currentMonth = `${today.getFullYear()}-${String(
     today.getMonth() + 1
   ).padStart(2, "0")}`;
-  
+
   return (
     <div className="w-screen min-h-screen">
       <div className="flex mt-30">
@@ -506,6 +505,18 @@ const TargetIncentive = () => {
                       children: (
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                           <Link
+                            to="/target-menu/target"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                          >
+                           
+                            <FiTarget 
+                            
+                             className="text-blue-500"
+                              size={30}
+                            />
+                            Set Target
+                          </Link>
+                          <Link
                             to="/reports/target-commission"
                             className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
                           >
@@ -515,16 +526,7 @@ const TargetIncentive = () => {
                             />
                             Commission Report
                           </Link>
-                          <Link
-                            to="/reports/target-incentive"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
-                          >
-                            <FileTextOutlined
-                              className="text-blue-500"
-                              size={30}
-                            />
-                            Incentive Report
-                          </Link>
+
                           <Link
                             to="/target-commission-incentive"
                             className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
@@ -547,78 +549,98 @@ const TargetIncentive = () => {
                   className="rounded-lg border border-gray-200 bg-white shadow-sm"
                 />
               </div>
-              {isFiltering && ((dateSelectionMode === "month" && selectedMonth) ||
-                (dateSelectionMode === "date-range" && fromDate && toDate)) &&
+              {isFiltering &&
+                ((dateSelectionMode === "month" && selectedMonth) ||
+                  (dateSelectionMode === "date-range" && fromDate && toDate)) &&
                 (selectedEmployeeId === "ALL" || selectedEmployeeDetails) && (
                   <div className="mb-8 bg-gray-50 rounded-md shadow-md p-6 space-y-4">
-                    {selectedEmployeeId !== "ALL" && selectedEmployeeDetails && (
-                      <>
-                        <div className="flex gap-4">
-                          <div className="flex flex-col flex-1">
-                            <label className="text-sm font-medium mb-1">Name</label>
+                    {selectedEmployeeId !== "ALL" &&
+                      selectedEmployeeDetails && (
+                        <>
+                          <div className="flex gap-4">
+                            <div className="flex flex-col flex-1">
+                              <label className="text-sm font-medium mb-1">
+                                Name
+                              </label>
+                              <input
+                                value={selectedEmployeeDetails.name || "-"}
+                                readOnly
+                                className="border border-gray-300 rounded px-4 py-2 bg-white"
+                              />
+                            </div>
+                            <div className="flex flex-col flex-1">
+                              <label className="text-sm font-medium mb-1">
+                                Email
+                              </label>
+                              <input
+                                value={selectedEmployeeDetails.email || "-"}
+                                readOnly
+                                className="border border-gray-300 rounded px-4 py-2 bg-white"
+                              />
+                            </div>
+                            <div className="flex flex-col flex-1">
+                              <label className="text-sm font-medium mb-1">
+                                Phone Number
+                              </label>
+                              <input
+                                value={
+                                  selectedEmployeeDetails.phone_number || "-"
+                                }
+                                readOnly
+                                className="border border-gray-300 rounded px-4 py-2 bg-white"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex gap-4">
+                            <div className="flex flex-col flex-1">
+                              <label className="text-sm font-medium mb-1">
+                                Adhaar Number
+                              </label>
+                              <input
+                                value={selectedEmployeeDetails.adhaar_no || "-"}
+                                readOnly
+                                className="border border-gray-300 rounded px-4 py-2 bg-white"
+                              />
+                            </div>
+                            <div className="flex flex-col flex-1">
+                              <label className="text-sm font-medium mb-1">
+                                PAN Number
+                              </label>
+                              <input
+                                value={selectedEmployeeDetails.pan_no || "-"}
+                                readOnly
+                                className="border border-gray-300 rounded px-4 py-2 bg-white"
+                              />
+                            </div>
+                            <div className="flex flex-col flex-1">
+                              <label className="text-sm font-medium mb-1">
+                                Pincode
+                              </label>
+                              <input
+                                value={selectedEmployeeDetails.pincode || "-"}
+                                readOnly
+                                className="border border-gray-300 rounded px-4 py-2 bg-white"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex flex-col">
+                            <label className="text-sm font-medium mb-1">
+                              Address
+                            </label>
                             <input
-                              value={selectedEmployeeDetails.name || "-"}
+                              value={selectedEmployeeDetails.address || "-"}
                               readOnly
                               className="border border-gray-300 rounded px-4 py-2 bg-white"
                             />
                           </div>
-                          <div className="flex flex-col flex-1">
-                            <label className="text-sm font-medium mb-1">Email</label>
-                            <input
-                              value={selectedEmployeeDetails.email || "-"}
-                              readOnly
-                              className="border border-gray-300 rounded px-4 py-2 bg-white"
-                            />
-                          </div>
-                          <div className="flex flex-col flex-1">
-                            <label className="text-sm font-medium mb-1">Phone Number</label>
-                            <input
-                              value={selectedEmployeeDetails.phone_number || "-"}
-                              readOnly
-                              className="border border-gray-300 rounded px-4 py-2 bg-white"
-                            />
-                          </div>
-                        </div>
-                        <div className="flex gap-4">
-                          <div className="flex flex-col flex-1">
-                            <label className="text-sm font-medium mb-1">Adhaar Number</label>
-                            <input
-                              value={selectedEmployeeDetails.adhaar_no || "-"}
-                              readOnly
-                              className="border border-gray-300 rounded px-4 py-2 bg-white"
-                            />
-                          </div>
-                          <div className="flex flex-col flex-1">
-                            <label className="text-sm font-medium mb-1">PAN Number</label>
-                            <input
-                              value={selectedEmployeeDetails.pan_no || "-"}
-                              readOnly
-                              className="border border-gray-300 rounded px-4 py-2 bg-white"
-                            />
-                          </div>
-                          <div className="flex flex-col flex-1">
-                            <label className="text-sm font-medium mb-1">Pincode</label>
-                            <input
-                              value={selectedEmployeeDetails.pincode || "-"}
-                              readOnly
-                              className="border border-gray-300 rounded px-4 py-2 bg-white"
-                            />
-                          </div>
-                        </div>
-                        <div className="flex flex-col">
-                          <label className="text-sm font-medium mb-1">Address</label>
-                          <input
-                            value={selectedEmployeeDetails.address || "-"}
-                            readOnly
-                            className="border border-gray-300 rounded px-4 py-2 bg-white"
-                          />
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
                     {/* ✅ CORRECTED SUMMARY: Two rows */}
                     <div className="flex gap-4">
                       <div className="flex flex-col flex-1">
-                        <label className="text-sm font-medium mb-1">Net Business</label>
+                        <label className="text-sm font-medium mb-1">
+                          Net Business
+                        </label>
                         <input
                           value={commissionTotalDetails?.actual_business || "-"}
                           readOnly
@@ -626,7 +648,9 @@ const TargetIncentive = () => {
                         />
                       </div>
                       <div className="flex flex-col flex-1">
-                        <label className="text-sm font-medium mb-1">Incentive (1% each)</label>
+                        <label className="text-sm font-medium mb-1">
+                         Net Incentive (1% each)
+                        </label>
                         <input
                           value={commissionTotalDetails?.total_actual || "-"}
                           readOnly
@@ -636,7 +660,9 @@ const TargetIncentive = () => {
                     </div>
                     <div className="flex gap-4">
                       <div className="flex flex-col flex-1">
-                        <label className="text-sm font-medium mb-1">Net Customers</label>
+                        <label className="text-sm font-medium mb-1">
+                          Net Customers
+                        </label>
                         <input
                           value={commissionTotalDetails?.total_customers || "-"}
                           readOnly
@@ -644,7 +670,9 @@ const TargetIncentive = () => {
                         />
                       </div>
                       <div className="flex flex-col flex-1">
-                        <label className="text-sm font-medium mb-1">Total Groups</label>
+                        <label className="text-sm font-medium mb-1">
+                          Net Groups
+                        </label>
                         <input
                           value={commissionTotalDetails?.total_groups || "-"}
                           readOnly
@@ -654,8 +682,9 @@ const TargetIncentive = () => {
                     </div>
                   </div>
                 )}
-              {isFiltering && ((dateSelectionMode === "month" && selectedMonth) ||
-                (dateSelectionMode === "date-range" && fromDate && toDate)) &&
+              {isFiltering &&
+                ((dateSelectionMode === "month" && selectedMonth) ||
+                  (dateSelectionMode === "date-range" && fromDate && toDate)) &&
                 selectedEmployeeId &&
                 selectedEmployeeId !== "ALL" && (
                   <div className="bg-gray-100  p-4 rounded-lg shadow mb-6">
@@ -728,7 +757,7 @@ const TargetIncentive = () => {
                             <li>Up to target (0%): 0.00</li>
                             {targetData.achieved > targetData.target && (
                               <li>
-                                Beyond target (1%): 
+                                Beyond target (1%):
                                 {(
                                   (targetData.achieved - targetData.target) *
                                   0.01
@@ -885,50 +914,64 @@ const TargetIncentive = () => {
                       selectedEmployeeId === "ALL"
                         ? "-"
                         : selectedEmployeeDetails?.phone_number || "-",
-                      ((dateSelectionMode === "month" && selectedMonth) ||
-                        (dateSelectionMode === "date-range" && fromDate && toDate)) ?
-                        dateSelectionMode === "month" ?
-                          new Date(`${selectedMonth}-01`).toLocaleString(
-                            "default",
-                            {
-                              month: "long",
-                              year: "numeric",
-                            }
-                          ) :
-                          `${new Date(fromDate).toLocaleDateString()} - ${new Date(toDate).toLocaleDateString()}`
+                      (dateSelectionMode === "month" && selectedMonth) ||
+                      (dateSelectionMode === "date-range" && fromDate && toDate)
+                        ? dateSelectionMode === "month"
+                          ? new Date(`${selectedMonth}-01`).toLocaleString(
+                              "default",
+                              {
+                                month: "long",
+                                year: "numeric",
+                              }
+                            )
+                          : `${new Date(
+                              fromDate
+                            ).toLocaleDateString()} - ${new Date(
+                              toDate
+                            ).toLocaleDateString()}`
                         : "-",
                       `${targetData?.target?.toLocaleString("en-IN") || "0"}`,
-                      `${targetData?.achieved?.toLocaleString("en-IN") || "0"
-                      }`,
-                      `${targetData?.remaining?.toLocaleString("en-IN") || "0"
+                      `${targetData?.achieved?.toLocaleString("en-IN") || "0"}`,
+                      `${
+                        targetData?.remaining?.toLocaleString("en-IN") || "0"
                       }`,
                       // MODIFIED: Using incentive amount
-                      `${targetData?.incentiveAmount?.toLocaleString("en-IN", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }) || "0.00"
+                      `${
+                        targetData?.incentiveAmount?.toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }) || "0.00"
                       }`,
-                      `${commissionTotalDetails?.actual_business?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `${
+                        commissionTotalDetails?.actual_business?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
-                      `${commissionTotalDetails?.total_actual?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `${
+                        commissionTotalDetails?.total_actual?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
-                      `${commissionTotalDetails?.expected_business?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `${
+                        commissionTotalDetails?.expected_business?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
-                      `${commissionTotalDetails?.total_estimated?.toLocaleString(
-                        "en-IN"
-                      ) || "0"
+                      `${
+                        commissionTotalDetails?.total_estimated?.toLocaleString(
+                          "en-IN"
+                        ) || "0"
                       }`,
                       commissionTotalDetails?.total_customers || "0",
                       commissionTotalDetails?.total_groups || "0",
                     ]}
-                    exportedFileName={`IncentiveReport-${selectedEmployeeDetails?.name || "all"
-                      }-${dateSelectionMode === "month" ? selectedMonth : `${fromDate}_to_${toDate}`}.csv`}
+                    exportedFileName={`IncentiveReport-${
+                      selectedEmployeeDetails?.name || "all"
+                    }-${
+                      dateSelectionMode === "month"
+                        ? selectedMonth
+                        : `${fromDate}_to_${toDate}`
+                    }.csv`}
                   />
                 </>
               ) : (
