@@ -118,7 +118,7 @@ const OutstandingReport = () => {
                   totalToBePaid: totalToBePaid,
                   relationshipManager:
                     data?.enrollment?.relationship_manager?.name || "N/A",
-                  collectionExecutive: usrData.collection_executive || "N/A",
+                  collectionExecutive:  usrData?.collection_executive?.join(" | ") || "N/A",
                   collectionArea: usrData.collection_area || "N/A",
                   referred_type: data?.enrollment?.referred_type,
                   reffered_by: data?.enrollment?.agent
