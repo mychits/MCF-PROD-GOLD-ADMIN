@@ -49,6 +49,9 @@ const Designation = () => {
       commission: true,
       reports: true,
       modify_payments: true,
+      chit_collection: true,
+      loan_collection: true,
+      pigme_collection: true,
     },
   });
 
@@ -62,6 +65,9 @@ const Designation = () => {
       commission: true,
       reports: true,
       modify_payments: true,
+      chit_collection: true,
+      loan_collection: true,
+      pigme_collection: true,
     },
   });
 
@@ -183,6 +189,9 @@ const Designation = () => {
             commission: true,
             reports: true,
             modify_payments: true,
+            chit_collection: true,
+      loan_collection: true,
+      pigme_collection: true,
           },
         });
         setReloadTrigger((prev) => prev + 1);
@@ -269,6 +278,15 @@ const Designation = () => {
           modify_payments:
             response.data?.permission?.modify_payments === true ||
             response.data?.permission?.modify_payments === "true",
+          chit_collection: 
+            response.data?.permission?.chit_collection === true ||
+            response.data?.permission?.chit_collection === "true",
+      loan_collection: 
+            response.data?.permission?.loan_collection === true ||
+            response.data?.permission?.loan_collection === "true",
+      pigme_collection:
+            response.data?.permission?.pigme_collection === true ||
+            response.data?.permission?.pigme_collection === "true",
         },
       });
       setShowModalUpdate(true);
@@ -656,6 +674,102 @@ const Designation = () => {
                   </span>
                 </label>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900">
+                  Chit Collection
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={formData.permission.chit_collection}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        permission: {
+                          ...formData.permission,
+                          chit_collection: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div
+                    className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4
+                              peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 
+                              peer-checked:after:translate-x-full peer-checked:after:border-white 
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                              after:bg-white after:border-gray-300 after:border after:rounded-full 
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                  ></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {formData.permission.chit_collection ? "Yes" : "No"}
+                  </span>
+                </label>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900">
+                  Loan Collection
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={formData.permission.loan_collection}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        permission: {
+                          ...formData.permission,
+                          loan_collection: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div
+                    className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4
+                              peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 
+                              peer-checked:after:translate-x-full peer-checked:after:border-white 
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                              after:bg-white after:border-gray-300 after:border after:rounded-full 
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                  ></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {formData.permission.loan_collection ? "Yes" : "No"}
+                  </span>
+                </label>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900">
+                  Pigmy Collection
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={formData.permission.pigme_collection}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        permission: {
+                          ...formData.permission,
+                          pigme_collection: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div
+                    className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4
+                              peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 
+                              peer-checked:after:translate-x-full peer-checked:after:border-white 
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                              after:bg-white after:border-gray-300 after:border after:rounded-full 
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                  ></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {formData.permission.pigme_collection ? "Yes" : "No"}
+                  </span>
+                </label>
+              </div>
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
@@ -921,6 +1035,102 @@ const Designation = () => {
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.modify_payments ? "Yes" : "No"}
+                  </span>
+                </label>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900">
+                  Chit Collection
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={updateFormData.permission.chit_collection}
+                    onChange={(e) =>
+                      setUpdateFormData({
+                        ...updateFormData,
+                        permission: {
+                          ...updateFormData.permission,
+                          chit_collection: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div
+                    className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4
+                              peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 
+                              peer-checked:after:translate-x-full peer-checked:after:border-white 
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                              after:bg-white after:border-gray-300 after:border after:rounded-full 
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                  ></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {updateFormData.permission.chit_collection ? "Yes" : "No"}
+                  </span>
+                </label>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900">
+                  Loan Collection
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={updateFormData.permission.loan_collection}
+                    onChange={(e) =>
+                      setUpdateFormData({
+                        ...updateFormData,
+                        permission: {
+                          ...updateFormData.permission,
+                          loan_collection: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div
+                    className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4
+                              peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 
+                              peer-checked:after:translate-x-full peer-checked:after:border-white 
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                              after:bg-white after:border-gray-300 after:border after:rounded-full 
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                  ></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {updateFormData.permission.loan_collection ? "Yes" : "No"}
+                  </span>
+                </label>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900">
+                  Pigmy Collection
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={updateFormData.permission.pigme_collection}
+                    onChange={(e) =>
+                      setUpdateFormData({
+                        ...updateFormData,
+                        permission: {
+                          ...updateFormData.permission,
+                          pigme_collection: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div
+                    className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4
+                              peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 
+                              peer-checked:after:translate-x-full peer-checked:after:border-white 
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                              after:bg-white after:border-gray-300 after:border after:rounded-full 
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                  ></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {updateFormData.permission.pigme_collection ? "Yes" : "No"}
                   </span>
                 </label>
               </div>
