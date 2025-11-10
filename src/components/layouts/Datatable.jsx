@@ -493,7 +493,7 @@ const DataTable = ({
       <Modal
         title="Select Columns to Export"
         open={showExportModal}
-          maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
+        styles={{ mask: { backgroundColor: "rgba(0, 0, 0, 0.8)" } }}
         onCancel={() => setShowExportModal(false)}
         footer={[
           <button
