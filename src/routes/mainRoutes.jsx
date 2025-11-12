@@ -124,6 +124,9 @@ import LegalsMenu from "../pages/LegalsMenu";
 import UnApprovedCustomerReport from "../pages/UnApprovedCustomerReport";
 import PaymentReport from "../pages/PaymentReport";
 import PigmySummaryReport from "../pages/PigmySummaryReport";
+
+
+import  SalaryRemainingReport from "../pages/SalaryRemainingReport";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -673,6 +676,7 @@ const mainRoutes = createBrowserRouter([
     path: "target-commission",
     element: <TargetCommission />,
   },
+   {path: "salary-remaining", element: <SalaryRemainingReport/>},
 
     ],
   },
