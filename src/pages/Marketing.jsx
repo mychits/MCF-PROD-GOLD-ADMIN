@@ -168,7 +168,7 @@ import { LiaSmsSolid } from "react-icons/lia";
 //                               submenu.red ? "text-red-700" : "text-blue-950"
 //                             } ${
 //                               isActive
-//                                 ? "bg-blue-100 border-l-4 border-blue-400"
+//                                 ? "bg-yellow-100 border-l-4 border-blue-400"
 //                                 : "hover:bg-gray-200"
 //                             }`
 //                           }
@@ -422,7 +422,7 @@ const Marketing = () => {
                     target={menu.newTab ? "_blank" : "_self"}
                     className={({ isActive }) =>
                       `flex items-center gap-3 p-2 rounded-md transition font-medium cursor-pointer 
-                      ${isActive ? "bg-blue-500 text-white" : "hover:bg-gray-200 text-blue-950"}`
+                      ${isActive ? "bg-yellow-500 text-white" : "hover:bg-gray-200 text-blue-950"}`
                     }
                   >
                     {menu.icon}

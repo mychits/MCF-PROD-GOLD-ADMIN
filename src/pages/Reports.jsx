@@ -1,44 +1,29 @@
 import Sidebar from "../components/layouts/Sidebar";
 import Navbar from "../components/layouts/Navbar";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { MdOutlinePending } from "react-icons/md";
-import { TbMoneybag } from "react-icons/tb";
-import { HiOutlineBanknotes } from "react-icons/hi2";
-import {
-  FaCalendarDays,
-  FaPeopleGroup,
-  FaPeopleArrows,
-  FaUserCheck,
-  FaUserTie,
-} from "react-icons/fa6";
-import { TbUserCancel } from "react-icons/tb";
-import {
-  MdOutlineEmojiPeople,
-  MdOutlineReceiptLong,
-  MdMan,
-} from "react-icons/md";
-import { FaPersonWalkingArrowLoopLeft } from "react-icons/fa6";
-import { RiMoneyRupeeCircleFill, RiAuctionFill } from "react-icons/ri";
-import { MdOutlinePayments } from "react-icons/md";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+// Icons
+import { FaCalendarDays } from "react-icons/fa6";
+import { MdOutlineReceiptLong, MdOutlinePayments, MdOutlineEmojiPeople, MdMan, MdCancel } from "react-icons/md";
+import { TbMoneybag, TbUserCancel, TbReportSearch, TbGraph, TbGraphFilled } from "react-icons/tb";
+import { FaPeopleGroup, FaPeopleArrows, FaUserCheck, FaUserTie, FaPersonWalkingArrowLoopLeft } from "react-icons/fa6";
+import { RiMoneyRupeeCircleFill, RiAuctionFill, RiReceiptLine } from "react-icons/ri";
+import { MdOutlinePayment } from "react-icons/md";
 import { LiaCalculatorSolid } from "react-icons/lia";
 import { GiMoneyStack } from "react-icons/gi";
-import { TbReportSearch } from "react-icons/tb";
-import { MdOutlinePayment } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
-import { RiReceiptLine } from "react-icons/ri";
-import { useState } from "react";
+import { BsCalendarDate, BsCalculator } from "react-icons/bs";
 import { BiGrid } from "react-icons/bi";
 import { TbList } from "react-icons/tb";
-import { BsCalendarDate } from "react-icons/bs";
-import { TbGraph } from "react-icons/tb";
-import { TbGraphFilled } from "react-icons/tb";
-import { IoSearchOutline } from "react-icons/io5";
-import { IoCloseCircle } from "react-icons/io5";
-import { MdCancel } from "react-icons/md";
-import { BsCalculator } from "react-icons/bs";
+import { IoSearchOutline, IoCloseCircle, IoStatsChart } from "react-icons/io5";
+import { AiTwotoneGold } from "react-icons/ai";
+
+
+// Keep your full subMenus array exactly as defined
 const subMenus = [
   {
-    id:"1",
+    id: "1",
     title: "Daybook",
     link: "/reports/daybook",
     Icon: FaCalendarDays,
@@ -46,23 +31,23 @@ const subMenus = [
     color: "from-blue-500 to-blue-600",
   },
   {
-     id:"2",
+    id: "2",
     title: "Receipt Report",
     link: "/reports/receipt",
     Icon: MdOutlineReceiptLong,
     category: "Finance",
     color: "from-green-500 to-green-600",
   },
-    {
-     id:"&&%",
+  {
+    id: "&&%",
     title: "Payment Report",
     link: "/reports/payment-report",
-    Icon: MdOutlinePayments ,
+    Icon: MdOutlinePayments,
     category: "Reports",
     color: "from-yellow-500 to-pink-600",
   },
   {
-     id:"3",
+    id: "3",
     title: "Group Report",
     link: "/reports/group-report",
     Icon: FaPeopleGroup,
@@ -70,7 +55,7 @@ const subMenus = [
     color: "from-purple-500 to-purple-600",
   },
   {
-     id:"4",
+    id: "4",
     title: "Enrollment Report",
     link: "/reports/enrollment-report",
     Icon: FaPeopleArrows,
@@ -78,7 +63,7 @@ const subMenus = [
     color: "from-cyan-500 to-cyan-600",
   },
   {
-    id:"5",
+    id: "5",
     title: "All Customer Report",
     link: "/reports/all-user-report",
     Icon: FaPersonWalkingArrowLoopLeft,
@@ -86,7 +71,7 @@ const subMenus = [
     color: "from-teal-500 to-teal-600",
   },
   {
-    id:"6",
+    id: "6",
     title: "Customer Report",
     link: "/reports/user-report",
     Icon: MdOutlineEmojiPeople,
@@ -94,23 +79,23 @@ const subMenus = [
     color: "from-cyan-500 to-cyan-600",
   },
   {
-    id:"7",
+    id: "7",
     title: "Loan Summary Report",
     link: "/reports/customer-loan-report",
     Icon: GiMoneyStack,
     category: "Customer",
     color: "from-cyan-500 to-cyan-600",
   },
-   {
-    id:"&*DD",
+  {
+    id: "&*DD",
     title: "Pigmy Summary Report",
     link: "/reports/pigmy-summary-report",
-    Icon: BsCalculator ,
+    Icon: BsCalculator,
     category: "Customer",
     color: "from-blue-500 to-blue-600",
   },
   {
-    id:"8",
+    id: "8",
     title: "Holded Customers",
     link: "/reports/holded-customer-report",
     Icon: TbUserCancel,
@@ -118,7 +103,7 @@ const subMenus = [
     color: "from-red-500 to-red-600",
   },
   {
-    id:"9",
+    id: "9",
     title: "Collection Executive Report",
     link: "/reports/collection-executive",
     Icon: TbMoneybag,
@@ -126,7 +111,7 @@ const subMenus = [
     color: "from-green-500 to-green-600",
   },
   {
-    id:"10",
+    id: "10",
     title: "Collection Area Report",
     link: "/reports/collection-area-report",
     Icon: TbMoneybag,
@@ -134,16 +119,15 @@ const subMenus = [
     color: "from-green-500 to-green-600",
   },
   {
-    id:"11",
+    id: "11",
     title: "Employee Report",
     link: "/reports/employee-report",
     Icon: FaUserTie,
     category: "Employee",
     color: "from-indigo-500 to-indigo-600",
   },
- 
   {
-     id:"13",
+    id: "13",
     title: "Registration Receipt",
     link: "/reports/registration-fee-receipt",
     Icon: RiReceiptLine,
@@ -151,7 +135,7 @@ const subMenus = [
     color: "from-emerald-500 to-emerald-600",
   },
   {
-    id:"14",
+    id: "14",
     title: "PayOut Report",
     link: "/reports/payout",
     Icon: MdOutlinePayment,
@@ -159,24 +143,23 @@ const subMenus = [
     color: "from-green-500 to-green-600",
   },
   {
-    id:"15",
+    id: "15",
     title: "Outstanding Report",
     link: "/reports/outstanding-report",
-    Icon: MdOutlinePending,
+    Icon: MdOutlinePayment,
     category: "Finance",
     color: "from-orange-500 to-orange-600",
   },
   {
-     id:"16",
+    id: "16",
     title: "Auction Report",
     link: "/reports/auction-report",
     Icon: RiAuctionFill,
     category: "Reports",
     color: "from-pink-500 to-pink-600",
   },
- 
   {
-     id:"17",
+    id: "17",
     title: "Lead Report",
     link: "/reports/lead-report",
     Icon: MdMan,
@@ -184,7 +167,7 @@ const subMenus = [
     color: "from-purple-500 to-purple-600",
   },
   {
-     id:"18",
+    id: "18",
     title: "Pigme Report",
     link: "/reports/pigme-report",
     Icon: LiaCalculatorSolid,
@@ -192,7 +175,7 @@ const subMenus = [
     color: "from-yellow-500 to-yellow-600",
   },
   {
-     id:"19",
+    id: "19",
     title: "Loan Report",
     link: "/reports/loan-report",
     Icon: GiMoneyStack,
@@ -200,7 +183,7 @@ const subMenus = [
     color: "from-green-500 to-green-600",
   },
   {
-       id:"20",
+    id: "20",
     title: "Sales Report",
     link: "/reports/sales-report",
     Icon: FaUserCheck,
@@ -208,7 +191,7 @@ const subMenus = [
     color: "from-blue-500 to-blue-600",
   },
   {
-     id:"21",
+    id: "21",
     title: "Payment Summary",
     link: "/reports/payment-summary",
     Icon: TbReportSearch,
@@ -216,7 +199,7 @@ const subMenus = [
     color: "from-indigo-500 to-indigo-600",
   },
   {
-    id:"22",
+    id: "22",
     title: "Monthly Installment Turnover",
     link: "/reports/monthly-install-turnover",
     Icon: SlCalender,
@@ -224,7 +207,7 @@ const subMenus = [
     color: "from-blue-500 to-blue-600",
   },
   {
-    id:"23",
+    id: "23",
     title: "Monthly Attendance Report",
     link: "/reports/employee-monthly-report",
     category: "Employee",
@@ -232,48 +215,48 @@ const subMenus = [
     color: "from-indigo-500 to-indigo-600",
   },
   {
-    id:"24",
+    id: "24",
     title: "Payout Salary Report",
     link: "/reports/payout-salary-report",
     category: "Employee",
-    Icon: HiOutlineBanknotes,
+    Icon: GiMoneyStack,
     color: "from-indigo-500 to-indigo-600",
   },
   {
-    id:"25",
+    id: "25",
     title: "Commission Report",
     link: "/reports/target-commission",
     category: "Agent",
-   Icon: TbGraph,
-   color: "from-yellow-500 to-yellow-600",
+    Icon: TbGraph,
+    color: "from-yellow-500 to-yellow-600",
   },
-   {
-    id:"26",
+  {
+    id: "26",
     title: "Incentive Report",
     link: "/reports/target-incentive",
     category: "Employee",
-   Icon: TbGraphFilled,
-   color: "from-indigo-500 to-indigo-600",
+    Icon: TbGraphFilled,
+    color: "from-indigo-500 to-indigo-600",
   },
-    {
-    id:"27",
+  {
+    id: "27",
     title: "Unverified Customer Report",
     link: "/reports/unverified-customer-report",
     category: "Customer",
-   Icon: MdCancel,
-   color: "from-blue-500 to-blue-600",
+    Icon: MdCancel,
+    color: "from-blue-500 to-blue-600",
   },
-      {
-    id:"28",
+  {
+    id: "28",
     title: "Remaining Salary Report",
     link: "/reports/salary-remaining",
     category: "Employee",
-   Icon: MdCancel,
-   color: "from-blue-500 to-blue-600",
-  }
+    Icon: MdCancel,
+    color: "from-blue-500 to-blue-600",
+  },
 ];
 
-const categories = ["All", "Reports", "Customer", "Agent" ,"Employee",  "Finance",];
+const categories = ["All", "Reports", "Customer", "Agent", "Employee", "Finance"];
 
 const Reports = () => {
   const location = useLocation();
@@ -281,69 +264,86 @@ const Reports = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [viewType, setViewType] = useState("grid");
   const [searchQuery, setSearchQuery] = useState("");
+  const [notRendered, setNotRendered] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  // Filter by category first, then by search query
+  // Simulate initial load (like Home)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+      setNotRendered(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, []);
+
   const filteredMenus = subMenus
     .filter((menu) => activeCategory === "All" || menu.category === activeCategory)
-    .filter((menu) => 
+    .filter((menu) =>
       menu.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-  const handleClearSearch = () => {
-    setSearchQuery("");
-  };
+  const handleClearSearch = () => setSearchQuery("");
 
-  return (
-    <div>
-      <div className="min-w-screen min-h-screen flex mt-20">
-        {<Navbar />}
+  // Skeleton for loading state
+  const SkeletonCard = () => (
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 h-[180px] animate-pulse">
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-12 h-12 bg-slate-200 rounded-xl"></div>
+      </div>
+      <div className="space-y-3">
+        <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+        <div className="h-6 bg-slate-200 rounded w-1/2"></div>
+      </div>
+    </div>
+  );
+
+  // Render only when at /reports (dashboard view)
+  if (location.pathname === "/reports") {
+    return (
+      <div className="flex min-h-screen bg-slate-50">
         <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <Navbar />
 
-        <div className="w-[300px] bg-gray-50 min-h-screen p-4 border-r border-gray-200">
-          {filteredMenus.map(({ title, link, Icon, red }) => (
-            <NavLink
-              key={link}
-              to={link}
-              className={({ isActive }) =>
-                `whitespace-nowrap my-2 flex items-center gap-2 font-medium rounded-3xl hover:bg-gray-300 p-3 ${
-                  red ? "text-red-800" : "text-gray-900"
-                } ${isActive ? "bg-gray-200 border-r-8 border-blue-300" : ""}`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Icon
-                    className={`${isActive ? "animate-bounce" : "text-black"}`}
-                  />
-                  <span className="text-black">{title}</span>
-                </>
-              )}
-            </NavLink>
-          ))}
-        </div>
-
-        <div className="flex-grow p-6 bg-gradient-to-br from-gray-50 to-gray-100">
-          {location.pathname === "/reports" ? (
-            <>
-              {/* Search Bar */}
+          <main className="flex-1 overflow-auto mt-20 px-4 py-6 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              {/* Header */}
               <div className="mb-8">
-                <div className="relative max-w-3xl mx-auto">
-                  <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                    <IoSearchOutline className="text-gray-400 text-2xl transition-all duration-300" />
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur-lg opacity-30"></div>
+                    <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-3 shadow-lg">
+                      <IoStatsChart className="text-3xl text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+                      Reports Dashboard
+                    </h1>
+                    <p className="text-slate-500 mt-1">
+                      Browse, search, and access all financial and operational reports
+                    </p>
+                  </div>
+                </div>
+
+                {/* Search Bar */}
+                <div className="relative max-w-3xl mt-6">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <IoSearchOutline className="text-gray-400 text-xl" />
                   </div>
                   <input
                     type="text"
                     placeholder="Search reports..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-16 pr-16 py-4 text-lg bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 shadow-md hover:shadow-lg focus:shadow-xl transition-all duration-300 placeholder:text-gray-400"
+                    className="w-full pl-12 pr-12 py-3 text-base bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-sm"
                   />
                   {searchQuery && (
                     <button
                       onClick={handleClearSearch}
-                      className="absolute inset-y-0 right-0 pr-5 flex items-center text-gray-400 hover:text-gray-600 transition-all duration-200 hover:scale-110 active:scale-95"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                     >
-                      <IoCloseCircle className="text-3xl" />
+                      <IoCloseCircle className="text-2xl" />
                     </button>
                   )}
                 </div>
@@ -355,10 +355,10 @@ const Reports = () => {
                   <button
                     key={category}
                     onClick={() => setActiveCategory(category)}
-                    className={`px-4 py-2 rounded-full font-medium transition-all ${
+                    className={`px-4 py-2 rounded-full font-medium text-sm transition-all ${
                       activeCategory === category
-                        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
-                        : "bg-white text-gray-800 hover:bg-gray-50 border border-gray-200"
+                        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
                     }`}
                   >
                     {category}
@@ -372,110 +372,112 @@ const Reports = () => {
                   onClick={() => setViewType("grid")}
                   className={`p-2 rounded-lg transition-all ${
                     viewType === "grid"
-                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
-                      : "bg-white text-gray-800 hover:bg-gray-50 border border-gray-200"
+                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow"
+                      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
                   }`}
                   title="Grid View"
                 >
-                  <BiGrid size={20} />
+                  <BiGrid size={18} />
                 </button>
                 <button
                   onClick={() => setViewType("list")}
                   className={`p-2 rounded-lg transition-all ${
                     viewType === "list"
-                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
-                      : "bg-white text-gray-800 hover:bg-gray-50 border border-gray-200"
+                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow"
+                      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
                   }`}
                   title="List View"
                 >
-                  <TbList size={20} />
+                  <TbList size={18} />
                 </button>
               </div>
 
-              {/* No Results Message */}
-              {filteredMenus.length === 0 && (
-                <div className="text-center py-12">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                    <IoSearchOutline className="text-3xl text-gray-400" />
+              {/* No Results */}
+              {!loading && filteredMenus.length === 0 && (
+                <div className="text-center py-20">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-slate-100 rounded-full mb-4">
+                    <AiTwotoneGold className="text-4xl text-slate-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">No reports found</h3>
-                  <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">No reports found</h3>
+                  <p className="text-slate-500">Try adjusting your search or filter</p>
                 </div>
               )}
 
               {/* Grid View */}
-              {viewType === "grid" && filteredMenus.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredMenus.map(({ title, Icon, link, color }) => (
-                    <div
-                      key={link}
-                      onClick={() => navigate(link)}
-                      className="group cursor-pointer h-full"
-                    >
-                      <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden h-full hover:-translate-y-1 border border-gray-100">
+              {viewType === "grid" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                  {loading
+                    ? Array(8)
+                        .fill(0)
+                        .map((_, i) => <SkeletonCard key={i} />)
+                    : filteredMenus.map((item, index) => (
                         <div
-                          className={`bg-gradient-to-br ${color} h-24 flex items-center justify-center relative overflow-hidden`}
+                          key={item.id}
+                          onClick={() => navigate(item.link)}
+                          className={`
+                            group relative bg-white border border-slate-200 rounded-2xl p-6 cursor-pointer
+                            transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1
+                            ${notRendered ? "opacity-0 translate-y-6" : "opacity-100 translate-y-0"}
+                          `}
+                          style={{ transitionDelay: `${index * 50}ms` }}
                         >
-                          <div className="absolute inset-0 opacity-10">
-                            <div className="absolute inset-0 bg-white mix-blend-overlay"></div>
+                          {/* Top accent bar */}
+                          <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${item.color} rounded-t-2xl`}></div>
+
+                          {/* Icon */}
+                          <div
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-md bg-gradient-to-br ${item.color}`}
+                          >
+                            <item.Icon className="text-2xl text-white" />
                           </div>
-                          <div className="relative">
-                            <Icon className="text-5xl text-white drop-shadow-lg" />
-                          </div>
-                        </div>
-                        <div className="p-6">
-                          <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                            {title}
+
+                          {/* Title */}
+                          <h3 className="font-semibold text-slate-800 group-hover:text-blue-600 line-clamp-2">
+                            {item.title}
                           </h3>
-                          <div className="mt-4 flex items-center text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="text-sm font-medium">
-                              View Report
-                            </span>
-                            <svg
-                              className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
+
+                          {/* Hover arrow */}
+                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
+                            <div className={`w-8 h-8 bg-gradient-to-r ${item.color} rounded-full flex items-center justify-center text-white`}>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      ))}
                 </div>
-              ) : (
-                /* List View */
-                filteredMenus.length > 0 && (
-                  <div className="space-y-3">
-                    {filteredMenus.map(({ title, Icon, link, color, id }) => (
-                      <div
-                        key={id}
-                        onClick={() => navigate(link)}
-                        className="group cursor-pointer"
-                      >
-                        <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:-translate-x-1 overflow-hidden">
-                          <div className="flex items-center p-5 hover:bg-gray-50 transition-colors">
+              )}
+
+              {/* List View */}
+              {viewType === "list" && (
+                <div className="space-y-4">
+                  {loading
+                    ? Array(8)
+                        .fill(0)
+                        .map((_, i) => <SkeletonCard key={i} />)
+                    : filteredMenus.map((item, index) => (
+                        <div
+                          key={item.id}
+                          onClick={() => navigate(item.link)}
+                          className={`
+                            group relative bg-white border border-slate-200 rounded-xl p-5 cursor-pointer
+                            transition-all duration-300 shadow-sm hover:shadow-md
+                            ${notRendered ? "opacity-0 translate-x-6" : "opacity-100 translate-x-0"}
+                          `}
+                          style={{ transitionDelay: `${index * 50}ms` }}
+                        >
+                          <div className="flex items-center gap-4">
                             <div
-                              className={`bg-gradient-to-br ${color} rounded-lg p-4 mr-5 flex-shrink-0`}
+                              className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow bg-gradient-to-br ${item.color}`}
                             >
-                              <Icon className="text-2xl text-white" />
+                              <item.Icon className="text-xl text-white" />
                             </div>
-                            <div className="flex-grow">
-                              <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                                {title}
-                              </h3>
-                              <p className="text-sm text-gray-500 mt-1">
-                                Click to view detailed report
-                              </p>
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-slate-800 group-hover:text-blue-600">{item.title}</h3>
+                              <p className="text-sm text-slate-500 mt-1">Click to view report</p>
                             </div>
-                            <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
+                            <div className="text-slate-400 group-hover:text-blue-600 transition-colors">
                               <svg
                                 className="w-5 h-5 group-hover:translate-x-1 transition-transform"
                                 fill="none"
@@ -492,15 +494,24 @@ const Reports = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )
+                      ))}
+                </div>
               )}
-            </>
-          ) : (
-            <Outlet />
-          )}
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  // Otherwise, render child routes via Outlet
+  return (
+    <div className="min-h-screen flex bg-slate-50">
+      <Sidebar />
+      <div className="flex-1">
+        <Navbar />
+        <div className="mt-20 p-4 sm:p-6">
+          <Outlet />
         </div>
       </div>
     </div>

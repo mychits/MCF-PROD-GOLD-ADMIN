@@ -11,10 +11,10 @@ const PaymentMenu = () => {
       id: "#1",
       title: "Payments",
        description: "Manage customer payment-in, payment-out records.",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
-       color: "from-green-600 to-green-700",
-      lightColor: "bg-green-50",
-      borderColor: "border-green-200",
+      icon: <TicketCheck size={28} className="text-yellow-600" />,
+       color: "from-yellow-600 to-yellow-700",
+      lightColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
       href:"/payment-menu/payment-in-out-menu",
       stats: "Payment Information",
     },
@@ -82,10 +82,10 @@ const PaymentMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-yellow-100 to-yellow-500 rounded-2xl border border-yellow-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-blue-600 mt-1" />
+                <Zap className="w-6 h-6 text-yellow-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>

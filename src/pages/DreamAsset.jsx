@@ -284,7 +284,7 @@ const DreamAsset = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-800 transition duration-200"
                 >
                   + Add Asset
                 </button>
@@ -350,7 +350,7 @@ const DreamAsset = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                  className="w-1/4 text-white bg-yellow-700 hover:bg-yellow-800 border-2 border-black
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Asset
@@ -407,7 +407,7 @@ const DreamAsset = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                  className="w-1/4 text-white bg-yellow-700 hover:bg-yellow-800 border-2 border-black
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update

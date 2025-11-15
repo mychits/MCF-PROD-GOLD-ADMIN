@@ -470,7 +470,7 @@ const DataTable = ({
             <button
               onClick={() => setShowExportModal(true)}
               className="flex items-center gap-2 px-4 py-2 rounded-md 
-    bg-[#217346] hover:bg-[#1a5c38] text-white 
+    bg-yellow-600 hover:bg-yellow-700 text-white 
     transition-colors duration-200 
     shadow-sm font-medium"
             >
@@ -479,7 +479,7 @@ const DataTable = ({
             </button>
             <button
               onClick={printToPDF}
-              className="flex items-center gap-2 px-4 py-2 rounded-md bg-green-700 hover:bg-green-900 text-white 
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-yellow-600 hover:bg-yellow-700 text-white 
     transition-colors duration-200 
     shadow-sm font-medium"
             >
@@ -608,7 +608,7 @@ const DataTable = ({
                 onClick={() => onSelectRow(row._id)}
                 className={`${
                   active[row._id]
-                    ? "bg-blue-200"
+                    ? "bg-yellow-500"
                     : changeColor(index)
                     ? "hover:bg-gray-200 bg-gray-100"
                     : " hover:bg-gray-200 bg-white" //
@@ -636,7 +636,7 @@ const DataTable = ({
         <select
           value={pageSize}
           onChange={(e) => setPageSize(Number(e.target.value))}
-          className="px-7 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-7 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
         >
           {[5, 10, 20, 50, 100].map((size) => (
             <option key={size} value={size}>

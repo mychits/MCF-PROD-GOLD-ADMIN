@@ -102,7 +102,7 @@
 //         api.open({
 //           message: "No changes made",
 //           description: "No fields were changed",
-//           className: "bg-blue-500 rounded-lg font-semibold text-white",
+//           className: "bg-yellow-500 rounded-lg font-semibold text-white",
 //         });
 //         return;
 //       }
@@ -441,7 +441,7 @@
 //                   disabled={!hasChanges || loading}
 //                   className={`px-5 py-2.5 rounded-lg text-white font-medium transition-colors ${
 //                     hasChanges && !loading
-//                       ? "bg-blue-600 hover:bg-blue-700"
+//                       ? "bg-yellow-600 hover:bg-yellow-700"
 //                       : "bg-gray-400 cursor-not-allowed"
 //                   }`}
 //                 >
@@ -645,7 +645,7 @@ const originalOtherPayments = Array.isArray(salary?.payout_metadata?.other_payme
   //       api.open({
   //         message: "No changes made",
   //         description: "No fields were changed",
-  //         className: "bg-blue-500 rounded-lg font-semibold text-white",
+  //         className: "bg-yellow-500 rounded-lg font-semibold text-white",
   //       });
   //       return;
   //     }
@@ -731,7 +731,7 @@ const handleSubmit = async (e) => {
       api.open({
         message: "No changes made",
         description: "No fields were changed",
-        className: "bg-blue-500 rounded-lg font-semibold text-white",
+        className: "bg-yellow-500 rounded-lg font-semibold text-white",
       });
       return;
     }
@@ -1129,7 +1129,7 @@ const handleSubmit = async (e) => {
                   type="submit"
                   disabled={!hasChanges || loading}
                   className={`px-5 py-2.5 rounded-lg text-white font-medium transition-colors ${hasChanges && !loading
-                      ? "bg-blue-600 hover:bg-blue-700"
+                      ? "bg-yellow-600 hover:bg-yellow-700"
                       : "bg-gray-400 cursor-not-allowed"
                     }`}
                 >

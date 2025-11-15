@@ -263,7 +263,7 @@ const selectednewGroup = groups.find(g => g._id === selectedAuctionGroupId);
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-bold text-center mb-6">Reports - Auction </h1>
             <div className="mt-6 mb-8">
-              <div className="flex justify-center items-center w-full gap-4 bg-blue-50 p-2 w-30 h-40  rounded-3xl  border   space-x-2 mb-10">
+              <div className="flex justify-center items-center w-full gap-4 bg-yellow-50 p-2 w-30 h-40  rounded-3xl  border   space-x-2 mb-10">
                 <div className="mb-2">
                 <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
                   Auction Group

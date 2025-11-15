@@ -13,10 +13,10 @@ const PaymentLinkMenu = () => {
       title: "Gold Chit Payment Link",
       description: "Manage customer chit payment link transaction information.",
       subtitle: "Individual Mode",
-      icon: <MdAddLink size={28} className="text-green-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+      icon: <MdAddLink size={28} className="text-yellow-600" />,
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
       href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-payment",
       stats: "Chit Payment Link Information"
     },
@@ -25,10 +25,10 @@ const PaymentLinkMenu = () => {
       title: "Bulk Gold Chit Payment Link",
       description: "Manage customer Bulk chit payment link transaction information.",
       subtitle: "Bulk Mode",
-      icon: <PiLinkSimpleBreakFill size={28} className="text-green-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+      icon: <PiLinkSimpleBreakFill size={28} className="text-yellow-600" />,
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
       href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-bulk-payment",
       stats: "Bulk Chit Payment Link Information"
     },
@@ -37,10 +37,10 @@ const PaymentLinkMenu = () => {
       title: "Chit Registration Payment Link",
       subtitle: "Individual Mode",
       description: "Manage customer chit Registration payment link transaction information.",
-      icon: <FaWpforms size={28} className="text-green-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+      icon: <FaWpforms size={28} className="text-yellow-600" />,
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
       href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/registration-chit-payment",
       stats: "Chit Registration Payment Link Information"
     },
@@ -108,10 +108,10 @@ const PaymentLinkMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-yellow-100 to-yellow-500 rounded-2xl border border-yellow-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-blue-600 mt-1" />
+                <Zap className="w-6 h-6 text-yellow-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>

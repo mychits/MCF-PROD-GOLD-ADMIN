@@ -10,10 +10,10 @@ const PayInOutMenu = () => {
       id: "#1",
       title: "Payment In",
       description: "Manage customer payment-in records.",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
-       color: "from-green-600 to-green-700",
-      lightColor: "bg-green-50",
-      borderColor: "border-green-200",
+      icon: <TicketCheck size={28} className="text-yellow-600" />,
+       color: "from-yellow-600 to-yellow-700",
+      lightColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
       href:"/payment-menu/payment-in-out-menu/pay-in-menu",
       stats: "Payment-In Information",
     },
@@ -22,9 +22,9 @@ const PayInOutMenu = () => {
       title: "Payment Out",
        description: "Manage customer payment-out records.",
       icon: <HiCurrencyRupee size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
-      lightColor: "bg-blue-50",
-      borderColor: "border-blue-200",
+       color: "from-yellow-600 to-yellow-700",
+      lightColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
        href:"/payment-menu/payment-in-out-menu/pay-out-menu",
        stats: "Payment-Out Information",
     },
@@ -95,10 +95,10 @@ const PayInOutMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-yellow-100 to-yellow-500 rounded-2xl border border-yellow-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-blue-600 mt-1" />
+                <Zap className="w-6 h-6 text-yellow-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>

@@ -1143,7 +1143,7 @@ const handleUpdate = async (e) => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-800 transition duration-200"
                 >
                   + Add Guarantor
                 </button>
@@ -1945,7 +1945,7 @@ const handleUpdate = async (e) => {
                       <button
                         type="button"
                         onClick={addNewDocField}
-                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+                        className="mt-2 px-2 py-1 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-700"
                       >
                         + Add Document
                       </button>
@@ -2496,7 +2496,7 @@ const handleUpdate = async (e) => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                  className="w-1/4 text-white bg-yellow-700 hover:bg-yellow-800 border-2 border-black
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Guarantor
@@ -3287,7 +3287,7 @@ const handleUpdate = async (e) => {
                       <button
                         type="button"
                         onClick={addNewDocField}
-                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+                        className="mt-2 px-2 py-1 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-700"
                       >
                         + Add Document
                       </button>
@@ -3967,7 +3967,7 @@ const handleUpdate = async (e) => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                  className="w-1/4 text-white bg-yellow-700 hover:bg-yellow-800 border-2 border-black
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update

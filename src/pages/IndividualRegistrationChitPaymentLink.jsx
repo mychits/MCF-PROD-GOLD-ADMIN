@@ -590,7 +590,7 @@ const IndividualRegistrationChitPaymentLink = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                        className="ml-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-800 transition duration-200"
                       >
                         + Add Payment Link
                       </button>
@@ -846,7 +846,7 @@ const IndividualRegistrationChitPaymentLink = () => {
                   <div className="flex justify-end pt-4">
                     <button
                       type="submit"
-                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 active:bg-blue-900 
+                      className="w-1/4 text-white bg-yellow-700 hover:bg-yellow-800 active:bg-yellow-900 
                    border-2 border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 
                    font-medium rounded-lg text-sm px-5 py-2.5 transition-colors duration-200"
                     >

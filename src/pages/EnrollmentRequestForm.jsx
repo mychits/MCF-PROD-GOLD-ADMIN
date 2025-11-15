@@ -207,7 +207,7 @@ const EnrollmentRequestForm = () => {
           </p>
 
           <Link to={"https://maps.app.goo.gl/X7FezFRPiTjuYoVt5"}>
-            <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition">
+            <button className="mt-4 px-6 py-2 bg-yellow-600 text-white font-semibold rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition">
               Our Location
             </button>
           </Link>
@@ -218,7 +218,7 @@ const EnrollmentRequestForm = () => {
     return (
       <div className="bg-white p-4 rounded-md shadow-2xl sm:my-10 sm:mx-64">
         <form onSubmit={handleSubmit}>
-          <div className="m-3 mt-3 p-4 text-xl sm:text-4xl font-bold rounded-md text-amber-50 bg-blue-900">
+          <div className="m-3 mt-3 p-4 text-xl sm:text-4xl font-bold rounded-md text-amber-50 bg-yellow-900">
             <h2> Chit Enrollment Form </h2>
           </div>
 
@@ -306,7 +306,7 @@ const EnrollmentRequestForm = () => {
 
           <div>
             <div className="bg-[#17216D] rounded-md m-3 ">
-              <h2 className="p-4 text-left text-white rounded-md font-bold text-xl bg-blue-900 ">
+              <h2 className="p-4 text-left text-white rounded-md font-bold text-xl bg-yellow-900 ">
                 {" "}
                 Customer Details
               </h2>
@@ -672,7 +672,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-yellow-900 hover:bg-indigo-600 text-white p-2 rounded-md"
                         onClick={() => setStep(2)}
                       >
                         Add Nominee
@@ -684,7 +684,7 @@ const EnrollmentRequestForm = () => {
                 {step === 2 && (
                   <div>
                     <div className="bg-[#17216D] rounded-md mb-3">
-                      <h2 className="p-4 text-left font-bold rounded-md bg-blue-900 text-xl text-white">
+                      <h2 className="p-4 text-left font-bold rounded-md bg-yellow-900 text-xl text-white">
                         {" "}
                         Nominee Details
                       </h2>
@@ -758,7 +758,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-yellow-900 hover:bg-indigo-600 text-white p-2 rounded-md"
                         onClick={() => setStep(1)}
                       >
                         Back
@@ -766,7 +766,7 @@ const EnrollmentRequestForm = () => {
 
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-yellow-900 hover:bg-indigo-600 text-white p-2 rounded-md"
                         onClick={() => setStep(3)}
                       >
                         Add Documents
@@ -778,7 +778,7 @@ const EnrollmentRequestForm = () => {
                 {step === 3 && (
                   <div>
                     <div className="bg-[#17216D] rounded-md">
-                      <h2 className="p-4 text-left font-bold rounded-md bg-blue-900 text-xl text-white mb-3">
+                      <h2 className="p-4 text-left font-bold rounded-md bg-yellow-900 text-xl text-white mb-3">
                         {" "}
                         Document Details
                       </h2>
@@ -907,7 +907,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-yellow-900 hover:bg-indigo-600 text-white p-2 rounded-md"
                         onClick={() => setStep(2)}
                       >
                         Back
@@ -915,7 +915,7 @@ const EnrollmentRequestForm = () => {
 
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-yellow-900 hover:bg-indigo-600 text-white p-2 rounded-md"
                         onClick={() => setStep(4)}
                       >
                         Add Bank Details
@@ -927,7 +927,7 @@ const EnrollmentRequestForm = () => {
                 {step === 4 && (
                   <div>
                     <div className="bg-[#17216D] rounded-md mb-3">
-                      <h2 className="p-4 text-left font-bold rounded-md bg-blue-900 text-xl text-white">
+                      <h2 className="p-4 text-left font-bold rounded-md bg-yellow-900 text-xl text-white">
                         {" "}
                         Bank Details
                       </h2>
@@ -997,7 +997,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-yellow-900 hover:bg-indigo-600 text-white p-2 rounded-md"
                         onClick={() => setStep(3)}
                       >
                         Back
@@ -1005,7 +1005,7 @@ const EnrollmentRequestForm = () => {
 
                       <button
                         type="submit"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-yellow-900 hover:bg-indigo-600 text-white p-2 rounded-md"
                       >
                         Submit
                       </button>

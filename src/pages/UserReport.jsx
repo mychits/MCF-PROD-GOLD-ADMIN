@@ -1044,7 +1044,7 @@ const UserReport = () => {
             </h1>
             <div className="mt-6 mb-8">
               <div className="mb-2">
-                <div className="flex justify-center items-center w-full gap-4 bg-blue-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
+                <div className="flex justify-center items-center w-full gap-4 bg-yellow-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
                   <div className="mb-2">
                     <label
                       className="block text-lg text-gray-500 text-center  font-semibold mb-2"
@@ -1131,7 +1131,7 @@ const UserReport = () => {
                             customerTransactions
                           )
                         }
-                        className="flex items-center gap-2 px-6 py-2 bg-blue-500 text-white rounded shadow"
+                        className="flex items-center gap-2 px-6 py-2 bg-yellow-500 text-white rounded shadow"
                       >
                         <IoMdDownload size={20} />
                         Download Full Report
@@ -1746,7 +1746,7 @@ const UserReport = () => {
                                 type="text"
                                 value={`Payment Balance: ₹${finalPaymentBalance}`}
                                 readOnly
-                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-yellow-100 text-blue-800 border-blue-400"
                               />
 
                               <input
@@ -1895,7 +1895,7 @@ const UserReport = () => {
                               type="text"
                               value={`Payment Balance: ₹${finalPaymentBalance}`}
                               readOnly
-                              className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
+                              className="px-4 py-2 border rounded font-semibold w-60 text-center bg-yellow-100 text-blue-800 border-blue-400"
                             />
                             <input
                               type="text"

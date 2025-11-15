@@ -23,6 +23,7 @@ import { TbGraphFilled } from "react-icons/tb";
 import { MdAccountBalanceWallet } from "react-icons/md";
 import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 import { FaGift } from "react-icons/fa6";
+
 const MenuSidebar = [
   { title: "Dashboard", icon: <RiDashboardFill />, link: "/dashboard" },
   {
@@ -30,9 +31,8 @@ const MenuSidebar = [
     icon: <SiGoogleanalytics />,
     link: "/analytics",
   },
-
   {
-    title: "App Settings ",
+    title: "App Settings",
     spacing: true,
     icon: <TiSpanner />,
     submenu: true,
@@ -64,15 +64,13 @@ const MenuSidebar = [
   {
     title: "Insurance",
     icon: <IoPeopleOutline />,
-    link : "/insurance"
-
+    link: "/insurance"
   },
   {
     title: "Reward",
     icon: <FaGift />,
-    link : "/gift-received"
+    link: "/gift-received"
   },
-
   {
     title: "Designations",
     icon: <IoPeopleOutline />,
@@ -88,64 +86,15 @@ const MenuSidebar = [
     icon: <BsPersonCheck />,
     link: "/admin-access-rights",
   },
-
-
-  // {
-  //   title: "Target Management",
-  //   icon: <LuTarget />,
-  //   submenu: true,
-
-  //   submenuItems: [
-  //     {
-  //       title: "Target",
-  //       icon: <TbTargetArrow />,
-  //       link: "/target",
-  //     },
-  //     {
-  //       title: "Reports",
-  //       icon: <BsFileBarGraph />,
-  //       submenu: true,
-  //       submenuItems: [
-  //         {
-  //           title: "Commission Report",
-  //           icon: <TbGraph size={20} />,
-  //           link: "/target-commission",
-  //         },
-  //         {
-  //           title: "Incentive Report",
-  //           icon: <TbGraphFilled size={20} />,
-  //           link: "/target-incentive",
-  //         },
-  //       ],
-  //     },
-  //     // {
-  //     //   title: "Accounts",
-  //     //   icon: <MdAccountBalanceWallet />,
-  //     //   submenu: true,
-  //     //   submenuItems: [
-  //     //     {
-  //     //       title: "PayOut Menu",
-  //     //       icon: <RiMoneyRupeeCircleFill size={20} />,
-  //     //       link:"/target-payout-menu"
-          
-
-          
-  //     //     },
-  //     //   ],
-  //     // },
-  //   ],
-  // },
-
-    {
-  title: "Penalty Management",
-  icon: <RiMoneyRupeeCircleFill />,
-  submenu: true,
-  submenuItems: [
-    { title: "Penalty Settings", icon: <TiSpanner size={20} />, link: "/penalty-settings" },
-    { title: "Penalty Monitor", icon: <TbGraph size={20} />, link: "/penalty-monitor" },
-  ],
-},
-
+  {
+    title: "Penalty Management",
+    icon: <RiMoneyRupeeCircleFill />,
+    submenu: true,
+    submenuItems: [
+      { title: "Penalty Settings", icon: <TiSpanner size={20} />, link: "/penalty-settings" },
+      { title: "Penalty Monitor", icon: <TbGraph size={20} />, link: "/penalty-monitor" },
+    ],
+  },
   {
     title: "Profile",
     spacing: true,
@@ -158,7 +107,6 @@ const MenuSidebar = [
 const SettingSidebar = () => {
   const [open, setOpen] = useState(true);
   const location = useLocation();
-
   const [expandedMenus, setExpandedMenus] = useState(new Set());
 
   const toggleExpand = (key) => {
@@ -175,6 +123,7 @@ const SettingSidebar = () => {
     return items.map((item, index) => {
       const key = pathPrefix ? `${pathPrefix}/${index}` : `${index}`;
       const isSubmenu = level > 0;
+      const isActive = location.pathname === item.link;
 
       const textSizeClass = "text-sm";
       const titleFontSizeClass = isSubmenu
@@ -188,29 +137,33 @@ const SettingSidebar = () => {
           {item.submenu ? (
             <>
               <div
-                className={`text-gray-300 ${textSizeClass} ${paddingLeftClass} flex items-center justify-between gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-2xl`}
+                className={`text-gray-300 ${textSizeClass} ${paddingLeftClass} flex items-center justify-between gap-x-4 cursor-pointer p-3 hover:bg-gradient-to-r hover:from-amber-900/30 hover:to-yellow-900/30 hover:border-l-4 hover:border-amber-500 rounded-r-xl transition-all duration-300 ${
+                  isExpanded(key) ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/20 border-l-4 border-amber-500/70 rounded-r-xl" : ""
+                }`}
                 onClick={() => toggleExpand(key)}
               >
                 <div className="flex items-center gap-x-4">
                   {item.icon && (
-                    <span className={iconSizeClass}>{item.icon}</span>
+                    <span className={`${iconSizeClass} text-amber-400 transition-colors duration-300`}>
+                      {item.icon}
+                    </span>
                   )}
                   {open && (
-                    <span className={titleFontSizeClass}>{item.title}</span>
+                    <span className={`${titleFontSizeClass}`}>{item.title}</span>
                   )}
                 </div>
                 {open && (
                   <span className={isSubmenu ? "text-sm" : "text-xl"}>
                     {item.title === "Groups" ? (
                       isExpanded(key) ? (
-                        <AiOutlineMinus size={isSubmenu ? 14 : 16} />
+                        <AiOutlineMinus size={isSubmenu ? 14 : 16} className="text-amber-400" />
                       ) : (
-                        <AiOutlinePlus size={isSubmenu ? 14 : 16} />
+                        <AiOutlinePlus size={isSubmenu ? 14 : 16} className="text-amber-400" />
                       )
                     ) : (
                       <BsChevronDown
                         size={isSubmenu ? 14 : 16}
-                        className={`transition-transform duration-200 ${
+                        className={`text-amber-400 transition-transform duration-200 ${
                           isExpanded(key) ? "rotate-180" : ""
                         }`}
                       />
@@ -219,8 +172,7 @@ const SettingSidebar = () => {
                 )}
               </div>
               {open && isExpanded(key) && item.submenuItems && (
-                <div className="ml-3 md:ml-4">
-                  {" "}
+                <div className="ml-3 md:ml-4 bg-gray-800/50 rounded-xl p-2 backdrop-blur-sm border-l-2 border-amber-500/30">
                   {renderMenu(item.submenuItems, level + 1, key)}
                 </div>
               )}
@@ -228,15 +180,17 @@ const SettingSidebar = () => {
           ) : (
             <Link to={item.link || "#"}>
               <div
-                className={`text-gray-300 ${textSizeClass} ${paddingLeftClass} flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-2xl ${
-                  location.pathname === item.link ? "bg-light-white" : ""
+                className={`text-gray-300 ${textSizeClass} ${paddingLeftClass} flex items-center gap-x-4 cursor-pointer p-3 hover:bg-gradient-to-r hover:from-amber-900/30 hover:to-yellow-900/30 hover:border-l-4 hover:border-amber-500 rounded-r-xl transition-all duration-300 ${
+                  isActive ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/20 border-l-4 border-amber-500/70 rounded-r-xl" : ""
                 }`}
               >
                 {item.icon && (
-                  <span className={iconSizeClass}>{item.icon}</span>
+                  <span className={`${iconSizeClass} text-amber-400 transition-colors duration-300`}>
+                    {item.icon}
+                  </span>
                 )}
                 {open && (
-                  <span className={titleFontSizeClass}>{item.title}</span>
+                  <span className={`${titleFontSizeClass}`}>{item.title}</span>
                 )}
               </div>
             </Link>
@@ -248,30 +202,30 @@ const SettingSidebar = () => {
 
   return (
     <div
-      className={`bg-secondary min-h-screen p-5 pt-8 duration-300 relative ${
+      className={`bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 min-h-screen max-h-auto p-5 pt-8 border-r border-amber-600/20 duration-300 relative shadow-2xl ${
         open ? "w-64" : "w-20"
       }`}
     >
-      <BsArrowLeftShort
-        className={`bg-white text-secondary text-3xl rounded-full absolute -right-3 top-9 border border-secondary cursor-pointer ${
-          !open && "rotate-180"
+      <div
+        className={`absolute top-9 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 text-3xl rounded-full p-1 cursor-pointer border-2 border-amber-400 shadow-lg hover:shadow-amber-500/25 transition-all duration-300 ${
+          open ? "-right-3" : "-right-3 rotate-180"
         }`}
         onClick={() => setOpen(!open)}
-      />
-      <div className="inline-flex">
-        <GiGoldBar
-          className={`bg-amber-300 text-4xl rounded cursor-pointer block float-left mr-2 duration-500 ${
-            open && "rotate-[360deg]"
-          }`}
-        />
+      >
+        <BsArrowLeftShort className="bg-white rounded-full" />
+      </div>
+      
+      <div className="inline-flex ml-9 mb-8">
+       
         <h3
-          className={`text-white origin-left font-medium text-2xl duration-300 ${
+          className={`text-white origin-left font-bold text-2xl flex items-center ${
             !open && "scale-0"
-          }`}
+          } duration-300`}
         >
-          Settings
+          <span className="text-amber-500">Settings</span>
         </h3>
       </div>
+
       <ul className="pt-2">{renderMenu(MenuSidebar)}</ul>
     </div>
   );

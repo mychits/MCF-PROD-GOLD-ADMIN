@@ -392,7 +392,7 @@ const Designation = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-800 transition duration-200"
                 >
                   + Add designation
                 </button>
@@ -477,7 +477,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.collection ? "Yes" : "No"}
@@ -509,7 +509,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.daybook ? "Yes" : "No"}
@@ -541,7 +541,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.targets ? "Yes" : "No"}
@@ -571,7 +571,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.leads ? "Yes" : "No"}
@@ -603,7 +603,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.commission ? "Yes" : "No"}
@@ -635,7 +635,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.modify_payments ? "Yes" : "No"}
@@ -667,7 +667,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.reports ? "Yes" : "No"}
@@ -699,7 +699,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.chit_collection ? "Yes" : "No"}
@@ -731,7 +731,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.loan_collection ? "Yes" : "No"}
@@ -763,7 +763,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {formData.permission.pigme_collection ? "Yes" : "No"}
@@ -773,7 +773,7 @@ const Designation = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
+                  className="w-1/4 text-white bg-yellow-700 hover:bg-yellow-800
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Save designation
@@ -841,7 +841,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.collection ? "Yes" : "No"}
@@ -873,7 +873,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.daybook ? "Yes" : "No"}
@@ -905,7 +905,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.targets ? "Yes" : "No"}
@@ -935,7 +935,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.leads ? "Yes" : "No"}
@@ -967,7 +967,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.commission ? "Yes" : "No"}
@@ -999,7 +999,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.reports ? "Yes" : "No"}
@@ -1031,7 +1031,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.modify_payments ? "Yes" : "No"}
@@ -1063,7 +1063,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.chit_collection ? "Yes" : "No"}
@@ -1095,7 +1095,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.loan_collection ? "Yes" : "No"}
@@ -1127,7 +1127,7 @@ const Designation = () => {
                               peer-checked:after:translate-x-full peer-checked:after:border-white 
                               after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
                               after:bg-white after:border-gray-300 after:border after:rounded-full 
-                              after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                              after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"
                   ></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.permission.pigme_collection ? "Yes" : "No"}
@@ -1137,7 +1137,7 @@ const Designation = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                  className="w-1/4 text-white bg-yellow-700 hover:bg-yellow-800 border-2 border-black
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update

@@ -471,7 +471,7 @@ const GroupReport = () => {
             <h1 className="text-2xl font-bold text-center mb-6">Reports - Group</h1>
 
             <div className="mt-6 mb-8">
-              <div className="flex justify-center items-center w-full gap-4 bg-blue-50 p-2 w-30 h-40  rounded-3xl  border   space-x-2">
+              <div className="flex justify-center items-center w-full gap-4 bg-yellow-50 p-2 w-30 h-40  rounded-3xl  border   space-x-2">
               <div className="mb-2">
                  
                     <label className="block text-lg text-gray-500 text-center font-semibold mb-2" htmlFor={"SS"}>
@@ -726,7 +726,7 @@ const GroupReport = () => {
                       <>
                         <div>
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 mb-10">
-                            <div className="bg-blue-300 shadow-md rounded-lg p-4">
+                            <div className="bg-yellow-300 shadow-md rounded-lg p-4">
                               <h3 className="text-2xl font-semibold text-start mb-2">
                                 ₹
                                 {filteredUsers[0]?.group?.group_type ===
@@ -908,7 +908,7 @@ const GroupReport = () => {
                           {/* Summary Cards */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 mb-10">
                             {/* Amount to be Paid */}
-                            <div className="bg-blue-300 shadow-md rounded-lg p-4">
+                            <div className="bg-yellow-300 shadow-md rounded-lg p-4">
                               <h3 className="text-2xl font-semibold text-start mb-2">
                                 ₹{amountToBePaid}
                               </h3>
@@ -1004,7 +1004,7 @@ const GroupReport = () => {
                           </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 mb-10">
-                          <div className="bg-blue-300 shadow-md rounded-lg p-4">
+                          <div className="bg-yellow-300 shadow-md rounded-lg p-4">
                             <h3 className="text-2xl font-semibold text-start mb-2">
                               ₹
                               {filteredUsers[0]?.group?.group_type ===
@@ -1206,7 +1206,7 @@ const GroupReport = () => {
 
                           {/* Summary cards */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 mb-10">
-                            <div className="bg-blue-300 shadow-md rounded-lg p-4">
+                            <div className="bg-yellow-300 shadow-md rounded-lg p-4">
                               <h3 className="text-2xl font-semibold text-start mb-2">
                                 ₹{amountToBePaid}
                               </h3>

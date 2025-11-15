@@ -73,75 +73,20 @@ const MenuSidebar = [
     id: ids.three,
     title: "Customers",
     icon: <IoIosPersonAdd />,
-   link: "/customer-menu",
-    // submenu: true,
-    // submenuItems: [
-    //   {
-    //     id: "$101#",
-    //     title: "Customers",
-    //     icon: <IoIosPersonAdd size={20} />,
-    //     link: "/user",
-    //   },
-    //   {
-    //     id: "&*&",
-    //     title: "Unverified Customers",
-    //     icon: <MdCancel size={25} />,
-    //     link: "/un-approved-customer",
-    //   },
-    // ],
-    
+    link: "/customer-menu",
   },
-  ,
-  // {
-  //   id: "&*&",
-  //   title: "Unverified Customers",
-  //   icon: <MdCancel />,
-  //   link: "/un-approved-customer",
-  // },
   {
     id: "$4",
     title: "Enrollments ",
     icon: <FaPeopleArrows />,
-   link: "/enroll-menu",
-    //  submenu: true,
-    // submenuItems: [
-    //   {
-    //     id: "$101#%",
-    //     title: "Enrollments",
-    //     icon: <FaPeopleArrows size={20} />,
-    //     link: "/enrollment",
-    //   },
-    //   {
-    //     id: "$83",
-    //     title: "Mobile Enrollments",
-    //     icon: <FaMobileAlt size={25} />,
-    //     link: "/mobile-app-enroll",
-    //   },
-    // ],
+    link: "/enroll-menu",
   },
-  
-  // {
-  //   id: "$83",
-  //   title: "Mobile Enrollments ",
-  //   icon: <FaMobileAlt />,
-  //   link: "/mobile-app-enroll",
-  // },
   {
     id: "$9856",
     title: "Legals ",
     icon: <FaHandshake />,
     link: "/legals-menu"
-//      submenu: true,
-//     submenuItems: [
-//   {
-//     id: "$67",
-//     title: "Guarantor ",
-//     icon: <FaHandshake />,
-//     link: "/guarantor",
-//   },
-// ],
   },
-
   {
     id: "$18",
     title: "Tasks",
@@ -153,42 +98,12 @@ const MenuSidebar = [
     title: "Staff",
     icon: <GiRoundTable />,
     link: "/staff-menu"
-    //submenu: true,
-    // submenuItems: [
-    //   {
-    //     id: "$101",
-    //     title: "All",
-    //     icon: <HiOutlineUserGroup size={20} />,
-    //     link: "/staff",
-    //   },
-    //   {
-    //     id: "$102",
-    //     title: "Agent",
-    //     icon: <FaPersonMilitaryPointing size={20} />,
-    //     link: "/agent",
-    //   },
-    //   {
-    //     id: "$103",
-    //     title: "Employee",
-    //     icon: <FaUserTie size={18} />,
-    //     link: "/employee",
-    //   },
-    // ],
   },
-   {
-      title: "Target Management",
-      icon: <LuTarget />,
-     // submenu: true,
-      link: "/target-menu"
-      // submenuItems: [
-      //   {
-      //     title: "Target",
-      //     icon: <TbTargetArrow />,
-      //     link: "/target",
-      //   },
-      // ],
-    },
-
+  {
+    title: "Target Management",
+    icon: <LuTarget />,
+    link: "/target-menu"
+  },
   {
     id: "$7",
     title: "Leads",
@@ -199,23 +114,8 @@ const MenuSidebar = [
     id: "$7865",
     title: "Other Services",
     icon: <GiTakeMyMoney />,
-   link: "/other-service-menu",
-//     submenu: true,
-//     submenuItems: [
-//   {
-//     id: "$8",
-//     title: "Loans",
-//     icon: <GiTakeMyMoney size={20} />,
-//     link: "/loan",
-//   },
-//   {
-//     id: "$9",
-//     title: "Pigme",
-//     icon: <PiCalculatorBold size={20} />,
-//     link: "/pigme",
-//   },
-// ],
-},
+    link: "/other-service-menu",
+  },
   {
     id: ids.eleven,
     title: "Auctions ",
@@ -227,32 +127,7 @@ const MenuSidebar = [
     title: "Accounts",
     icon: <MdAccountBalanceWallet />,
     link: "/payment-menu/"
-   // submenu: true,
-   // submenuItems: [
-     // {
-        // id: "&^$1",
-        // title: "Payments ",
-        // icon: <BsCash size={20} />,
-        // link: "/payment-in-out-menu"
-        // submenu: true,
-        // submenuItems: [
-        //   {
-        //     id: "&^$2",
-        //     title: "Pay-In ",
-        //     icon: <TbReceiptRupee size={20} />,
-        //     link: "/pay-in-menu",
-        //   },
-        //   {
-        //     id: "&^$3",
-        //     title: "Pay-Out ",
-        //     icon: <RiMoneyRupeeCircleLine size={20} />,
-        //     link: "/pay-out-menu",
-        //   },
-        // ],
-     // },
-  //  ],
   },
-
   {
     id: "$12",
     title: "Reports",
@@ -265,7 +140,6 @@ const MenuSidebar = [
     icon: <GoGraph />,
     link: "/marketing",
   },
-
   {
     id: "$199",
     title: "General Settings",
@@ -286,25 +160,8 @@ const MenuSidebar = [
             icon: <FaMapLocationDot />,
             link: "/collection-area-request",
           },
-        
         ],
       },
-      // {
-      //   id: "#2",
-      //   title: "Groups",
-      //   icon: <MdOutlineGroups size="25" />,
-      //   hider: true,
-      //   newTab: true,
-      //   submenu: true,
-      //   submenuItems: [
-      //     {
-      //       id: ids.sixteen,
-      //       title: "Mobile Access Groups",
-      //       icon: <FaFilter size={18} />,
-      //       link: "/filter-groups",
-      //     },
-      //   ],
-      // },
       {
         id: "#3",
         title: "Employee",
@@ -321,11 +178,11 @@ const MenuSidebar = [
           },
         ],
       },
-       {
+      {
         id: "#3",
         title: "Transfer",
         hider: true,
-        icon: <BiTransfer  size={18} />,
+        icon: <BiTransfer size={18} />,
         newTab: true,
         submenu: true,
         submenuItems: [
@@ -334,20 +191,17 @@ const MenuSidebar = [
             title: "Soft Transfer",
             icon: <GrUserSettings size={18} />,
             link: "/soft-transfer",
-            
           },
-            {
+          {
             id: "#206",
             title: "Hard Transfer",
             icon: <GrUserSettings size={18} />,
             link: "/hard-transfer",
-            
           },
         ],
       },
     ],
   },
-
   {
     id: "$15",
     title: "Other Sites",
@@ -392,7 +246,6 @@ const Sidebar = () => {
   const ref = useRef(null);
   const [open, setOpen] = useState(true);
   const [submenuOpenIndex, setSubmenuOpenIndex] = useState(null);
-
   const [nestedSubmenuOpenIndex, setNestedSubmenuOpenIndex] = useState({});
 
   const toggleSubMenu = (index) => {
@@ -409,32 +262,36 @@ const Sidebar = () => {
   return (
     <div
       ref={ref}
-      className={`bg-secondary min-h-screen max-h-auto p-5 pt-8  ${
+      className={`bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 min-h-screen max-h-auto p-5 pt-8 border-r border-amber-600/20 ${
         open ? "w-64" : "w-20"
-      } duration-300 relative`}
+      } duration-300 relative shadow-2xl`}
     >
-      <BsArrowLeftShort
-        className={`bg-white text-secondary text-3xl rounded-full absolute -right-3 top-9 border border-secondary cursor-pointer ${
-          !open && "rotate-180"
+      <div
+        className={`absolute top-9 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 text-3xl rounded-full p-1 cursor-pointer border-2 border-amber-400 shadow-lg hover:shadow-amber-500/25 transition-all duration-300 ${
+          open ? "-right-3" : "-right-3 rotate-180"
         }`}
         onClick={() => setOpen(!open)}
-      />
-      <div className="inline-flex">
-        <GiGoldBar
-          className={`bg-amber-300 text-4xl rounded cursor-pointer block float-left mr-2 duration-500 ${
-            open && "rotate-[360deg]"
-          }`}
-        />
+      >
+        <BsArrowLeftShort className="bg-white rounded-full" />
+      </div>
+      
+      <div className="inline-flex mb-8">
+        <div className="relative group">
+          
+        
+        </div>
         <h3
-          className={`text-white origin-left font-medium text-2xl ${
+          className={`text-white origin-left   font-bold text-2xl flex items-center ${
             !open && "scale-0"
-          } duration-300 `}
+          } duration-300`}
         >
-          MyChits
+          <span className="text-amber-500">My</span>
+          <span className="text-yellow-500 ml-1">Chits</span>
+            <span className="text-amber-300 ml-1">Gold</span>
         </h3>
       </div>
 
-      <ul className="pt-2">
+      <ul className="">
         {MenuSidebar.map((menu, index) => {
           const isSpecialMenu =
             menu.title === "Collections" || menu.title === "Groups";
@@ -444,11 +301,13 @@ const Sidebar = () => {
             <Fragment key={menu.id}>
               <a href={menu.link} onClick={() => toggleSubMenu(index)}>
                 <li
-                  className={`text-gray-300 text-sm flex items-center p-2 gap-x-4 cursor-pointer  hover:bg-light-white rounded-2xl  ${
+                  className={`text-gray-300 text-sm flex items-center p-3 gap-x-4 cursor-pointer hover:bg-gradient-to-r hover:from-amber-900/30 hover:to-yellow-900/30 hover:border-l-4 hover:border-amber-500 rounded-r-xl transition-all duration-300 ${
                     menu.spacing ? "mt-9" : "mt-2"
                   }`}
                 >
-                  <span className="text-2xl block float-left">{menu.icon}</span>
+                  <span className="text-2xl block float-left text-amber-400 group-hover:text-yellow-400 transition-colors duration-300">
+                    {menu.icon}
+                  </span>
                   <span
                     className={`text-base font-medium flex-1 ${
                       !open && "hidden"
@@ -460,13 +319,13 @@ const Sidebar = () => {
                     open &&
                     (isSpecialMenu ? (
                       isOpen ? (
-                        <AiOutlineMinus className="ml-auto transition-transform duration-200" />
+                        <AiOutlineMinus className="ml-auto text-amber-400 transition-transform duration-200" />
                       ) : (
-                        <AiOutlinePlus className="ml-auto transition-transform duration-200" />
+                        <AiOutlinePlus className="ml-auto text-amber-400 transition-transform duration-200" />
                       )
                     ) : (
                       <BsChevronDown
-                        className={`${
+                        className={`text-amber-400 ${
                           isOpen ? "rotate-180" : "rotate-0"
                         } transition-transform duration-200`}
                       />
@@ -475,7 +334,7 @@ const Sidebar = () => {
               </a>
 
               {menu.submenu && isOpen && open && (
-                <ul className="ml-4">
+                <ul className="ml-4 bg-gray-800/50 rounded-xl p-2 backdrop-blur-sm border-l-2 border-amber-500/30">
                   {menu.submenuItems.map((submenuItem, subIndex) => (
                     <Fragment key={submenuItem.id}>
                       <a
@@ -486,22 +345,24 @@ const Sidebar = () => {
                           onClick={() => toggleNestedSubMenu(index, subIndex)}
                           className={`${
                             submenuItem.red ? "text-red-300" : "text-gray-300"
-                          } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white  rounded-2xl`}
+                          } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-gradient-to-r hover:from-amber-900/20 hover:to-yellow-900/20 rounded-lg transition-all duration-300 group`}
                         >
-                          {submenuItem.icon}
-                          {submenuItem.title}
+                          <span className="text-amber-400 group-hover:text-yellow-400 transition-colors duration-300">
+                            {submenuItem.icon}
+                          </span>
+                          <span className="flex-1">{submenuItem.title}</span>
                           {submenuItem.submenu &&
                             (nestedSubmenuOpenIndex[index] === subIndex ? (
-                              <AiOutlineMinus className="ml-auto transition-transform duration-200" />
+                              <AiOutlineMinus className="text-amber-400 transition-transform duration-200" />
                             ) : (
-                              <AiOutlinePlus className={`ml-auto`} />
+                              <AiOutlinePlus className="text-amber-400" />
                             ))}
                         </li>
                       </a>
 
                       {submenuItem.submenu &&
                         nestedSubmenuOpenIndex[index] === subIndex && (
-                          <ul className="ml-8">
+                          <ul className="ml-8 bg-gray-900/50 rounded-lg p-2 backdrop-blur-sm border-l border-amber-500/30">
                             {submenuItem.submenuItems.map((subSubItem) => (
                               <a
                                 key={subSubItem.id}
@@ -513,10 +374,12 @@ const Sidebar = () => {
                                     subSubItem.red
                                       ? "text-red-300"
                                       : "text-gray-300"
-                                  } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md`}
+                                  } select-none text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-gradient-to-r hover:from-amber-900/20 hover:to-yellow-900/20 rounded-md transition-all duration-300 group`}
                                 >
-                                  {subSubItem.icon}
-                                  {subSubItem.title}
+                                  <span className="text-amber-400 group-hover:text-yellow-400 transition-colors duration-300">
+                                    {subSubItem.icon}
+                                  </span>
+                                  <span>{subSubItem.title}</span>
                                 </li>
                               </a>
                             ))}
@@ -532,12 +395,12 @@ const Sidebar = () => {
       </ul>
 
       <div
-        className="rounded-md fixed right-1 bottom-20 bg-blue-900 p-2 bg-opacity-30 hover:bg-opacity-100 active:scale-95 z-50 animate-bounce"
+        className="rounded-full fixed right-5 bottom-20 bg-gradient-to-r from-amber-500 to-yellow-500 p-3 shadow-lg hover:shadow-amber-500/25 transition-all duration-300 z-50 hover:scale-110 cursor-pointer"
         onClick={() => {
           ref.current.scrollIntoView({ behavior: "smooth" });
         }}
       >
-        <TbArrowsLeftDown className="text-3xl text-white rotate-90" />
+        <TbArrowsLeftDown className="text-2xl text-gray-900 rotate-90" />
       </div>
     </div>
   );

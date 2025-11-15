@@ -12,9 +12,9 @@ const StaffMenu = () => {
       title: "Add/Update Employee",
       description: "Manage employee records, roles and assignments",
       icon: <Briefcase className="w-8 h-8" />,
-      color: "from-blue-600 to-blue-700",
-      lightColor: "bg-blue-50",
-      borderColor: "border-blue-200",
+      color: "from-yellow-600 to-yellow-700",
+      lightColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
       href: "/staff-menu/employee-menu/employee",
       stats: "Active Employees",
     },
@@ -23,9 +23,9 @@ const StaffMenu = () => {
       title: "Attendance",
       description: "Manage Employee Attendance records",
       icon: <SlCalender className="w-8 h-8" />,
-      color: "from-green-600 to-green-700",
-      lightColor: "bg-green-50",
-      borderColor: "border-green-200",
+      color: "from-yellow-600 to-yellow-700",
+      lightColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
       href: "/staff-menu/employee-menu/add-employee-attendance",
       stats: "Attendance Information",
     },
@@ -92,7 +92,7 @@ const StaffMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-yellow-100 to-yellow-500 rounded-2xl border border-blue-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
                 <Zap className="w-6 h-6 text-blue-600 mt-1" />

@@ -574,28 +574,28 @@ const TargetIncentive = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Link
                     to="/target-menu/target"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-yellow-50 transition-all group"
                   >
                     <FiTarget className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
                     <span className="font-medium text-gray-700 group-hover:text-blue-600">Set Target</span>
                   </Link>
                   <Link
                     to="/reports/target-commission"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-yellow-50 transition-all group"
                   >
                     <DollarOutlined className="text-blue-600 group-hover:scale-110 transition-transform text-lg" />
                     <span className="font-medium text-gray-700 group-hover:text-blue-600">Incentive Report</span>
                   </Link>
                   <Link
                     to="/target-commission-incentive"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-yellow-50 transition-all group"
                   >
                     <MdPayments className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
                     <span className="font-medium text-gray-700 group-hover:text-blue-600">Incentive / Commission Payout</span> 
                   </Link>
                   <Link
                     to="/payment-menu/payment-in-out-menu/payment-out/salary"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-yellow-50 transition-all group"
                   >
                     <FaMoneyBill className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
                     <span className="font-medium text-gray-700 group-hover:text-blue-600">Salary Payout</span>
@@ -763,11 +763,11 @@ const TargetIncentive = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
+                        <div className="bg-yellow-50 border border-blue-200 rounded-lg p-5">
                           <p className="text-sm font-semibold text-blue-800 mb-3">Incentive Breakdown</p>
                           <ul className="space-y-2">
                             <li className="text-sm text-gray-700 flex items-center gap-2">
-                              <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                              <span className="w-2 h-2 bg-yellow-600 rounded-full"></span>
                               <span>Up to target (0%): <span className="font-semibold">0.00</span></span>
                             </li>
                             {targetData.achieved > targetData.target && (

@@ -511,7 +511,7 @@ const CommissionPayout = () => {
                     setShowCommissionModal(true);
                     resetCommissionForm();
                   }}
-                  className="bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                  className="bg-yellow-900 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-600 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> Commission / Incentive Payment
                 </button>
@@ -792,7 +792,7 @@ const CommissionPayout = () => {
                     </h3>
                     <table className="min-w-full text-sm border">
                       <thead>
-                        <tr className="bg-blue-100 text-gray-700">
+                        <tr className="bg-yellow-100 text-gray-700">
                           <th className="border px-3 py-2 text-left">Part</th>
                           <th className="border px-3 py-2 text-right">
                             Amount (₹)
@@ -915,7 +915,7 @@ const CommissionPayout = () => {
                     <div className="max-h-60 overflow-y-auto custom-scrollbar">
                       <table className="min-w-full text-sm border">
                         <thead>
-                          <tr className="bg-blue-100 text-gray-700">
+                          <tr className="bg-yellow-100 text-gray-700">
                             <th className="border px-3 py-2 text-left">
                               Customer
                             </th>
@@ -962,7 +962,7 @@ const CommissionPayout = () => {
                     <div className="max-h-60 overflow-y-auto custom-scrollbar">
                       <table className="min-w-full text-sm border">
                         <thead>
-                          <tr className="bg-blue-100 text-gray-700">
+                          <tr className="bg-yellow-100 text-gray-700">
                             <th className="border px-3 py-2 text-left">
                               Customer
                             </th>
@@ -1065,7 +1065,7 @@ const CommissionPayout = () => {
                   )}
                 </div>
 
-                <div className="w-full bg-blue-50 p-3 rounded-lg">
+                <div className="w-full bg-yellow-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -1086,7 +1086,7 @@ const CommissionPayout = () => {
                   <button
                     type="submit"
                     disabled={isLoading || isLoadingCommissionCalculation}
-                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Save Payment"}
                   </button>

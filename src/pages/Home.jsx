@@ -10,9 +10,10 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/layouts/Sidebar";
 import Navbar from "../components/layouts/Navbar";
 import api from "../instance/TokenInstance";
+import { AiTwotoneGold } from "react-icons/ai";
+import { IoTrendingUp, IoStatsChart } from "react-icons/io5";
 
 const Home = () => {
-
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [agents, setAgents] = useState([]);
@@ -129,7 +130,6 @@ const Home = () => {
     }
   }, []);
 
-  // Effects
   useEffect(() => {
     checkPaymentPermissions();
   }, [checkPaymentPermissions]);
@@ -165,88 +165,118 @@ const Home = () => {
     fetchMonthlyPayments,
   ]);
 
-  // Card Configuration
   const baseCards = [
     {
       id: 1,
-      icon: <LiaLayerGroupSolid size={24} />,
+      icon: <LiaLayerGroupSolid size={22} />,
       text: "Groups",
       count: groups?.length,
-      bgGradient: "from-blue-500 to-blue-600",
-      iconBg: "bg-blue-700",
-      hoverBg: "hover:from-blue-600 hover:to-blue-700",
+      bgGradient: "from-amber-50 to-yellow-50",
+      iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+      iconColor: "text-white",
+      textColor: "text-slate-700",
+      countColor: "text-slate-900",
+      borderColor: "border-amber-100",
+      hoverShadow: "hover:shadow-amber-100",
+      accentColor: "bg-amber-500",
       redirect: "/group",
     },
     {
       id: 2,
-      icon: <MdGroups size={24} />,
+      icon: <MdGroups size={22} />,
       text: "Customers",
       count: users?.length,
-      bgGradient: "from-orange-500 to-orange-600",
-      iconBg: "bg-orange-700",
-      hoverBg: "hover:from-orange-600 hover:to-orange-700",
+      bgGradient: "from-amber-50 to-yellow-50",
+      iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+      iconColor: "text-white",
+      textColor: "text-slate-700",
+      countColor: "text-slate-900",
+      borderColor: "border-amber-100",
+      hoverShadow: "hover:shadow-amber-100",
+      accentColor: "bg-amber-500",
       redirect: "/user",
     },
-    {
-      id: 3,
-      icon: <FaPeopleGroup size={24} />,
-      text: "Staff",
-      count: staff?.length,
-      bgGradient: "from-sky-500 to-sky-600",
-      iconBg: "bg-sky-700",
-      hoverBg: "hover:from-sky-600 hover:to-sky-700",
-      redirect: "/staff-menu",
-    },
+    // {
+    //   id: 3,
+    //   icon: <FaPeopleGroup size={22} />,
+    //   text: "Staff",
+    //   count: staff?.length,
+    //   bgGradient: "from-amber-50 to-yellow-50",
+    //   iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+    //   iconColor: "text-white",
+    //   textColor: "text-slate-700",
+    //   countColor: "text-slate-900",
+    //   borderColor: "border-amber-100",
+    //   hoverShadow: "hover:shadow-amber-100",
+    //   accentColor: "bg-amber-500",
+    //   redirect: "/staff-menu",
+    // },
     {
       id: 4,
-      icon: <FaPersonMilitaryPointing size={24} />,
+      icon: <FaPersonMilitaryPointing size={22} />,
       text: "Agents",
       count: agents?.length,
-      bgGradient: "from-teal-500 to-teal-600",
-      iconBg: "bg-teal-700",
-      hoverBg: "hover:from-teal-600 hover:to-teal-700",
+      bgGradient: "from-amber-50 to-yellow-50",
+      iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+      iconColor: "text-white",
+      textColor: "text-slate-700",
+      countColor: "text-slate-900",
+      borderColor: "border-amber-100",
+      hoverShadow: "hover:shadow-amber-100",
+      accentColor: "bg-amber-500",
       redirect: "/staff-menu/agent",
     },
     {
       id: 5,
-      icon: <ImUserTie size={24} />,
+      icon: <ImUserTie size={22} />,
       text: "Employees",
       count: employee?.length,
-      bgGradient: "from-lime-500 to-lime-600",
-      iconBg: "bg-lime-700",
-      hoverBg: "hover:from-lime-600 hover:to-lime-700",
+      bgGradient: "from-amber-50 to-yellow-50",
+      iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+      iconColor: "text-white",
+      textColor: "text-slate-700",
+      countColor: "text-slate-900",
+      borderColor: "border-amber-100",
+      hoverShadow: "hover:shadow-amber-100",
+      accentColor: "bg-amber-500",
       redirect: "/staff-menu/employee-menu",
     },
   ];
 
   const paymentCards = hidePayment
     ? [
-        {
-          id: 6,
-          icon: <MdOutlinePayments size={24} />,
-          text: "Payments",
-          count: totalAmount,
-          bgGradient: "from-yellow-500 to-yellow-600",
-          iconBg: "bg-yellow-700",
-          hoverBg: "hover:from-yellow-600 hover:to-yellow-700",
-          redirect: "/payment-in-out-menu/pay-in-menu/payment",
-        },
-        {
-          id: 7,
-          icon: (
-            <div className="flex items-center justify-center">
-              <SlCalender size={24} className="mr-1" />
-              
-            </div>
-          ),
-          text: "Current Month Payments",
-          count: paymentsPerMonthValue,
-          bgGradient: "from-purple-500 to-purple-600",
-          iconBg: "bg-purple-700",
-          hoverBg: "hover:from-purple-600 hover:to-purple-700",
-          redirect: "/payment-in-out-menu/pay-in-menu/payment",
-        },
-      ]
+      {
+        id: 6,
+        icon: <MdOutlinePayments size={22} />,
+        text: "Total Payments",
+        count: totalAmount,
+        bgGradient: "from-amber-50 to-yellow-50",
+        iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+        iconColor: "text-white",
+        textColor: "text-slate-700",
+        countColor: "text-slate-900",
+        borderColor: "border-amber-100",
+        hoverShadow: "hover:shadow-amber-100",
+        accentColor: "bg-amber-500",
+        redirect: "/payment-in-out-menu/pay-in-menu/payment",
+        featured: true,
+      },
+      {
+        id: 7,
+        icon: <SlCalender size={22} />,
+        text: "Monthly Payments",
+        count: paymentsPerMonthValue,
+        bgGradient: "from-amber-50 to-yellow-50",
+        iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+        iconColor: "text-white",
+        textColor: "text-slate-700",
+        countColor: "text-slate-900",
+        borderColor: "border-amber-100",
+        hoverShadow: "hover:shadow-amber-100",
+        accentColor: "bg-amber-500",
+        redirect: "/payment-in-out-menu/pay-in-menu/payment",
+      },
+    ]
     : [];
 
   const allCards = [...baseCards, ...paymentCards];
@@ -255,7 +285,6 @@ const Home = () => {
     card.text.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  // Event Handlers
   const handleCardClick = (index) => {
     setClickedIndex(index);
   };
@@ -270,13 +299,20 @@ const Home = () => {
     }
   };
 
-  // Skeleton Loader
   const SkeletonCard = () => (
-    <div className="bg-gray-200 rounded-lg h-32 animate-pulse" />
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 h-[168px] animate-pulse">
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-12 h-12 bg-slate-200 rounded-xl"></div>
+      </div>
+      <div className="space-y-3">
+        <div className="h-4 bg-slate-200 rounded w-2/3"></div>
+        <div className="h-8 bg-slate-200 rounded w-1/2"></div>
+      </div>
+    </div>
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
@@ -285,115 +321,144 @@ const Home = () => {
           visibility={true}
         />
 
-        <main className="flex-1 overflow-auto mt-20 p-8">
+        <main className="flex-1 overflow-auto mt-20 px-6 py-8 lg:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Header Section */}
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Dashboard
-              </h1>
-              <p className="text-gray-600">
-                Overview of your business metrics and data
-              </p>
+            <div className="mb-10">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-2xl blur-lg opacity-30"></div>
+                  <div className="relative bg-gradient-to-br from-amber-400 to-yellow-500 rounded-2xl p-3 shadow-lg">
+                    <IoStatsChart className="text-3xl text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+                    Business Dashboard
+                  </h1>
+                  <p className="text-slate-500 text-sm lg:text-base mt-1">
+                    Real-time insights and metrics at a glance
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Stats Bar */}
+              <div className="mt-6 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-2 text-sm">
+                  <IoTrendingUp className="text-emerald-500 text-lg" />
+                  <span className="text-slate-600">
+                    Last updated: {new Date().toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {loading
                 ? Array(baseCards.length)
-                    .fill(0)
-                    .map((_, i) => <SkeletonCard key={i} />)
+                  .fill(0)
+                  .map((_, i) => <SkeletonCard key={i} />)
                 : filteredCards.map((card, index) => (
-                    <Link
-                      to={card.redirect}
-                      key={card.id}
-                      onClick={() => handleCardClick(index)}
-                      onKeyDown={(e) => handleCardKeyDown(e, index)}
-                      role="button"
-                      tabIndex={0}
-                      className={`
-                        group relative flex flex-col p-6 rounded-xl
-                        bg-gradient-to-br ${card.bgGradient}
-                        text-white cursor-pointer
-                        transition-all duration-500 ease-out
-                        shadow-lg hover:shadow-2xl
-                        transform hover:scale-105 hover:translate-y-[-4px]
-                        ${card.hoverBg}
-                        ${
-                          notRendered
-                            ? "-translate-y-56 opacity-0 pointer-events-none"
-                            : "translate-y-0 opacity-100 pointer-events-auto"
-                        }
-                        ${
-                          clickedIndex === index
-                            ? "scale-95 brightness-110"
-                            : ""
-                        }
-                        overflow-hidden
+                  <Link
+                    to={card.redirect}
+                    key={card.id}
+                    onClick={() => handleCardClick(index)}
+                    onKeyDown={(e) => handleCardKeyDown(e, index)}
+                    role="button"
+                    tabIndex={0}
+                    className={`
+                        group relative flex flex-col p-6 rounded-2xl
+                        bg-white
+                        border ${card.borderColor}
+                        cursor-pointer
+                        transition-all duration-300 ease-out
+                        shadow-sm hover:shadow-xl
+                        ${card.hoverShadow}
+                        hover:-translate-y-1
+                        ${notRendered
+                        ? "opacity-0 translate-y-8 pointer-events-none"
+                        : "opacity-100 translate-y-0 pointer-events-auto"
+                      }
+                        ${clickedIndex === index
+                        ? "scale-98"
+                        : ""
+                      }
+                        ${card.featured ? "lg:col-span-2" : ""}
                       `}
-                      style={{
-                        transitionDelay: `${index * 100}ms`,
-                      }}
-                    >
-                      {/* Decorative Background */}
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500" />
-                      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-12 -mb-12" />
+                    style={{
+                      transitionDelay: `${index * 50}ms`,
+                    }}
+                  >
+                    {/* Top accent line */}
+                    <div className={`absolute top-0 left-0 right-0 h-1 ${card.accentColor} rounded-t-2xl`}></div>
 
-                      {/* Content */}
-                      <div className="relative z-10">
-                        {/* Icon */}
-                        <div
-                          className={`
-                            flex items-center justify-center w-16 h-16
-                            ${card.iconBg} text-white rounded-xl mb-4
+                    {/* Content */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div
+                        className={`
+                            flex items-center justify-center w-12 h-12
+                            ${card.iconBg} ${card.iconColor} rounded-xl
+                            shadow-lg
                             group-hover:scale-110 transition-transform duration-300
-                            shadow-md
                           `}
-                        >
-                          {card.icon}
-                        </div>
+                      >
+                        {card.icon}
+                      </div>
+                    </div>
 
-                        {/* Title and Count */}
-                        <h3
+                    <div className="flex-1">
+                      <h3 className={`text-sm font-medium ${card.textColor} mb-2 uppercase tracking-wide`}>
+                        {card.text}
+                      </h3>
+
+                      <div className="flex items-baseline gap-3">
+                        <span
                           className={`
-                          font-semibold text-white mb-2 
-                          group-hover:translate-x-1 transition-transform duration-300
-                          line-clamp-2
-                          ${card.text.length > 20 ? "text-base" : "text-lg"}
-                          ${card.text.length > 30 ? "text-sm" : ""}
-                        `}
+                              text-3xl font-bold ${card.countColor}
+                              ${String(card.count).length > 10 ? "text-2xl" : ""}
+                              ${String(card.count).length > 15 ? "text-xl" : ""}
+                            `}
                         >
-                          {card.text}
-                        </h3>
+                          {card.count.toLocaleString()}
+                        </span>
 
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span
-                            className={`
-                            font-bold text-white truncate
-                            ${
-                              String(card.count).length > 10
-                                ? "text-2xl"
-                                : "text-3xl"
-                            }
-                            ${String(card.count).length > 15 ? "text-xl" : ""}
-                          `}
-                          >
-                            {card.count}
-                          </span>
-                          <div className="text-xs font-semibold text-white opacity-75 bg-white bg-opacity-20 px-2 py-1 rounded-full whitespace-nowrap">
-                            View
-                          </div>
+                        {/* Trend indicator */}
+                        <div className="flex items-center gap-1 text-emerald-600 text-xs font-semibold">
+                          <IoTrendingUp className="text-sm" />
+                          <span>Active</span>
                         </div>
                       </div>
-                    </Link>
-                  ))}
+                    </div>
+
+                    {/* Hover arrow */}
+                    <div className={`
+                        absolute bottom-4 right-4 
+                        opacity-0 group-hover:opacity-100 
+                        transform translate-x-2 group-hover:translate-x-0
+                        transition-all duration-300
+                      `}>
+                      <div className={`w-8 h-8 ${card.accentColor} rounded-full flex items-center justify-center text-white`}>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
             </div>
 
             {/* Empty State */}
             {!loading && filteredCards.length === 0 && (
-              <div className="text-center py-16">
-                <p className="text-gray-500 text-lg">
-                  No results found for "{searchValue}"
+              <div className="text-center py-20">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-slate-100 rounded-full mb-4">
+                  <AiTwotoneGold className="text-4xl text-slate-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                  No results found
+                </h3>
+                <p className="text-slate-500">
+                  We couldn't find any matches for "{searchValue}"
                 </p>
               </div>
             )}

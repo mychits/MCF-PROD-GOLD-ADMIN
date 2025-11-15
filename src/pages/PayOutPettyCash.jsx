@@ -228,7 +228,7 @@ const PayOutPettyCash = () => {
           <div className="flex-grow p-7">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-semibold">
-                <span className="text-2xl text-red-500 font-bold">
+                <span className="text-2xl text-yellow-700 font-bold">
                   PETTY CASH
                 </span>
                 {"  "}
@@ -238,7 +238,7 @@ const PayOutPettyCash = () => {
               <Tooltip title="Record Petty Cash Expense">
                 <button
                   onClick={() => setShowPettyCashModal(true)}
-                  className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                  className="ml-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-700 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> New Expense
                 </button>
@@ -246,7 +246,7 @@ const PayOutPettyCash = () => {
             </div>
 
             <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
+              <h2 className="text-xl font-semibold mb-4 text-yellow-700 border-b pb-2">
                 Petty Cash Transactions
               </h2>
 
@@ -283,7 +283,7 @@ const PayOutPettyCash = () => {
                 {/* Expense Category */}
                 <div className="w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Expense Category <span className="text-red-500">*</span>
+                    Expense Category <span className="text-yellow-600">*</span>
                   </label>
                   <Select
                     className="w-full h-12"
@@ -457,7 +457,7 @@ const PayOutPettyCash = () => {
                   )}
                 </div>
                 
-                <div className="w-full bg-blue-50 p-3 rounded-lg">
+                <div className="w-full bg-yellow-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -476,7 +476,7 @@ const PayOutPettyCash = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Save Expense"}
                   </button>

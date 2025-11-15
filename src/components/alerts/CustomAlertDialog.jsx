@@ -30,7 +30,7 @@ const CustomAlertDialog = memo(({ isVisible=false, type = "info", message, onClo
       icon: <FaExclamationTriangle className="h-5 w-5 text-yellow-400" />,
     },
     info: {
-      bg: "bg-blue-50",
+      bg: "bg-yellow-50",
       text: "text-blue-800",
       border: "border-blue-300",
       icon: <FaInfoCircle className="h-5 w-5 text-blue-400" />,

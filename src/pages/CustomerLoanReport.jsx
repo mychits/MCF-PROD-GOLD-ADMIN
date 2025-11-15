@@ -122,7 +122,7 @@ const CustomerLoanReport = () => {
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-600 rounded-lg">
+            <div className="p-2 bg-yellow-600 rounded-lg">
               <FileText className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900">

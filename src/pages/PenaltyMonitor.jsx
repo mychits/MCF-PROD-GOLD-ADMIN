@@ -474,7 +474,7 @@ const PenaltyMonitor = () => {
             className="mb-10 shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl"
             title={
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-3">
                   <Filter className="w-6 h-6 text-blue-600" />
                 </div>
                 <span className="text-xl font-bold text-gray-900">Filter Options</span>
@@ -699,7 +699,7 @@ const PenaltyMonitor = () => {
                     <div className="text-4xl font-bold text-blue-600">{data.length}</div>
                     <div className="text-sm text-gray-600 mt-2">Active accounts</div>
                   </div>
-                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center">
                     <Users className="w-8 h-8 text-blue-600" />
                   </div>
                 </div>

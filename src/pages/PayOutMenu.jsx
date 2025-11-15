@@ -8,12 +8,12 @@ const PayOutMenu = () => {
   const paymentOutMenuCategories = [
     {
       id: "#1",
-      title: "Chit",
+      title: " Gold Chit",
       description: "Manage customer chit payment out transaction information.",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+      icon: <TicketCheck size={28} className="text-yellow-600" />,
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
       href:"/payment-menu/payment-in-out-menu/general-payment-out/chit",
       stats: "Chit Payment Out Information"
     },
@@ -22,9 +22,9 @@ const PayOutMenu = () => {
       title: "Commission / Incentive",
       description: "Manage customer Commission / Incentive  payment out transaction information.",
       icon: <HiCurrencyRupee size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
        href:"/target-commission-incentive",
        stats: "Commission / Incentive Information"
     },
@@ -32,10 +32,10 @@ const PayOutMenu = () => {
       id: "#3",
       title: "Salary",
       description: "Manage Employee salary information.",
-      icon: <Briefcase size={28} className="text-purple-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+      icon: <Briefcase size={28} className="text-yellow-600" />,
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
        href:"/payment-menu/payment-in-out-menu/payment-out/salary",
        stats: "Employee Salary Out Information"
 
@@ -45,9 +45,9 @@ const PayOutMenu = () => {
       title: "Petty Cash",
       description: "Manage Petty Cash information.",
       icon: <Banknote size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
        href:"/payment-menu/payment-in-out-menu/payment-out/petty-cash",
        stats: "Petty cash Information"
 
@@ -57,9 +57,9 @@ const PayOutMenu = () => {
       title: "Others",
       description: "Manage Others information.",
       icon: <MoreHorizontal size={28} className="text-gray-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-yellow-600 to-yellow-700",
+          lightColor: "bg-yellow-50",
+          borderColor: "border-yellow-200",
        href:"/payment-menu/payment-in-out-menu/payment-out/others",
        stats: "Other payment out Information"
 
@@ -128,10 +128,10 @@ const PayOutMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-yellow-100 to-yellow-500 rounded-2xl border border-yellow-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-blue-600 mt-1" />
+                <Zap className="w-6 h-6 text-yellow-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>

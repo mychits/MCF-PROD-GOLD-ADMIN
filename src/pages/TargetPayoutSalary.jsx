@@ -400,7 +400,7 @@ const TargetPayOutSalary = () => {
                     setShowSalaryModal(true);
                     resetForm();
                   }}
-                  className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                  className="ml-4 bg-yellow-900 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-600 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> Salary Payment
                 </button>
@@ -532,7 +532,7 @@ const TargetPayOutSalary = () => {
                       <div className="col-span-2">
                         <button
                           type="button"
-                          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                          className="mt-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
                           onClick={() => {
                             if (
                               salaryForm.agent_id &&
@@ -750,7 +750,7 @@ const TargetPayOutSalary = () => {
                   />
                 </div>
 
-                <div className="w-full bg-blue-50 p-3 rounded-lg">
+                <div className="w-full bg-yellow-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -768,7 +768,7 @@ const TargetPayOutSalary = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Save Payment"}
                   </button>

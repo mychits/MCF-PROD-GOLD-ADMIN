@@ -394,7 +394,7 @@
 //                       setIsEditing(true);
 //                     }}
 //                   >
-//                     <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
+//                     <span className="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center group-hover:bg-yellow-100 transition-colors duration-200">
 //                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 //                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
 //                       </svg>
@@ -668,7 +668,7 @@
 //                   setShowSalaryModal(true);
 //                   resetForm();
 //                 }}
-//                 className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+//                 className="ml-4 bg-yellow-900 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-600 transition duration-200 flex items-center"
 //               >
 //                 <span className="mr-2">+</span> Salary Payment
 //               </button>
@@ -1147,7 +1147,7 @@
 //                     <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-300 shadow-sm">
 //                       <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Disbursed By</p>
 //                       <p className="text-lg font-bold text-blue-900 flex items-center gap-2">
-//                         <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+//                         <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-sm font-bold">
 //                           {adminName?.charAt(0).toUpperCase()}
 //                         </div>
 //                         {adminName}
@@ -1173,7 +1173,7 @@
 //                       className={`px-5 py-2.5 rounded-lg text-white font-medium transition-colors ${
 //                         isLoading 
 //                           ? 'bg-gray-400 cursor-not-allowed' 
-//                           : 'bg-blue-600 hover:bg-blue-700'
+//                           : 'bg-yellow-600 hover:bg-yellow-700'
 //                       }`}
 //                     >
 //                       {isLoading ? (
@@ -1641,7 +1641,7 @@ const PayoutSalary = () => {
                       setIsEditing(true);
                     }}
                   >
-                    <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
+                    <span className="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center group-hover:bg-yellow-100 transition-colors duration-200">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
@@ -1995,7 +1995,7 @@ const PayoutSalary = () => {
         <div className="flex-grow p-7">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-semibold">
-              <span className="text-2xl text-red-500 font-bold">{paymentFor?.toUpperCase()}</span> Payments Out
+              <span className="text-2xl text-yellow-700 font-bold">{paymentFor?.toUpperCase()}</span> Payments Out
             </h1>
             <Tooltip title="Add Salary Payment">
               <button
@@ -2003,7 +2003,7 @@ const PayoutSalary = () => {
                   setShowSalaryModal(true);
                   resetForm();
                 }}
-                className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                className="ml-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-700 transition duration-200 flex items-center"
               >
                 <span className="mr-2">+</span> Salary Payment
               </button>
@@ -2011,7 +2011,7 @@ const PayoutSalary = () => {
           </div>
 
           <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">Salary Payments</h2>
+            <h2 className="text-xl font-semibold mb-4 text-yellow-700 border-b pb-2">Salary Payments</h2>
             {salaryPayments.length > 0 ? (
               <DataTable
                 data={salaryPayments}
@@ -2526,7 +2526,7 @@ const PayoutSalary = () => {
                     <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-300 shadow-sm">
                       <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Disbursed By</p>
                       <p className="text-lg font-bold text-blue-900 flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                        <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-sm font-bold">
                           {adminName?.charAt(0).toUpperCase()}
                         </div>
                         {adminName}
@@ -2551,7 +2551,7 @@ const PayoutSalary = () => {
                       disabled={isLoading}
                       className={`px-5 py-2.5 rounded-lg text-white font-medium transition-colors ${isLoading
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-yellow-600 hover:bg-yellow-700'
                         }`}
                     >
                       {isLoading ? (

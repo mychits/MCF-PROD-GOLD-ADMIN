@@ -264,7 +264,7 @@ const { Option } = Select;
 //             {/* Filter Button */}
 //             <button
 //               onClick={fetchSalaryPayments}
-//               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+//               className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition"
 //             >
 //               Filter
 //             </button>
@@ -525,7 +525,7 @@ const { Option } = Select;
 //             {/* Filter Button */}
 //             {/* <button
 //               onClick={fetchSalaryPayments}
-//               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+//               className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition"
 //             >
 //               Filter
 //             </button> */}

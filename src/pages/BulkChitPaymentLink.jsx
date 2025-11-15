@@ -484,7 +484,7 @@ const handleEnrollmentSelect = (id) => {
     />
   ),
   render: (row) => (
-    <div className={selectedEnrollments.includes(row._id) ? "bg-blue-100" : ""}>
+    <div className={selectedEnrollments.includes(row._id) ? "bg-yellow-100" : ""}>
       <input
         type="checkbox"
         checked={selectedEnrollments.includes(row._id)}
@@ -568,7 +568,7 @@ const handleEnrollmentSelect = (id) => {
                   {selectedEnrollments.length > 0 && (
                     <button
                       onClick={handleOpenPaymentLinkModal}
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                      className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
                     >
                       Add Payment Link ({selectedEnrollments.length})
                     </button>
@@ -611,7 +611,7 @@ const handleEnrollmentSelect = (id) => {
               Create Payment Links
             </h3>
 
-            <div className="mb-4 p-3 bg-blue-50 rounded">
+            <div className="mb-4 p-3 bg-yellow-50 rounded">
               <p className="text-sm text-blue-700">
                 Creating payment links for {selectedEnrollments.length} selected enrollment{selectedEnrollments.length > 1 ? 's' : ''}
               </p>
@@ -693,7 +693,7 @@ const handleEnrollmentSelect = (id) => {
                   type="submit"
                   disabled={loading}
                   className={`px-5 py-2.5 rounded-lg font-medium transition-colors ${
-                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-950 text-white hover:bg-blue-800"
+                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-600 text-white hover:bg-yellow-800"
                   }`}
                 >
                   {loading ? "Creating..." : "Create Payment Links"}

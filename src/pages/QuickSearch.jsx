@@ -245,8 +245,8 @@ const QuickSearch = () => {
                     className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
                         ? isDark
-                          ? 'bg-blue-600 text-white hover:bg-blue-700'
-                          : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
+                          ? 'bg-yellow-600 text-white hover:bg-yellow-700'
+                          : 'bg-yellow-600 text-white hover:bg-yellow-700 shadow-sm'
                         : isDark
                           ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'
                           : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
@@ -295,7 +295,7 @@ const QuickSearch = () => {
                   <div className={`flex items-center justify-between p-5 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        isDark ? 'bg-blue-600' : 'bg-blue-600'
+                        isDark ? 'bg-yellow-600' : 'bg-yellow-600'
                       }`}>
                         <FiUser className="text-white" size={20} />
                       </div>
@@ -337,7 +337,7 @@ const QuickSearch = () => {
                     style: { cursor: "pointer" },
                     className: isDark 
                       ? "hover:bg-gray-700 transition-colors duration-150" 
-                      : "hover:bg-blue-50 transition-colors duration-150",
+                      : "hover:bg-yellow-50 transition-colors duration-150",
                   };
                 }}
               />
