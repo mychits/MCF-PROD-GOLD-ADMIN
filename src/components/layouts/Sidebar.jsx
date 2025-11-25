@@ -42,6 +42,7 @@ import { MdCancel } from "react-icons/md";
 import { MdAccountBalanceWallet } from "react-icons/md";
 import { LuTarget } from "react-icons/lu";
 import { TbTargetArrow } from "react-icons/tb";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 const MenuSidebar = [
   {
@@ -115,6 +116,12 @@ const MenuSidebar = [
     title: "Other Services",
     icon: <GiTakeMyMoney />,
     link: "/other-service-menu",
+  },
+    {
+    id: "$2564",
+    title: "Approvals",
+    icon: <FaExclamationTriangle />,
+    link: "/approval-menu",
   },
   {
     id: ids.eleven,

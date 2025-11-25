@@ -1,57 +1,32 @@
+import { Link } from "react-router-dom";
 import Navbar from "../components/layouts/Navbar";
 import Sidebar from "../components/layouts/Sidebar";
-import { HiCurrencyRupee } from "react-icons/hi2";
-import { Banknote, Briefcase, TicketCheck, MoreHorizontal, ChevronRight,Zap } from "lucide-react";
-import { Link } from "react-router-dom";
-import { CiLink } from "react-icons/ci";
-const PayInMenu = () => {
-  const paymentInMenuCategories = [
+import { Users, Briefcase, ChevronRight,Zap  } from "lucide-react";
+
+const AdminApprovalMenu = () => {
+  const AdminApprovalCategories = [
     {
-      id: "#1",
-      title: "Registration Fee",
-       description: "Manage customer registration fee for joining Chit group records.",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
-       color: "from-green-600 to-green-700",
-      lightColor: "bg-green-50",
-      borderColor: "border-green-200",
-      href:"/payment-menu/payment-in-out-menu/pay-in-menu/registration-fee",
-      stats: "Registration-Fee Information",
-    },
-    {
-      id: "#2",
-      title: "Payment Receipt",
-      description: "Customer Receipt Management.",
-      icon: <HiCurrencyRupee size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
+      id: 1,
+      title: "Unverified Customers",
+      description: "Manage Unverified Customers for approval",
+      icon: <Users className="w-8 h-8" />,
+      color: "from-blue-600 to-blue-700",
       lightColor: "bg-yellow-50",
       borderColor: "border-blue-200",
-       href:"/payment-menu/payment-in-out-menu/pay-in-menu/payment",
-       stats: "Payment Receipt Information"
-    },
-      {
-      id: "#3",
-      title: "Suspense Payments",
-      description: "Manage customer Suspense chit payment transaction.",
-      icon: <HiCurrencyRupee size={28} className="text-red-600" />,
-       color: "from-red-600 to-red-700",
-      lightColor: "bg-red-50",
-      borderColor: "border-red-200",
-       href:"/payment-menu/payment-in-out-menu/pay-in-menu/suspense-payments",
-       stats: "Chit Payment Information"
+      href: "/approval-menu/un-approved-customer",
+      stats: "Unapproved Customers",
     },
     {
-      id: "#4",
-      title: "Payment Links",
-      description: "Manage customer chit payment link transaction information.",
-      icon: <CiLink  size={28} className="text-green-600" />,
-       color: "from-blue-600 to-blue-700",
-      lightColor: "bg-yellow-50",
-      borderColor: "border-blue-200",
-       href:"/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu",
-       stats: "Payment Link Information"
+      id: 2,
+      title: "Mobile Enrollments",
+      description: "Manage Mobile Enrollments",
+      icon: <Briefcase className="w-8 h-8" />,
+      color: "from-amber-600 to-amber-700",
+      lightColor: "bg-amber-50",
+      borderColor: "border-amber-200",
+      href: "/approval-menu/mobile-app-enroll",
+      stats: "InActive Enrollments",
     },
-    
-   
   ];
 
   return (
@@ -63,15 +38,15 @@ const PayInMenu = () => {
           <div className="p-8">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900">
-                Payment-In Management
+                Approval Management
               </h2>
               <p className="text-gray-600 mt-2">
-                Manage and view payment-In information 
+                Manage and organize New Customers and Mobile Enrollment.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-              {paymentInMenuCategories.map((category) => (
+              {AdminApprovalCategories.map((category) => (
                 <Link key={category.id} to={category.href} className="group">
                   <div
                     className={`relative h-full overflow-hidden rounded-xl bg-white border ${category.borderColor} shadow-md hover:shadow-lg transition-all duration-300`}
@@ -122,10 +97,8 @@ const PayInMenu = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>
-                <p className="text-slate-700">Use the Registration-Fee directory to manage Registration-Fee transaction details and view payment in information all in one place.</p>
-                <p className="text-slate-700">Use the Chit Payment directory to manage Chit Payment transaction details and view payment in information all in one place.</p>
-                 <p className="text-slate-700">Use the Payment Link directory to manage Payment Link transaction details and view payment in information all in one place.</p>
-                
+                <p className="text-slate-700">Use the Admin Approval directory to approve new Customers from Mobile, update customer information  all in one place.</p>
+                <p className="text-slate-700">Use the Admin Approval directory to approve new Enrollments from Mobile update new Enrolled Customer information all in one place.</p>
               </div>
             </div>
           </div>
@@ -136,4 +109,4 @@ const PayInMenu = () => {
   );
 };
 
-export default PayInMenu;
+export default AdminApprovalMenu;

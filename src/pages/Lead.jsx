@@ -94,7 +94,7 @@ const Lead = () => {
     const fetchLeads = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/lead/get-lead");
+        const response = await api.get("/lead/non-converted");
         setLeads(response.data);
         const formattedData = response.data.map((group, index) => ({
           _id: group._id,
@@ -628,7 +628,7 @@ const Lead = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-800 transition duration-200"
+                  className="ml-4 bg-yellow-950 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-800 transition duration-200"
                 >
                   + Add Lead
                 </button>
